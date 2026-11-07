@@ -1,25 +1,6 @@
 
 <!DOCTYPE html>
 <html lang="vi">
-
-<style>
-/* Ẩn thông báo mô phỏng dài ở đầu trang */
-main.page > p.notice:not(#stage-workload) {
-    display: none !important;
-}
-</style>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    // Đổi tên menu thành Dự đoán AI
-    document.querySelectorAll(".navigation a").forEach(function(link) {
-        if (link.getAttribute("href") === "ai_dashboard.html") {
-            link.textContent = "Dự đoán AI";
-        }
-    });
-});
-</script>
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,396 +12,449 @@ document.addEventListener("DOMContentLoaded", function () {
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{box-sizing:border-box}
-
-body{
-    font-family:'Be Vietnam Pro',sans-serif;
-    background:#f4f7fb;
-    color:#26384d;
-    margin:0;
+* {
+    box-sizing: border-box;
 }
 
-/* Phần nội dung trang */
-.page{
-    max-width:1400px;
-    margin:28px auto;
-    padding:0 22px 50px;
+body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: #f4f7fb;
+    color: #26384d;
+    margin: 0;
 }
 
-.page-heading{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    flex-wrap:wrap;
-    margin-bottom:22px;
+/* NỘI DUNG TRANG */
+.page {
+    max-width: 1400px;
+    margin: 28px auto;
+    padding: 0 22px 50px;
 }
 
-.page-heading h1{
-    font-size:24px;
-    margin:0 0 7px;
-    color:#263d56;
+.page-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
 }
 
-.page-heading p{
-    font-size:13px;
-    color:#8493a4;
-    margin:0;
+.page-heading h1 {
+    font-size: 24px;
+    margin: 0 0 7px;
+    color: #263d56;
 }
 
-.actions{
-    display:flex;
-    gap:9px;
-    flex-wrap:wrap;
+.page-heading p {
+    font-size: 13px;
+    color: #8493a4;
+    margin: 0;
 }
 
-.btn{
-    border:0;
-    border-radius:8px;
-    padding:10px 15px;
-    font-family:inherit;
-    font-size:12px;
-    font-weight:600;
-    cursor:pointer;
+/* NÚT BẤM */
+.actions {
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
 }
 
-.btn-primary{background:#2879bd;color:white}
-.btn-primary:hover{background:#1e659f}
-.btn-light{background:#eaf1f8;color:#42627f}
-.btn-success{background:#e4f5ed;color:#218456}
-.btn-danger{background:#fff0ef;color:#c64c4c}
-.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn {
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #2879bd;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #1e659f;
+}
+
+.btn-light {
+    background: #eaf1f8;
+    color: #42627f;
+}
+
+.btn-success {
+    background: #e4f5ed;
+    color: #218456;
+}
+
+.btn-danger {
+    background: #fff0ef;
+    color: #c64c4c;
+}
+
+.btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
 
 /* KPI */
-.kpis{
-    display:grid;
-    grid-template-columns:repeat(4,minmax(150px,1fr));
-    gap:15px;
-    margin-bottom:22px;
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 22px;
 }
 
-.kpi,.panel{
-    background:#fff;
-    border:1px solid #e8eef5;
-    border-radius:12px;
+.kpi, .panel {
+    background: #fff;
+    border: 1px solid #e8eef5;
+    border-radius: 12px;
 }
 
-.kpi{padding:17px 19px}
-
-.kpi-label{
-    font-size:11px;
-    color:#8292a4;
-    margin-bottom:10px;
+.kpi {
+    padding: 17px 19px;
 }
 
-.kpi-value{
-    font-size:25px;
-    font-weight:700;
-    color:#294967;
+.kpi-label {
+    font-size: 11px;
+    color: #8292a4;
+    margin-bottom: 10px;
 }
 
-.kpi-note{
-    font-size:10px;
-    color:#9aa8b6;
-    margin-top:5px;
+.kpi-value {
+    font-size: 25px;
+    font-weight: 700;
+    color: #294967;
 }
 
-/* Panel */
-.panel{
-    padding:20px;
-    margin-bottom:20px;
+.kpi-note {
+    font-size: 10px;
+    color: #9aa8b6;
+    margin-top: 5px;
 }
 
-.panel-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    flex-wrap:wrap;
-    margin-bottom:15px;
+/* PANEL */
+.panel {
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
-.panel-head h2{
-    font-size:15px;
-    margin:0;
-    color:#304a65;
+.panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
 }
 
-.panel-head p{
-    font-size:11px;
-    color:#8b9aaa;
-    margin:5px 0 0;
+.panel-head h2 {
+    font-size: 15px;
+    margin: 0;
+    color: #304a65;
 }
 
-/* Bảng */
-.table-wrap{overflow-x:auto}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:760px;
+.panel-head p {
+    font-size: 11px;
+    color: #8b9aaa;
+    margin: 5px 0 0;
 }
 
-th{
-    background:#f5f8fc;
-    color:#788a9d;
-    font-size:10px;
-    font-weight:700;
-    text-align:left;
-    padding:12px 11px;
-    white-space:nowrap;
+/* BẢNG DỮ LIỆU */
+.table-wrap {
+    overflow-x: auto;
 }
 
-td{
-    padding:12px 11px;
-    border-bottom:1px solid #edf1f6;
-    font-size:11px;
-    color:#53677d;
-    vertical-align:middle;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
 }
 
-tr:last-child td{border-bottom:0}
-
-.status{
-    display:inline-block;
-    padding:5px 9px;
-    border-radius:20px;
-    font-size:10px;
-    font-weight:700;
-    white-space:nowrap;
+th {
+    background: #f5f8fc;
+    color: #788a9d;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: left;
+    padding: 12px 11px;
+    white-space: nowrap;
 }
 
-.status-PENDING{background:#fff4df;color:#a87519}
-.status-IN_PROGRESS{background:#e7f2ff;color:#2672b9}
+td {
+    padding: 12px 11px;
+    border-bottom: 1px solid #edf1f6;
+    font-size: 11px;
+    color: #53677d;
+    vertical-align: middle;
+}
+
+tr:last-child td {
+    border-bottom: 0;
+}
+
+/* TRẠNG THÁI */
+.status {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-PENDING {
+    background: #fff4df;
+    color: #a87519;
+}
+
+.status-IN_PROGRESS {
+    background: #e7f2ff;
+    color: #2672b9;
+}
+
 .status-COMPLETED,
 .status-SHIPPED,
-.status-DELIVERED{background:#e4f5ed;color:#218456}
+.status-DELIVERED {
+    background: #e4f5ed;
+    color: #218456;
+}
+
 .status-FAILED,
-.status-CANCELLED{background:#fff0ef;color:#c64c4c}
-
-.empty{
-    text-align:center;
-    padding:30px;
-    color:#99a7b5;
-    font-size:12px;
+.status-CANCELLED {
+    background: #fff0ef;
+    color: #c64c4c;
 }
 
-/* Form */
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:13px;
+.empty {
+    text-align: center;
+    padding: 30px;
+    color: #99a7b5;
+    font-size: 12px;
 }
 
-.field{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
+/* FORM */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
 }
 
-.field label{
-    font-size:11px;
-    color:#65798e;
-    font-weight:600;
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field label {
+    font-size: 11px;
+    color: #65798e;
+    font-weight: 600;
 }
 
 .field input,
 .field select,
-.field textarea{
-    width:100%;
-    border:1px solid #dce5ef;
-    border-radius:7px;
-    padding:10px 11px;
-    font-family:inherit;
-    font-size:11px;
-    color:#344b62;
-    background:#fff;
-    outline:none;
+.field textarea {
+    width: 100%;
+    border: 1px solid #dce5ef;
+    border-radius: 7px;
+    padding: 10px 11px;
+    font-family: inherit;
+    font-size: 11px;
+    color: #344b62;
+    background: #fff;
+    outline: none;
 }
 
 .field input:focus,
 .field select:focus,
-.field textarea:focus{
-    border-color:#75a9d7;
+.field textarea:focus {
+    border-color: #75a9d7;
 }
 
-.field textarea{
-    min-height:70px;
-    resize:vertical;
+.field textarea {
+    min-height: 70px;
+    resize: vertical;
 }
 
-.form-actions{
-    display:flex;
-    gap:9px;
-    margin-top:16px;
-    flex-wrap:wrap;
+.form-actions {
+    display: flex;
+    gap: 9px;
+    margin-top: 16px;
+    flex-wrap: wrap;
 }
 
-.form-section{
-    border-top:1px solid #edf1f6;
-    margin-top:18px;
-    padding-top:16px;
+.form-section {
+    border-top: 1px solid #edf1f6;
+    margin-top: 18px;
+    padding-top: 16px;
 }
 
-.form-section h3{
-    font-size:12px;
-    color:#385775;
-    margin:0 0 12px;
+.form-section h3 {
+    font-size: 12px;
+    color: #385775;
+    margin: 0 0 12px;
 }
 
-.item-row{
-    display:grid;
-    grid-template-columns:2fr 1fr 1fr 1fr auto;
-    gap:8px;
-    align-items:end;
-    margin-bottom:9px;
+.item-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 8px;
+    align-items: end;
+    margin-bottom: 9px;
 }
 
 .item-row input,
-.item-row select{
-    width:100%;
-    border:1px solid #dce5ef;
-    border-radius:7px;
-    padding:9px;
-    font-family:inherit;
-    font-size:11px;
+.item-row select {
+    width: 100%;
+    border: 1px solid #dce5ef;
+    border-radius: 7px;
+    padding: 9px;
+    font-family: inherit;
+    font-size: 11px;
 }
 
-.small-btn{
-    border:0;
-    border-radius:7px;
-    padding:9px 11px;
-    cursor:pointer;
-    font-family:inherit;
-    font-size:11px;
+.small-btn {
+    border: 0;
+    border-radius: 7px;
+    padding: 9px 11px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 11px;
 }
 
-.notice{
-    padding:12px 14px;
-    border-radius:8px;
-    background:#eff6fc;
-    color:#55748f;
-    font-size:11px;
-    line-height:1.7;
-    margin-bottom:15px;
+/* THÔNG BÁO NGHIỆP VỤ */
+.notice {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: #eff6fc;
+    color: #55748f;
+    font-size: 11px;
+    line-height: 1.7;
+    margin-bottom: 15px;
 }
 
-.hidden{display:none!important}
-
-.search{
-    max-width:230px;
-    border:1px solid #dce5ef;
-    border-radius:7px;
-    padding:9px 11px;
-    font-family:inherit;
-    font-size:11px;
+.hidden {
+    display: none !important;
 }
 
-.task-actions{
-    display:flex;
-    gap:6px;
-    flex-wrap:wrap;
+.search {
+    max-width: 230px;
+    border: 1px solid #dce5ef;
+    border-radius: 7px;
+    padding: 9px 11px;
+    font-family: inherit;
+    font-size: 11px;
 }
 
-.task-actions .btn{
-    padding:7px 9px;
-    font-size:10px;
+.task-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
-/* Modal */
-.modal-bg{
-    position:fixed;
-    inset:0;
-    background:#172b405c;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:18px;
-    z-index:1000;
+.task-actions .btn {
+    padding: 7px 9px;
+    font-size: 10px;
 }
 
-.modal{
-    background:#fff;
-    border-radius:13px;
-    width:min(900px,100%);
-    max-height:90vh;
-    overflow:auto;
-    padding:22px;
+/* MODAL */
+.modal-bg {
+    position: fixed;
+    inset: 0;
+    background: #172b405c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    z-index: 1000;
 }
 
-.modal-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:18px;
+.modal {
+    background: #fff;
+    border-radius: 13px;
+    width: min(900px, 100%);
+    max-height: 90vh;
+    overflow: auto;
+    padding: 22px;
 }
 
-.modal-head h2{
-    font-size:16px;
-    margin:0;
+.modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
 }
 
-.close{
-    border:0;
-    background:#eef3f8;
-    border-radius:7px;
-    padding:7px 11px;
-    cursor:pointer;
+.modal-head h2 {
+    font-size: 16px;
+    margin: 0;
 }
 
-.toast{
-    position:fixed;
-    right:22px;
-    bottom:22px;
-    background:#294967;
-    color:#fff;
-    padding:13px 18px;
-    border-radius:9px;
-    font-size:12px;
-    z-index:2000;
-    box-shadow:0 5px 20px #0002;
-    max-width:360px;
+.close {
+    border: 0;
+    background: #eef3f8;
+    border-radius: 7px;
+    padding: 7px 11px;
+    cursor: pointer;
 }
 
-@media(max-width:850px){
-    .kpis{grid-template-columns:repeat(2,1fr)}
-    .form-grid{grid-template-columns:repeat(2,1fr)}
+.toast {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    background: #294967;
+    color: #fff;
+    padding: 13px 18px;
+    border-radius: 9px;
+    font-size: 12px;
+    z-index: 2000;
+    box-shadow: 0 5px 20px #0002;
+    max-width: 360px;
 }
 
-@media(max-width:560px){
-    .page{padding:0 12px 35px}
-    .kpis{grid-template-columns:repeat(2,1fr);gap:9px}
-    .kpi{padding:13px}
-    .form-grid{grid-template-columns:1fr}
-    .item-row{grid-template-columns:1fr 1fr}
-    .item-row>*:first-child{grid-column:span 2}
+/* RESPONSIVE */
+@media (max-width: 850px) {
+    .kpis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .page {
+        padding: 0 12px 35px;
+    }
+
+    .kpis {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 9px;
+    }
+
+    .kpi {
+        padding: 13px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .item-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .item-row > *:first-child {
+        grid-column: span 2;
+    }
 }
 </style>
-
-<style>
-/* SMARTWMS - XÓA CẢ HAI KHUNG THÔNG BÁO */
-
-/* Khung số thùng, lô/đơn và năng lực */
-#stage-workload {
-    display: none !important;
-}
-
-/* Khung thông báo dữ liệu mô phỏng */
-main.page > p.notice:not(#stage-workload) {
-    display: none !important;
-}
-
-/* Ẩn cả khung thông báo nếu dùng thẻ div */
-main.page > div.notice {
-    display: none !important;
-}
-</style>
-
 </head>
 
 <body>
 
-<!-- HEADER ĐỒNG BỘ VỚI TRANG TỔNG QUAN -->
 <header class="topbar">
     <div class="brand">
         <span class="brand-icon">W</span>
@@ -437,29 +471,35 @@ main.page > div.notice {
         <a href="stage.html?stage=putaway">Cất hàng</a>
         <a href="stage.html?stage=picking">Lấy hàng</a>
         <a href="stage.html?stage=packing">Đóng gói</a>
-
         <a href="stage.html?stage=shipping">Xuất hàng</a>
-        <a href="ai_dashboard.html">Dự kiến xử lý</a>
+        <a href="ai_dashboard.html">Dự đoán AI</a>
         <a href="bottleneck_analysis.html">Điểm nghẽn</a>
     </nav>
 
     <div class="user">
-        <a class="data-import-link" href="import.html">Nhập dữ liệu</a><span class="avatar">QL</span>
+        <a class="data-import-link" href="import.html">Nhập dữ liệu</a>
+        <span class="avatar">QL</span>
         <span>Quản lý kho</span>
     </div>
 </header>
 
 <main class="page">
-    <div class="page-heading">
 
+    <div class="page-heading">
         <div>
             <h1 id="pageTitle">Đang tải công đoạn...</h1>
-            <p id="pageDescription">Quản lý và theo dõi hoạt động trong kho</p>
+            <p id="pageDescription">
+                Quản lý và theo dõi hoạt động trong kho
+            </p>
         </div>
 
         <div class="actions">
-            <button class="btn btn-light" onclick="loadData()">↻ Làm mới dữ liệu</button>
-            <button class="btn btn-primary" id="createButton" onclick="showCreateForm()">+ Tạo phiếu</button>
+            <button class="btn btn-light" onclick="loadData()">
+                ↻ Làm mới dữ liệu
+            </button>
+            <button class="btn btn-primary" id="createButton" onclick="showCreateForm()">
+                + Tạo phiếu
+            </button>
         </div>
     </div>
 
@@ -506,7 +546,9 @@ main.page > div.notice {
                 <h2 id="tableTitle">Danh sách phiếu</h2>
                 <p id="tableDescription">Theo dõi trạng thái xử lý</p>
             </div>
-            <input class="search" id="searchInput" placeholder="Tìm mã phiếu..." oninput="renderTable()">
+            <input class="search" id="searchInput"
+                   placeholder="Tìm mã phiếu..."
+                   oninput="renderTable()">
         </div>
 
         <div class="table-wrap">
@@ -712,8 +754,6 @@ async function loadData() {
             extraRecords = db.shipments || [];
         }
 
-        const metrics = WmsDemo.analysis().find(item => item.stage === stage);
-        
         updateKpis();
         renderTable();
         renderExtra();
@@ -1038,7 +1078,7 @@ function addReceivingItem() {
     document.getElementById("receivingItems").appendChild(row);
 }
 
-async function submitReceiving(event) {
+function submitReceiving(event) {
     event.preventDefault();
 
     const form = new FormData(event.target);
@@ -1060,16 +1100,13 @@ async function submitReceiving(event) {
     payload.arrival_time = arrival ? arrival.replace("T"," ") + ":00" : "";
     payload.items = items;
 
-    try {
-        const result = await postJson(cfg.endpoint,{action:"create",...payload});
-
-        toast(result.message || "Đã tạo phiếu nhận hàng.");
-        hideForm();
-        await loadData();
-
-    } catch(e) {
-        toast(e.message);
-    }
+    postJson(cfg.endpoint,{action:"create",...payload})
+        .then(async result => {
+            toast(result.message || "Đã tạo phiếu nhận hàng.");
+            hideForm();
+            await loadData();
+        })
+        .catch(e => toast(e.message));
 }
 
 async function completeReceiving(id) {
@@ -1262,7 +1299,6 @@ function createPickingForm() {
                         ${selectOptions(orders,"order_id",x=>`${x.order_code} - ${x.total_qty} sản phẩm`)}
                     </select>
                 </div>
-
                 <div class="field">
                     <label>Nhân viên lấy hàng *</label>
                     <select name="employee_id" required>
@@ -1284,15 +1320,12 @@ function createPickingForm() {
 
     document.getElementById("pickingForm").onsubmit = async e => {
         e.preventDefault();
-
         const data = Object.fromEntries(new FormData(e.target).entries());
-
         try {
             const r = await postJson(cfg.endpoint,{action:"create",...data});
             toast(r.message);
             hideForm();
             await loadData();
-
         } catch(err) {
             toast(err.message);
         }
@@ -1304,14 +1337,12 @@ async function getPickingDetails(id) {
         action:"details",
         picking_id:id
     });
-
     return r.data || [];
 }
 
 async function completePicking(id) {
     try {
         const details = await getPickingDetails(id);
-
         if (!details.length) {
             return toast("Phiếu không có chi tiết lấy hàng.");
         }
@@ -1320,7 +1351,6 @@ async function completePicking(id) {
             <div class="notice">
                 Đối chiếu số lượng thực tế. Theo quy tắc hiện tại, cần xác nhận đủ số lượng yêu cầu để hoàn tất phiếu.
             </div>
-
             <div class="table-wrap">
                 <table>
                     <thead>
@@ -1348,14 +1378,12 @@ async function completePicking(id) {
                     </tbody>
                 </table>
             </div>
-
             <div class="form-actions">
                 <button class="btn btn-primary" onclick="submitPicking(${id})">
                     Xác nhận hoàn tất Picking
                 </button>
             </div>
         `);
-
     } catch(e) {
         toast(e.message);
     }
@@ -1373,11 +1401,9 @@ async function submitPicking(id) {
             picking_id:id,
             picked_items
         });
-
         closeModal();
         toast(r.message);
         await loadData();
-
     } catch(e) {
         toast(e.message);
     }
@@ -1400,7 +1426,6 @@ function createPackingForm() {
                         ${selectOptions(available,"picking_id",x=>`${x.picking_code} - ${x.order_code}`)}
                     </select>
                 </div>
-
                 <div class="field">
                     <label>Nhân viên đóng gói *</label>
                     <select name="employee_id" required>
@@ -1422,19 +1447,15 @@ function createPackingForm() {
 
     document.getElementById("packingForm").onsubmit = async e => {
         e.preventDefault();
-
         const data = Object.fromEntries(new FormData(e.target).entries());
-
         try {
             const r = await postJson("packing",{
                 action:"create",
                 ...data
             });
-
             toast(r.message);
             hideForm();
             await loadData();
-
         } catch(err) {
             toast(err.message);
         }
@@ -1447,25 +1468,20 @@ async function completePacking(id) {
 
     try {
         const allPicking = await getJson("picking");
-
         const pickingRows = (allPicking.data?.tasks || []).filter(
             x=>Number(x.order_id)===Number(task.order_id)
         );
-
         const picking = pickingRows.find(
             x=>String(x.status).toUpperCase()==="COMPLETED"
         );
-
         if (!picking) {
             return toast("Không tìm thấy phiếu Picking đã hoàn thành của đơn hàng này.");
         }
 
         const details = await getPickingDetails(Number(picking.picking_id));
-
         const alreadyPacked = (db.details || []).filter(
             x=>Number(x.packing_id)===id
         );
-
         if (alreadyPacked.length) {
             return toast("Phiếu này đã có chi tiết đóng gói. Không thể ghi nhận đóng gói lần nữa.");
         }
@@ -1485,22 +1501,18 @@ async function completePacking(id) {
                         <option value="OTHER">Khác</option>
                     </select>
                 </div>
-
                 <div class="field">
                     <label>Khối lượng (kg)</label>
                     <input id="packageWeight" type="number" min="0" step="1" value="1">
                 </div>
-
                 <div class="field">
                     <label>Dài (cm)</label>
                     <input id="packageLength" type="number" min="0" step="1">
                 </div>
-
                 <div class="field">
                     <label>Rộng (cm)</label>
                     <input id="packageWidth" type="number" min="0" step="1">
                 </div>
-
                 <div class="field">
                     <label>Cao (cm)</label>
                     <input id="packageHeight" type="number" min="0" step="1">
@@ -1509,7 +1521,6 @@ async function completePacking(id) {
 
             <div class="form-section">
                 <h3>Sản phẩm trong kiện</h3>
-
                 <div class="table-wrap">
                     <table>
                         <thead>
@@ -1520,7 +1531,6 @@ async function completePacking(id) {
                                 <th>Tình trạng</th>
                             </tr>
                         </thead>
-
                         <tbody>
                             ${details.map(d=>`
                                 <tr data-id="${d.picking_detail_id}">
@@ -1551,7 +1561,6 @@ async function completePacking(id) {
                 </button>
             </div>
         `);
-
     } catch(e) {
         toast(e.message);
     }
@@ -1559,7 +1568,6 @@ async function completePacking(id) {
 
 async function submitPacking(id) {
     const rows = [...document.querySelectorAll("#modalRoot tbody tr[data-id]")];
-
     const items = rows.map(row=>({
         picking_detail_id:Number(row.dataset.id),
         packed_qty:Number(row.querySelector(".packQty").value),
@@ -1586,11 +1594,9 @@ async function submitPacking(id) {
             packing_id:id,
             packages
         });
-
         closeModal();
         toast(r.message);
         await loadData();
-
     } catch(e) {
         toast(e.message);
     }
@@ -1608,17 +1614,13 @@ async function getPackingData() {
 async function createShippingForm() {
     try {
         const packingData = await getPackingData();
-
         const completed = (packingData.tasks || []).filter(
             x=>String(x.status).toUpperCase()==="COMPLETED"
         );
-
         const shippedOrderIds = records.map(x=>Number(x.order_id));
-
         const available = completed.filter(
             x=>!shippedOrderIds.includes(Number(x.order_id))
         );
-
         const employees = db.employees || [];
 
         showForm("Tạo phiếu xuất hàng", `
@@ -1630,7 +1632,6 @@ async function createShippingForm() {
                             ${selectOptions(available,"order_id",x=>`${x.order_code} - ${x.packing_code}`)}
                         </select>
                     </div>
-
                     <div class="field">
                         <label>Nhân viên phụ trách *</label>
                         <select name="employee_id" required>
@@ -1652,24 +1653,19 @@ async function createShippingForm() {
 
         document.getElementById("shippingForm").onsubmit = async e => {
             e.preventDefault();
-
             const data = Object.fromEntries(new FormData(e.target).entries());
-
             try {
                 const r = await postJson("shipping",{
                     action:"create",
                     ...data
                 });
-
                 toast(r.message);
                 hideForm();
                 await loadData();
-
             } catch(err) {
                 toast(err.message);
             }
         };
-
     } catch(e) {
         toast(e.message);
     }
@@ -1681,18 +1677,14 @@ async function showShipmentForm(shippingId) {
 
     try {
         const packingData = await getPackingData();
-
         const packingTasks = (packingData.tasks || []).filter(
             x=>Number(x.order_id)===Number(order.order_id) &&
             String(x.status).toUpperCase()==="COMPLETED"
         );
-
         const packingIds = packingTasks.map(x=>Number(x.packing_id));
-
         const alreadyShipped = (db.packages || []).map(
             x=>Number(x.packaging_unit_id)
         );
-
         const packages = (packingData.packages || []).filter(
             x=>packingIds.includes(Number(x.packing_id)) &&
             !alreadyShipped.includes(Number(x.packaging_unit_id))
@@ -1704,22 +1696,18 @@ async function showShipmentForm(shippingId) {
                     <label>Đơn vị vận chuyển *</label>
                     <input id="carrierName" required placeholder="Tên đơn vị vận chuyển">
                 </div>
-
                 <div class="field">
                     <label>Biển số xe</label>
                     <input id="vehicleNumber">
                 </div>
-
                 <div class="field">
                     <label>Tên tài xế</label>
                     <input id="driverName">
                 </div>
-
                 <div class="field">
                     <label>Số điện thoại tài xế</label>
                     <input id="driverPhone">
                 </div>
-
                 <div class="field">
                     <label>Thời gian dự kiến xuất phát</label>
                     <input id="plannedDeparture" type="datetime-local">
@@ -1728,7 +1716,6 @@ async function showShipmentForm(shippingId) {
 
             <div class="form-section">
                 <h3>Chọn kiện hàng bàn giao</h3>
-
                 <div class="notice">
                     Chọn các kiện thuộc đơn hàng ${esc(order.order_code)}.
                 </div>
@@ -1739,36 +1726,27 @@ async function showShipmentForm(shippingId) {
                         <label style="display:block;padding:9px;border-bottom:1px solid #edf1f6;font-size:11px">
                             <input type="checkbox" class="shipPackage"
                                 value="${p.packaging_unit_id}" checked>
-                            ${esc(p.package_code)} · ${esc(p.package_type)} · ${esc(p.weight)} kg
+                            ${esc(p.package_code)} - ${esc(p.package_type)}
                         </label>
                     `).join("")
-                    : '<div class="empty">Không còn kiện hàng chưa bàn giao cho đơn này.</div>'
+                    : `<p class="empty">Không có kiện hàng sẵn sàng bàn giao.</p>`
                 }
             </div>
 
             <div class="form-actions">
-                <button class="btn btn-primary"
-                    onclick="submitShipment(${shippingId})"
-                    ${packages.length?'':'disabled'}>
-                    Tạo chuyến xe
+                <button class="btn btn-primary" onclick="submitShipment(${shippingId})">
+                    Xác nhận tạo chuyến xe
                 </button>
             </div>
         `);
-
     } catch(e) {
         toast(e.message);
     }
 }
 
 async function submitShipment(shippingId) {
-    const package_ids = [...document.querySelectorAll(".shipPackage:checked")].map(
-        x=>Number(x.value)
-    );
-
-    if (!package_ids.length) {
-        return toast("Vui lòng chọn ít nhất một kiện hàng.");
-    }
-
+    const package_ids = [...document.querySelectorAll(".shipPackage:checked")]
+        .map(x=>Number(x.value));
     const planned = document.getElementById("plannedDeparture").value;
 
     const payload = {
@@ -1788,11 +1766,9 @@ async function submitShipment(shippingId) {
 
     try {
         const r = await postJson("shipping",payload);
-
         closeModal();
         toast(r.message);
         await loadData();
-
     } catch(e) {
         toast(e.message);
     }
@@ -1807,39 +1783,29 @@ async function startTask(id) {
 
     let payload = {};
     let url = cfg.endpoint;
-    let isForm = false;
 
     if (stage === "receiving") {
         payload = {action:"start",receipt_id:id};
     }
-
     if (stage === "putaway") {
         payload = {action:"start",putaway_id:id};
     }
-
     if (stage === "picking") {
         payload = {action:"start",picking_id:id};
-        isForm = true;
     }
-
     if (stage === "packing") {
         url = "packing";
         payload = {action:"start",packing_id:id};
     }
-
     if (stage === "shipping") {
         url = "shipping";
         payload = {action:"start",shipping_order_id:id};
     }
 
     try {
-        const r = isForm
-            ? await postJson(url,payload)
-            : await postJson(url,payload);
-
+        const r = await postJson(url,payload);
         toast(r.message || "Đã bắt đầu công việc.");
         await loadData();
-
     } catch(e) {
         toast(e.message);
     }
@@ -1853,10 +1819,8 @@ async function completeSimple(id) {
             action:"complete",
             putaway_id:id
         });
-
         toast(r.message);
         await loadData();
-
     } catch(e) {
         toast(e.message);
     }
@@ -1878,7 +1842,6 @@ async function viewDetails(id) {
             <p><b>Nhà cung cấp:</b> ${esc(row.supplier_name)}</p>
             <p><b>Nhân viên:</b> ${esc(row.employee_name)}</p>
             <p><b>Vị trí nhận:</b> ${esc(row.dock_number)}</p>
-
             <div class="table-wrap">
                 <table>
                     <thead>
@@ -1906,11 +1869,9 @@ async function viewDetails(id) {
     } else if (stage === "picking") {
         try {
             const details = await getPickingDetails(id);
-
             html = `
                 <p><b>Mã phiếu:</b> ${esc(row.picking_code)}</p>
                 <p><b>Đơn hàng:</b> ${esc(row.order_code)}</p>
-
                 <div class="table-wrap">
                     <table>
                         <thead>
@@ -1936,7 +1897,6 @@ async function viewDetails(id) {
                     </table>
                 </div>
             `;
-
         } catch(e) {
             html = esc(e.message);
         }
@@ -1945,11 +1905,9 @@ async function viewDetails(id) {
         const details = (db.details || []).filter(
             x=>Number(x.packing_id)===id
         );
-
         html = `
             <p><b>Mã phiếu:</b> ${esc(row.packing_code)}</p>
             <p><b>Đơn hàng:</b> ${esc(row.order_code)}</p>
-
             <div class="table-wrap">
                 <table>
                     <thead>
@@ -1978,11 +1936,9 @@ async function viewDetails(id) {
         const shipments = (db.shipments || []).filter(
             x=>Number(x.shipping_order_id)===id
         );
-
         html = `
             <p><b>Mã phiếu xuất:</b> ${esc(row.shipping_code)}</p>
             <p><b>Đơn hàng:</b> ${esc(row.order_code)}</p>
-
             <div class="table-wrap">
                 <table>
                     <thead>
@@ -2006,7 +1962,6 @@ async function viewDetails(id) {
                                         onclick="updateShipmentStatus(${Number(s.shipment_id)},'DELIVERED')">
                                         Đã giao
                                     </button>
-
                                     <button class="btn btn-danger"
                                         onclick="updateShipmentStatus(${Number(s.shipment_id)},'FAILED')">
                                         Giao thất bại
@@ -2041,11 +1996,9 @@ async function updateShipmentStatus(shipmentId,status) {
             shipment_id:shipmentId,
             delivery_status:status
         });
-
         toast(r.message);
         closeModal();
         await loadData();
-
     } catch(e) {
         toast(e.message);
     }
@@ -2063,7 +2016,6 @@ function openModal(title,content) {
                     <h2>${esc(title)}</h2>
                     <button class="close" onclick="closeModal()">✕</button>
                 </div>
-
                 ${content}
             </div>
         </div>
@@ -2077,8 +2029,12 @@ function closeModal() {
 /* Tải dữ liệu khi mở trang */
 loadData();
 window.addEventListener("wms:change", loadData);
-window.addEventListener("pageshow", event => { if (event.persisted) loadData(); });
-window.addEventListener("storage", event => { if (event.key === WmsDemo.storageKey) loadData(); });
+window.addEventListener("pageshow", event => {
+    if (event.persisted) loadData();
+});
+window.addEventListener("storage", event => {
+    if (event.key === WmsDemo.storageKey) loadData();
+});
 </script>
 
 </body>

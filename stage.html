@@ -411,9 +411,7 @@ tr:last-child td{border-bottom:0}
 </header>
 
 <main class="page">
-    <p id="stage-workload" class="notice"></p>
-    <p class="notice">Dữ liệu mô phỏng được lưu trên trình duyệt này. Dữ liệu dùng chung giữa các công đoạn. Chỉ hàng đạt QC mới được cất, và chỉ tồn đã cất mới được phân bổ để lấy hàng.</p>
-
+   
     <div class="page-heading">
         <div>
             <h1 id="pageTitle">Đang tải công đoạn...</h1>
@@ -676,7 +674,12 @@ async function loadData() {
         }
 
         const metrics = WmsDemo.analysis().find(item => item.stage === stage);
-        document.getElementById("stage-workload").textContent = metrics.workload + " thùng cần xử lý · " + metrics.ready + " lô/đơn sẵn sàng tạo phiếu · Năng lực " + metrics.capacity + " thùng/giờ";
+        const workloadBox = document.getElementById("stage-workload");
+if (workloadBox) {
+    workloadBox.textContent =
+        metrics.workload + " thùng cần xử lý · " +
+        metrics.ready + " lô/đơn sẵn sàng tạo phiếu";
+} = metrics.workload + " thùng cần xử lý · " + metrics.ready + " lô/đơn sẵn sàng tạo phiếu · Năng lực " + metrics.capacity + " thùng/giờ";
         updateKpis();
         renderTable();
         renderExtra();

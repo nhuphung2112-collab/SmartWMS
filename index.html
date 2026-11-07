@@ -4,10 +4,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WMS - Hệ thống quản lý kho</title>
+    <title>SmartWMS - Tổng quan hoạt động kho</title>
+
     <link rel="stylesheet" href="style.css?v=7">
-<link rel="stylesheet" href="smartwms-unified.css?v=1">
+    <link rel="stylesheet" href="smartwms-unified.css?v=1">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ==================================
+   PHÂN TÍCH RỦI RO - SMARTWMS
+================================== */
+
+.risk-section {
+    margin: 30px 0;
+    padding: 26px;
+    background: #ffffff;
+    border: 1px solid #e3eaf2;
+    border-radius: 16px;
+    font-family: 'Be Vietnam Pro', sans-serif;
+    box-shadow: 0 4px 20px rgba(36, 64, 95, 0.035);
+}
+
+.risk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.risk-header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.risk-header-icon {
+    width: 46px;
+    height: 46px;
+    background: #eaf2f9;
+    border-radius: 12px;
+    color: #346a98;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+    flex-shrink: 0;
+}
+
+.risk-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+    color: #7894b0;
+}
+
+.risk-header h2 {
+    margin: 5px 0 6px;
+    font-size: 21px;
+    font-weight: 700;
+    color: #294866;
+}
+
+.risk-header p {
+    margin: 0;
+    font-size: 12px;
+    color: #8596a8;
+    line-height: 1.7;
+}
+
+.risk-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #eef3f8;
+    color: #58728b;
+    border: 1px solid #e1e9f1;
+    border-radius: 30px;
+    padding: 9px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.risk-badge::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    background: currentColor;
+    border-radius: 50%;
+}
+
+/* KHUNG KẾT QUẢ CHÍNH */
+
+.risk-result {
+    background: #fff7f5;
+    border: 1px solid #f0d9d4;
+    border-left: 5px solid #d55b4c;
+    border-radius: 12px;
+    padding: 24px;
+    transition: background .2s ease;
+}
+
+.risk-result-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.risk-alert-icon {
+    width: 29px;
+    height: 29px;
+    background: #d55b4c;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.risk-result-label {
+    color: #b54d40;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .8px;
+}
+
+.risk-stage {
+    margin: 0 0 8px;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1.4;
+    color: #294866;
+}
+
+.risk-description {
+    margin: 0 0 22px;
+    font-size: 12px;
+    color: #8b7773;
+    line-height: 1.7;
+}
+
+/* HAI CHỈ SỐ QUAN TRỌNG */
+
+.risk-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.risk-metric {
+    padding: 18px 20px;
+    background: #ffffff;
+    border: 1px solid #f0e0dc;
+    border-radius: 10px;
+}
+
+.risk-metric-label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #8292a4;
+}
+
+.risk-metric-value {
+    display: block;
+    font-size: 29px;
+    font-weight: 800;
+    color: #294866;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.risk-metric-value small {
+    font-size: 12px;
+    font-weight: 500;
+    color: #8393a5;
+}
+
+#risk-percent {
+    color: #c64d40;
+}
+
+.risk-progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 9px;
+    font-size: 11px;
+    color: #8a7773;
+}
+
+.risk-progress {
+    height: 9px;
+    background: #f0dcd7;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.risk-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #d55b4c;
+    border-radius: 20px;
+    transition: width .4s ease;
+}
+
+.risk-explanation {
+    margin: 14px 0 0;
+    font-size: 12px;
+    color: #886e69;
+    line-height: 1.8;
+}
+
+/* CHÂN KHUNG */
+
+.risk-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: 20px;
+}
+
+.risk-footer-note {
+    max-width: 570px;
+    margin: 0;
+    color: #8595a6;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+.risk-links {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.risk-secondary-link {
+    color: #49769e;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.risk-primary-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 16px;
+    background: #2879bd;
+    color: #ffffff !important;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background .2s ease;
+}
+
+.risk-primary-link:hover {
+    background: #1d659f;
+}
+
+/* CẢNH BÁO VÀNG */
+
+.risk-section[data-risk="MEDIUM"] .risk-result {
+    background: #fffbf1;
+    border-color: #efdfb8;
+    border-left-color: #d59b35;
+}
+
+.risk-section[data-risk="MEDIUM"] .risk-alert-icon,
+.risk-section[data-risk="MEDIUM"] .risk-progress-fill {
+    background: #d59b35;
+}
+
+.risk-section[data-risk="MEDIUM"] .risk-result-label,
+.risk-section[data-risk="MEDIUM"] #risk-percent {
+    color: #ad7c23;
+}
+
+.risk-section[data-risk="MEDIUM"] .risk-badge {
+    background: #fff3d9;
+    color: #a8781f;
+    border-color: #f0dfb8;
+}
+
+/* TRẠNG THÁI XANH */
+
+.risk-section[data-risk="LOW"] .risk-result {
+    background: #f2faf5;
+    border-color: #cfe8da;
+    border-left-color: #33986d;
+}
+
+.risk-section[data-risk="LOW"] .risk-alert-icon,
+.risk-section[data-risk="LOW"] .risk-progress-fill {
+    background: #33986d;
+}
+
+.risk-section[data-risk="LOW"] .risk-result-label,
+.risk-section[data-risk="LOW"] #risk-percent {
+    color: #287e59;
+}
+
+.risk-section[data-risk="LOW"] .risk-badge {
+    background: #e8f6ed;
+    color: #287e59;
+    border-color: #cfe8da;
+}
+
+.risk-hidden-summary {
+    display: none !important;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+    .risk-section {
+        padding: 18px;
+    }
+
+    .risk-result {
+        padding: 18px;
+    }
+
+    .risk-header h2 {
+        font-size: 19px;
+    }
+
+    .risk-stage {
+        font-size: 21px;
+    }
+
+    .risk-metric-value {
+        font-size: 25px;
+    }
+}
+
+@media (max-width: 520px) {
+    .risk-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .risk-header-left {
+        align-items: flex-start;
+    }
+
+    .risk-footer {
+        align-items: flex-start;
+    }
+
+    .risk-links {
+        width: 100%;
+    }
+}
+</style>
 </head>
+
 <body>
 
 <header class="topbar">
@@ -32,7 +399,9 @@
     </nav>
 
     <div class="user">
-        <a class="data-import-link" href="import.html">Nhập dữ liệu</a>
+        <a class="data-import-link" href="import.html">
+            Nhập dữ liệu
+        </a>
         <span class="avatar">QL</span>
         <span>Quản lý kho</span>
     </div>
@@ -40,19 +409,27 @@
 
 <main class="container">
 
+    <!-- TỔNG QUAN -->
+
     <section class="page-heading">
         <div>
             <p class="eyebrow">WAREHOUSE MANAGEMENT SYSTEM</p>
             <h1>Tổng quan hoạt động kho hàng</h1>
-            <p class="subheading">SmartWMS · Dữ liệu liên thông theo phiếu và số lượng hàng.</p>
+            <p class="subheading">
+                SmartWMS · Dữ liệu liên thông theo phiếu và số lượng hàng.
+            </p>
         </div>
+
         <div class="date-box">
             <span>Ngày làm việc</span>
             <strong id="today"></strong>
         </div>
     </section>
 
+    <!-- KPI -->
+
     <section class="overview-grid">
+
         <div class="overview-card">
             <span class="card-icon">📦</span>
             <p>Tổng lượng hàng nhập</p>
@@ -78,11 +455,17 @@
             <span class="card-icon">◷</span>
             <p>Đơn hàng chưa xuất</p>
             <h2>0 <small>đơn</small></h2>
-            <span class="card-note warning-text">Gồm đơn chưa lấy, đang xử lý và chờ xuất</span>
+            <span class="card-note warning-text">
+                Gồm đơn chưa lấy, đang xử lý và chờ xuất
+            </span>
         </div>
+
     </section>
 
+    <!-- SƠ ĐỒ KHO -->
+
     <section class="warehouse-section">
+
         <div class="section-heading">
             <div>
                 <h2>Sơ đồ hoạt động kho hàng</h2>
@@ -94,19 +477,42 @@
         <div class="warehouse-map">
             <img src="warehouse.png" alt="Sơ đồ kho hàng">
 
-            <a class="hotspot receiving" href="stage.html?stage=receiving" aria-label="Nhận hàng" style="--x:10.6%;--y:39.6%;--w:10.9%"></a>
-            <a class="hotspot putaway" href="stage.html?stage=putaway" aria-label="Cất hàng" style="--x:32.5%;--y:24.4%;--w:10.2%"></a>
-            <a class="hotspot picking" href="stage.html?stage=picking" aria-label="Lấy hàng" style="--x:44.8%;--y:39.5%;--w:10.0%"></a>
-            <a class="hotspot packing" href="stage.html?stage=packing" aria-label="Đóng gói" style="--x:63.5%;--y:40.5%;--w:10.0%"></a>
-            <a class="hotspot shipping" href="stage.html?stage=shipping" aria-label="Xuất hàng" style="--x:83.5%;--y:28.8%;--w:10.3%"></a>
+            <a class="hotspot receiving"
+               href="stage.html?stage=receiving"
+               aria-label="Nhận hàng"
+               style="--x:10.6%;--y:39.6%;--w:10.9%"></a>
+
+            <a class="hotspot putaway"
+               href="stage.html?stage=putaway"
+               aria-label="Cất hàng"
+               style="--x:32.5%;--y:24.4%;--w:10.2%"></a>
+
+            <a class="hotspot picking"
+               href="stage.html?stage=picking"
+               aria-label="Lấy hàng"
+               style="--x:44.8%;--y:39.5%;--w:10.0%"></a>
+
+            <a class="hotspot packing"
+               href="stage.html?stage=packing"
+               aria-label="Đóng gói"
+               style="--x:63.5%;--y:40.5%;--w:10.0%"></a>
+
+            <a class="hotspot shipping"
+               href="stage.html?stage=shipping"
+               aria-label="Xuất hàng"
+               style="--x:83.5%;--y:28.8%;--w:10.3%"></a>
         </div>
 
         <p class="image-caption">
             Bấm vào nhãn trên ảnh để mở công đoạn tương ứng.
         </p>
+
     </section>
 
+    <!-- TÌNH TRẠNG 5 CÔNG ĐOẠN -->
+
     <section class="process-section">
+
         <div class="section-heading">
             <div>
                 <h2>Tình trạng các công đoạn</h2>
@@ -127,8 +533,13 @@
                     <span>Đang chờ <b>0 phiếu</b></span>
                     <span>Đang xử lý <b>0 phiếu</b></span>
                 </div>
-                <div class="progress-bar"><span style="width:0%"></span></div>
-                <div class="progress-label"><span>Tiến độ</span><b>—</b></div>
+                <div class="progress-bar">
+                    <span style="width:0%"></span>
+                </div>
+                <div class="progress-label">
+                    <span>Tiến độ</span>
+                    <b>—</b>
+                </div>
             </a>
 
             <a class="process-card" href="stage.html?stage=putaway">
@@ -142,8 +553,13 @@
                     <span>Đang chờ <b>0 phiếu</b></span>
                     <span>Đang xử lý <b>0 phiếu</b></span>
                 </div>
-                <div class="progress-bar"><span style="width:0%"></span></div>
-                <div class="progress-label"><span>Tiến độ</span><b>—</b></div>
+                <div class="progress-bar">
+                    <span style="width:0%"></span>
+                </div>
+                <div class="progress-label">
+                    <span>Tiến độ</span>
+                    <b>—</b>
+                </div>
             </a>
 
             <a class="process-card" href="stage.html?stage=picking">
@@ -157,8 +573,13 @@
                     <span>Đang chờ <b>0 phiếu</b></span>
                     <span>Đang xử lý <b>0 phiếu</b></span>
                 </div>
-                <div class="progress-bar"><span style="width:0%"></span></div>
-                <div class="progress-label"><span>Tiến độ</span><b>—</b></div>
+                <div class="progress-bar">
+                    <span style="width:0%"></span>
+                </div>
+                <div class="progress-label">
+                    <span>Tiến độ</span>
+                    <b>—</b>
+                </div>
             </a>
 
             <a class="process-card" href="stage.html?stage=packing">
@@ -172,8 +593,13 @@
                     <span>Đang chờ <b>0 phiếu</b></span>
                     <span>Đang xử lý <b>0 phiếu</b></span>
                 </div>
-                <div class="progress-bar"><span style="width:0%"></span></div>
-                <div class="progress-label"><span>Tiến độ</span><b>—</b></div>
+                <div class="progress-bar">
+                    <span style="width:0%"></span>
+                </div>
+                <div class="progress-label">
+                    <span>Tiến độ</span>
+                    <b>—</b>
+                </div>
             </a>
 
             <a class="process-card" href="stage.html?stage=shipping">
@@ -187,44 +613,142 @@
                     <span>Đang chờ <b>0 phiếu</b></span>
                     <span>Đang xử lý <b>0 phiếu</b></span>
                 </div>
-                <div class="progress-bar"><span style="width:0%"></span></div>
-                <div class="progress-label"><span>Tiến độ</span><b>—</b></div>
+                <div class="progress-bar">
+                    <span style="width:0%"></span>
+                </div>
+                <div class="progress-label">
+                    <span>Tiến độ</span>
+                    <b>—</b>
+                </div>
             </a>
 
         </div>
     </section>
 
-    <section class="ai-section" id="ai">
-        <div class="ai-heading">
-            <span class="ai-icon">✦</span>
-            <div>
-                <h2>Phân tích rủi ro vận hành</h2>
-                <p>Điểm rủi ro được tính từ các phiếu đang chờ và đang xử lý.</p>
+    <!-- ==================================
+         CẢNH BÁO ĐIỂM NGHẼN MỚI
+    ================================== -->
+
+    <section class="risk-section" id="ai" data-risk="LOW">
+
+        <div class="risk-header">
+
+            <div class="risk-header-left">
+                <span class="risk-header-icon">✦</span>
+
+                <div>
+                    <span class="risk-eyebrow">
+                        GIÁM SÁT HOẠT ĐỘNG KHO
+                    </span>
+                    <h2>Phân tích rủi ro vận hành</h2>
+                    <p>
+                        Phát hiện công đoạn có tải công việc cao nhất.
+                    </p>
+                </div>
             </div>
+
+            <span class="risk-badge" id="risk-badge">
+                Đang phân tích
+            </span>
+
         </div>
 
-        <div class="ai-content" id="bottleneck">
-            <div>
-                <span class="ai-label">CẢNH BÁO ĐIỂM NGHẼN</span>
-                <h3><span id="video-summary">Phân tích điểm nghẽn theo công đoạn</span></h3>
-                <p>
-                    Tải công việc được tính từ số thùng cần xử lý và năng lực của từng công đoạn.
-                </p>
-                <a href="bottleneck_analysis.html" class="detail-link">
-                    Mở phân tích điểm nghẽn →
+        <div class="risk-result" id="bottleneck">
+
+            <div class="risk-result-top">
+                <span class="risk-alert-icon">!</span>
+                <span class="risk-result-label">
+                    KẾT QUẢ CẢNH BÁO ĐIỂM NGHẼN
+                </span>
+            </div>
+
+            <h3 class="risk-stage" id="risk-stage">
+                Đang phân tích dữ liệu...
+            </h3>
+
+            <p class="risk-description" id="risk-description">
+                Hệ thống đang xác định công đoạn có tỷ lệ tải cao nhất.
+            </p>
+
+            <div class="risk-metrics">
+
+                <div class="risk-metric">
+                    <span class="risk-metric-label">
+                        Khối lượng cần xử lý
+                    </span>
+
+                    <strong class="risk-metric-value">
+                        <span id="risk-workload">—</span>
+                        <small>thùng</small>
+                    </strong>
+                </div>
+
+                <div class="risk-metric">
+                    <span class="risk-metric-label">
+                        Tỷ lệ sử dụng năng lực trong 2 giờ
+                    </span>
+
+                    <strong class="risk-metric-value" id="risk-percent">
+                        —
+                    </strong>
+                </div>
+
+            </div>
+
+            <div class="risk-progress-header">
+                <span>Mức sử dụng năng lực</span>
+                <span>Ngưỡng quá tải: trên 100%</span>
+            </div>
+
+            <div class="risk-progress">
+                <div class="risk-progress-fill"
+                     id="risk-progress-fill"></div>
+            </div>
+
+            <p class="risk-explanation" id="risk-explanation">
+                Kết quả sẽ cập nhật theo dữ liệu kho.
+            </p>
+
+            <!-- Giữ ID để tương thích wms-video.js -->
+            <span id="video-summary" class="risk-hidden-summary"></span>
+
+        </div>
+
+        <div class="risk-footer">
+
+            <p class="risk-footer-note">
+                Phân tích dựa trên số thùng đang chờ,
+                đang xử lý và năng lực của từng công đoạn.
+                Kết quả sử dụng dữ liệu mô phỏng hiện tại.
+            </p>
+
+            <div class="risk-links">
+                <a class="risk-secondary-link"
+                   href="ai_dashboard.html">
+                    Xem dự đoán AI
+                </a>
+
+                <a class="risk-primary-link"
+                   href="bottleneck_analysis.html">
+                    Phân tích chi tiết →
                 </a>
             </div>
 
-            <div class="prediction-box">
-                <span>Tải và năng lực</span>
-                <a href="ai_dashboard.html">Xem điểm theo công đoạn</a>
-            </div>
         </div>
+
     </section>
+
+    <!-- ĐỐI CHIẾU DÒNG HÀNG -->
 
     <section class="panel">
         <h2>Đối chiếu dòng hàng theo SKU</h2>
-        <p>Đơn vị thùng. Hàng thực nhận = hàng loại + chờ cất + tồn khả dụng + giữ cho lấy hàng + chờ đóng + chờ xuất + đã xuất.</p>
+
+        <p>
+            Đơn vị thùng. Hàng thực nhận = hàng loại + chờ cất
+            + tồn khả dụng + giữ cho lấy hàng + chờ đóng
+            + chờ xuất + đã xuất.
+        </p>
+
         <div class="table-wrap">
             <table>
                 <thead>
@@ -240,6 +764,7 @@
                         <th>Đã xuất</th>
                     </tr>
                 </thead>
+
                 <tbody id="inventory-body"></tbody>
             </table>
         </div>
@@ -247,79 +772,260 @@
 
 </main>
 
+<!-- ==================================
+     JAVASCRIPT GỐC
+================================== -->
+
 <script src="wms-demo.js?v=7"></script>
+
 <script>
-    document.getElementById("today").textContent = new Date().toLocaleDateString("vi-VN");
+document.getElementById("today").textContent =
+    new Date().toLocaleDateString("vi-VN");
 
-    function renderOverview() {
-        const summary = WmsDemo.overview();
-        const formatter = new Intl.NumberFormat("vi-VN", {maximumFractionDigits: 1});
-        const cards = document.querySelectorAll(".overview-grid .overview-card");
-        const counts = [
-            summary.received,
-            summary.orders,
-            summary.completed,
-            summary.orders - summary.completed
-        ];
+function renderOverview() {
+    const summary = WmsDemo.overview();
+    const formatter = new Intl.NumberFormat("vi-VN", {
+        maximumFractionDigits: 1
+    });
 
-        cards.forEach((card, i) => {
-            card.querySelector("h2").firstChild.nodeValue = formatter.format(counts[i]) + " ";
-        });
+    const cards = document.querySelectorAll(
+        ".overview-grid .overview-card"
+    );
 
-        cards[2].querySelector(".card-note").textContent = summary.orders
-            ? formatter.format(100 * summary.completed / summary.orders) + "% tổng đơn hàng"
+    const counts = [
+        summary.received,
+        summary.orders,
+        summary.completed,
+        summary.orders - summary.completed
+    ];
+
+    cards.forEach((card, i) => {
+        card.querySelector("h2").firstChild.nodeValue =
+            formatter.format(counts[i]) + " ";
+    });
+
+    cards[2].querySelector(".card-note").textContent =
+        summary.orders
+            ? formatter.format(
+                100 * summary.completed / summary.orders
+              ) + "% tổng đơn hàng"
             : "Chưa có dữ liệu";
 
-        document.querySelectorAll(".process-card").forEach(card => {
-            const stage = new URL(card.href).searchParams.get("stage");
-            const rows = summary.stages[stage];
-            const metric = WmsDemo.analysis().find(item => item.stage === stage);
-            const pending = rows.filter(row => row.status === "PENDING").length;
-            const active = rows.filter(row => row.status === "IN_PROGRESS").length;
-            const completed = rows.length - pending - active;
-            const percent = rows.length ? Math.round(100 * completed / rows.length) : 0;
-            const status = card.querySelector(".status");
+    const analysis = WmsDemo.analysis();
 
-            status.textContent = metric.risk === "HIGH"
+    document.querySelectorAll(".process-card").forEach(card => {
+        const stage = new URL(card.href).searchParams.get("stage");
+        const rows = summary.stages[stage] || [];
+        const metric = analysis.find(item => item.stage === stage);
+
+        if (!metric) return;
+
+        const pending = rows.filter(
+            row => row.status === "PENDING"
+        ).length;
+
+        const active = rows.filter(
+            row => row.status === "IN_PROGRESS"
+        ).length;
+
+        const completed = rows.length - pending - active;
+
+        const percent = rows.length
+            ? Math.round(100 * completed / rows.length)
+            : 0;
+
+        const status = card.querySelector(".status");
+
+        status.textContent =
+            metric.risk === "HIGH"
                 ? "Quá tải"
                 : metric.workload
                     ? "Có việc cần xử lý"
                     : "Đã xử lý hết";
 
-            status.classList.toggle("warning", metric.risk === "HIGH");
+        status.classList.toggle(
+            "warning",
+            metric.risk === "HIGH"
+        );
 
-            const [waiting, processing] = card.querySelectorAll(".process-data b");
-            waiting.textContent = pending + " phiếu";
-            card.querySelector(".process-data").title =
-                metric.ready + " lô/đơn chưa tạo phiếu · " +
-                metric.workload + " thùng cần xử lý";
-            processing.textContent = active + " phiếu";
-            card.querySelector(".progress-bar span").style.width = percent + "%";
-            card.querySelector(".progress-label b").textContent =
-                rows.length ? percent + "%" : "—";
-        });
+        const [waiting, processing] =
+            card.querySelectorAll(".process-data b");
 
-        const inventory = WmsDemo.inventory();
-        document.getElementById("inventory-body").innerHTML = inventory.map(item =>
-            '<tr><td>' + item.sku +
-            '</td><td>' + item.received +
-            '</td><td>' + item.rejected +
-            '</td><td>' + item.toStore +
-            '</td><td>' + item.free +
-            '</td><td>' + item.reserved +
-            '</td><td>' + item.toPack +
-            '</td><td>' + item.toShip +
-            '</td><td>' + item.shipped +
-            '</td></tr>'
-        ).join('');
+        waiting.textContent = pending + " phiếu";
+
+        card.querySelector(".process-data").title =
+            metric.ready + " lô/đơn chưa tạo phiếu · " +
+            metric.workload + " thùng cần xử lý";
+
+        processing.textContent = active + " phiếu";
+
+        card.querySelector(".progress-bar span").style.width =
+            percent + "%";
+
+        card.querySelector(".progress-label b").textContent =
+            rows.length ? percent + "%" : "—";
+    });
+
+    const inventory = WmsDemo.inventory();
+
+    const escapeHtml = value =>
+        String(value ?? "").replace(/[&<>"']/g, c => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[c]));
+
+    document.getElementById("inventory-body").innerHTML =
+        inventory.map(item => `
+            <tr>
+                <td>${escapeHtml(item.sku)}</td>
+                <td>${formatter.format(item.received || 0)}</td>
+                <td>${formatter.format(item.rejected || 0)}</td>
+                <td>${formatter.format(item.toStore || 0)}</td>
+                <td>${formatter.format(item.free || 0)}</td>
+                <td>${formatter.format(item.reserved || 0)}</td>
+                <td>${formatter.format(item.toPack || 0)}</td>
+                <td>${formatter.format(item.toShip || 0)}</td>
+                <td>${formatter.format(item.shipped || 0)}</td>
+            </tr>
+        `).join("");
+
+    updateRiskCard(analysis);
+}
+
+/* ==================================
+   CẬP NHẬT CẢNH BÁO TỰ ĐỘNG
+================================== */
+
+function updateRiskCard(stats) {
+    if (!stats) {
+        stats = WmsDemo.analysis();
     }
 
-    renderOverview();
-    window.addEventListener("pageshow", renderOverview);
-    window.addEventListener("storage", renderOverview);
-    window.addEventListener("wms:change", renderOverview);
+    if (!Array.isArray(stats) || !stats.length) return;
+
+    const names = {
+        receiving: "Nhận hàng",
+        putaway: "Cất hàng",
+        picking: "Lấy hàng",
+        packing: "Đóng gói",
+        shipping: "Xuất hàng"
+    };
+
+    const format = value =>
+        Number(value || 0).toLocaleString("vi-VN", {
+            maximumFractionDigits: 1
+        });
+
+    const worst = [...stats].sort(
+        (a, b) =>
+            Number(b.loadPercent || 0) -
+            Number(a.loadPercent || 0)
+    )[0];
+
+    const workload = Number(worst.workload || 0);
+    const percent = Number(worst.loadPercent || 0);
+
+    const risk = workload <= 0
+        ? "LOW"
+        : worst.risk === "HIGH"
+            ? "HIGH"
+            : worst.risk === "MEDIUM"
+                ? "MEDIUM"
+                : "LOW";
+
+    const section = document.getElementById("ai");
+
+    section.dataset.risk = risk;
+
+    const badge = document.getElementById("risk-badge");
+    const stageTitle = document.getElementById("risk-stage");
+    const description = document.getElementById("risk-description");
+    const explanation = document.getElementById("risk-explanation");
+
+    badge.textContent =
+        risk === "HIGH"
+            ? "Quá tải"
+            : risk === "MEDIUM"
+                ? "Cần theo dõi"
+                : "Trong năng lực";
+
+    if (workload <= 0) {
+        stageTitle.textContent =
+            "Không phát hiện điểm nghẽn hiện tại";
+
+        description.textContent =
+            "Các công đoạn không có khối lượng cần xử lý.";
+
+    } else {
+        const stageName = names[worst.stage] || worst.stage;
+
+        stageTitle.textContent =
+            stageName +
+            (
+                risk === "HIGH"
+                    ? " đang quá tải"
+                    : risk === "MEDIUM"
+                        ? " cần theo dõi"
+                        : " đang trong năng lực"
+            );
+
+        description.textContent =
+            "Công đoạn có tỷ lệ sử dụng năng lực cao nhất trong hệ thống.";
+    }
+
+    document.getElementById("risk-workload").textContent =
+        format(workload);
+
+    document.getElementById("risk-percent").textContent =
+        format(percent) + "%";
+
+    document.getElementById("risk-progress-fill").style.width =
+        Math.max(0, Math.min(100, percent)) + "%";
+
+    if (workload <= 0) {
+        explanation.textContent =
+            "Hiện chưa có khối lượng chờ xử lý tại các công đoạn.";
+
+    } else if (risk === "HIGH") {
+        explanation.textContent =
+            "Cảnh báo: Khối lượng công việc vượt năng lực xử lý " +
+            "trong 2 giờ. Cần ưu tiên điều phối nhân sự và " +
+            "nâng năng lực tại công đoạn này.";
+
+    } else if (risk === "MEDIUM") {
+        explanation.textContent =
+            "Tải công việc đang ở mức cần theo dõi. " +
+            "Nên giám sát để hạn chế nguy cơ ùn tắc.";
+
+    } else {
+        explanation.textContent =
+            "Khối lượng công việc hiện nằm trong năng lực " +
+            "xử lý dự kiến của công đoạn.";
+    }
+}
+
+/* KHỞI TẠO VÀ ĐỒNG BỘ DỮ LIỆU */
+
+function refreshDashboard() {
+    try {
+        renderOverview();
+    } catch (error) {
+        console.error("Lỗi cập nhật Tổng quan:", error);
+    }
+}
+
+refreshDashboard();
+
+window.addEventListener("pageshow", refreshDashboard);
+window.addEventListener("storage", refreshDashboard);
+window.addEventListener("wms:change", refreshDashboard);
 </script>
 
+<!-- Giữ file phân tích gốc cho các trang khác -->
 <script src="wms-video.js?v=7"></script>
+
 </body>
 </html>

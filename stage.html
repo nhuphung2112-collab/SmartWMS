@@ -693,7 +693,7 @@ async function loadData() {
         }
 
         const metrics = WmsDemo.analysis().find(item => item.stage === stage);
-        document.getElementById("stage-workload").textContent = metrics.workload + " thùng cần xử lý · " + metrics.ready + " lô/đơn sẵn sàng tạo phiếu · Năng lực " + metrics.capacity + " thùng/giờ";
+        
         updateKpis();
         renderTable();
         renderExtra();

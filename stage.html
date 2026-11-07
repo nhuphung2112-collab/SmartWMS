@@ -673,23 +673,20 @@ async function loadData() {
             extraRecords = db.shipments || [];
         }
 
-        const metrics = WmsDemo.analysis().find(item => item.stage === stage);
-        const workloadBox = document.getElementById("stage-workload");
-if (workloadBox) {
+     
+const metrics = WmsDemo.analysis().find(
+    item => item.stage === stage
+);
+
+const workloadBox = document.getElementById("stage-workload");
+
+if (workloadBox && metrics) {
     workloadBox.textContent =
         metrics.workload + " thùng cần xử lý · " +
-        metrics.ready + " lô/đơn sẵn sàng tạo phiếu";
-} = metrics.workload + " thùng cần xử lý · " + metrics.ready + " lô/đơn sẵn sàng tạo phiếu · Năng lực " + metrics.capacity + " thùng/giờ";
-        updateKpis();
-        renderTable();
-        renderExtra();
-
-    } catch (error) {
-        toast("Không tải được dữ liệu: " + error.message);
-    }
+        metrics.ready + " lô/đơn sẵn sàng tạo phiếu · " +
+        "Năng lực " + metrics.capacity + " thùng/giờ";
 }
 
-function updateKpis() {
     document.getElementById("kpiTotal").textContent = records.length;
 
     document.getElementById("kpiPending").textContent =

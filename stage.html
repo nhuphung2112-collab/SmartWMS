@@ -1,0 +1,2048 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WMS - Quản lý công đoạn</title>
+
+<link rel="stylesheet" href="style.css?v=7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    font-family:'Be Vietnam Pro',sans-serif;
+    background:#f4f7fb;
+    color:#26384d;
+    margin:0;
+}
+
+/* Phần nội dung trang */
+.page{
+    max-width:1400px;
+    margin:28px auto;
+    padding:0 22px 50px;
+}
+
+.page-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-bottom:22px;
+}
+
+.page-heading h1{
+    font-size:24px;
+    margin:0 0 7px;
+    color:#263d56;
+}
+
+.page-heading p{
+    font-size:13px;
+    color:#8493a4;
+    margin:0;
+}
+
+.actions{
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:0;
+    border-radius:8px;
+    padding:10px 15px;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.btn-primary{background:#2879bd;color:white}
+.btn-primary:hover{background:#1e659f}
+.btn-light{background:#eaf1f8;color:#42627f}
+.btn-success{background:#e4f5ed;color:#218456}
+.btn-danger{background:#fff0ef;color:#c64c4c}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* KPI */
+.kpis{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(150px,1fr));
+    gap:15px;
+    margin-bottom:22px;
+}
+
+.kpi,.panel{
+    background:#fff;
+    border:1px solid #e8eef5;
+    border-radius:12px;
+}
+
+.kpi{padding:17px 19px}
+
+.kpi-label{
+    font-size:11px;
+    color:#8292a4;
+    margin-bottom:10px;
+}
+
+.kpi-value{
+    font-size:25px;
+    font-weight:700;
+    color:#294967;
+}
+
+.kpi-note{
+    font-size:10px;
+    color:#9aa8b6;
+    margin-top:5px;
+}
+
+/* Panel */
+.panel{
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:15px;
+}
+
+.panel-head h2{
+    font-size:15px;
+    margin:0;
+    color:#304a65;
+}
+
+.panel-head p{
+    font-size:11px;
+    color:#8b9aaa;
+    margin:5px 0 0;
+}
+
+/* Bảng */
+.table-wrap{overflow-x:auto}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:760px;
+}
+
+th{
+    background:#f5f8fc;
+    color:#788a9d;
+    font-size:10px;
+    font-weight:700;
+    text-align:left;
+    padding:12px 11px;
+    white-space:nowrap;
+}
+
+td{
+    padding:12px 11px;
+    border-bottom:1px solid #edf1f6;
+    font-size:11px;
+    color:#53677d;
+    vertical-align:middle;
+}
+
+tr:last-child td{border-bottom:0}
+
+.status{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.status-PENDING{background:#fff4df;color:#a87519}
+.status-IN_PROGRESS{background:#e7f2ff;color:#2672b9}
+.status-COMPLETED,
+.status-SHIPPED,
+.status-DELIVERED{background:#e4f5ed;color:#218456}
+.status-FAILED,
+.status-CANCELLED{background:#fff0ef;color:#c64c4c}
+
+.empty{
+    text-align:center;
+    padding:30px;
+    color:#99a7b5;
+    font-size:12px;
+}
+
+/* Form */
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:13px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.field label{
+    font-size:11px;
+    color:#65798e;
+    font-weight:600;
+}
+
+.field input,
+.field select,
+.field textarea{
+    width:100%;
+    border:1px solid #dce5ef;
+    border-radius:7px;
+    padding:10px 11px;
+    font-family:inherit;
+    font-size:11px;
+    color:#344b62;
+    background:#fff;
+    outline:none;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+    border-color:#75a9d7;
+}
+
+.field textarea{
+    min-height:70px;
+    resize:vertical;
+}
+
+.form-actions{
+    display:flex;
+    gap:9px;
+    margin-top:16px;
+    flex-wrap:wrap;
+}
+
+.form-section{
+    border-top:1px solid #edf1f6;
+    margin-top:18px;
+    padding-top:16px;
+}
+
+.form-section h3{
+    font-size:12px;
+    color:#385775;
+    margin:0 0 12px;
+}
+
+.item-row{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr auto;
+    gap:8px;
+    align-items:end;
+    margin-bottom:9px;
+}
+
+.item-row input,
+.item-row select{
+    width:100%;
+    border:1px solid #dce5ef;
+    border-radius:7px;
+    padding:9px;
+    font-family:inherit;
+    font-size:11px;
+}
+
+.small-btn{
+    border:0;
+    border-radius:7px;
+    padding:9px 11px;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:11px;
+}
+
+.notice{
+    padding:12px 14px;
+    border-radius:8px;
+    background:#eff6fc;
+    color:#55748f;
+    font-size:11px;
+    line-height:1.7;
+    margin-bottom:15px;
+}
+
+.hidden{display:none!important}
+
+.search{
+    max-width:230px;
+    border:1px solid #dce5ef;
+    border-radius:7px;
+    padding:9px 11px;
+    font-family:inherit;
+    font-size:11px;
+}
+
+.task-actions{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.task-actions .btn{
+    padding:7px 9px;
+    font-size:10px;
+}
+
+/* Modal */
+.modal-bg{
+    position:fixed;
+    inset:0;
+    background:#172b405c;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    z-index:1000;
+}
+
+.modal{
+    background:#fff;
+    border-radius:13px;
+    width:min(900px,100%);
+    max-height:90vh;
+    overflow:auto;
+    padding:22px;
+}
+
+.modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.modal-head h2{
+    font-size:16px;
+    margin:0;
+}
+
+.close{
+    border:0;
+    background:#eef3f8;
+    border-radius:7px;
+    padding:7px 11px;
+    cursor:pointer;
+}
+
+.toast{
+    position:fixed;
+    right:22px;
+    bottom:22px;
+    background:#294967;
+    color:#fff;
+    padding:13px 18px;
+    border-radius:9px;
+    font-size:12px;
+    z-index:2000;
+    box-shadow:0 5px 20px #0002;
+    max-width:360px;
+}
+
+@media(max-width:850px){
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .form-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:560px){
+    .page{padding:0 12px 35px}
+    .kpis{grid-template-columns:repeat(2,1fr);gap:9px}
+    .kpi{padding:13px}
+    .form-grid{grid-template-columns:1fr}
+    .item-row{grid-template-columns:1fr 1fr}
+    .item-row>*:first-child{grid-column:span 2}
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER ĐỒNG BỘ VỚI TRANG TỔNG QUAN -->
+<header class="topbar">
+    <div class="brand">
+        <span class="brand-icon">W</span>
+        <div>
+            <h2>WAREHOUSE</h2>
+            <small>Management System</small>
+        </div>
+    </div>
+
+    <nav class="navigation">
+        <a href="index.html">Tổng quan</a>
+        <a href="simulation.html">Kho mô phỏng</a>
+        <a href="stage.html?stage=receiving">Nhận hàng</a>
+        <a href="stage.html?stage=putaway">Cất hàng</a>
+        <a href="stage.html?stage=picking">Lấy hàng</a>
+        <a href="stage.html?stage=packing">Đóng gói</a>
+
+        <a href="stage.html?stage=shipping">Xuất hàng</a>
+        <a href="ai_dashboard.html">Dự kiến xử lý</a>
+        <a href="bottleneck_analysis.html">Điểm nghẽn</a>
+    </nav>
+
+    <div class="user">
+        <a class="data-import-link" href="import.html">Nhập dữ liệu</a><span class="avatar">QL</span>
+        <span>Quản lý kho</span>
+    </div>
+</header>
+
+<main class="page">
+    <p id="stage-workload" class="notice"></p>
+    <p class="notice">Dữ liệu mô phỏng được lưu trên trình duyệt này. Dữ liệu dùng chung giữa các công đoạn. Chỉ hàng đạt QC mới được cất, và chỉ tồn đã cất mới được phân bổ để lấy hàng.</p>
+
+    <div class="page-heading">
+        <div>
+            <h1 id="pageTitle">Đang tải công đoạn...</h1>
+            <p id="pageDescription">Quản lý và theo dõi hoạt động trong kho</p>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-light" onclick="loadData()">↻ Làm mới dữ liệu</button>
+            <button class="btn btn-primary" id="createButton" onclick="showCreateForm()">+ Tạo phiếu</button>
+        </div>
+    </div>
+
+    <section class="kpis">
+        <div class="kpi">
+            <div class="kpi-label">Tổng số phiếu</div>
+            <div class="kpi-value" id="kpiTotal">0</div>
+            <div class="kpi-note">Tổng số phiếu ghi nhận</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-label">Chờ xử lý</div>
+            <div class="kpi-value" id="kpiPending">0</div>
+            <div class="kpi-note">Đang chờ thực hiện</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-label">Đang thực hiện</div>
+            <div class="kpi-value" id="kpiProgress">0</div>
+            <div class="kpi-note">Đang xử lý tại công đoạn</div>
+        </div>
+
+        <div class="kpi">
+            <div class="kpi-label">Đã hoàn thành</div>
+            <div class="kpi-value" id="kpiDone">0</div>
+            <div class="kpi-note">Đã hoàn tất công việc</div>
+        </div>
+    </section>
+
+    <section class="panel hidden" id="formPanel">
+        <div class="panel-head">
+            <div>
+                <h2 id="formTitle">Tạo phiếu mới</h2>
+                <p>Nhập thông tin để ghi nhận nghiệp vụ</p>
+            </div>
+            <button class="btn btn-light" onclick="hideForm()">Đóng</button>
+        </div>
+        <div id="formContent"></div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head">
+            <div>
+                <h2 id="tableTitle">Danh sách phiếu</h2>
+                <p id="tableDescription">Theo dõi trạng thái xử lý</p>
+            </div>
+            <input class="search" id="searchInput" placeholder="Tìm mã phiếu..." oninput="renderTable()">
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="panel" id="extraPanel">
+        <div class="panel-head">
+            <div>
+                <h2 id="extraTitle">Thông tin liên quan</h2>
+                <p id="extraDescription">Dữ liệu nghiệp vụ chi tiết</p>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead id="extraHead"></thead>
+                <tbody id="extraBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script src="wms-demo.js?v=7"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const requestedStage = (params.get("stage") || "receiving").toLowerCase();
+
+const config = {
+    receiving: {
+        title:"Nhận hàng (Receiving)",
+        description:"Tiếp nhận hàng hóa từ nhà cung cấp và kiểm tra chất lượng đầu vào.",
+        endpoint:"receiving",
+        key:"receipts",
+        code:"receipt_code",
+        id:"receipt_id",
+        extra:"Chi tiết sản phẩm nhận hàng"
+    },
+    putaway: {
+        title:"Cất hàng (Putaway)",
+        description:"Di chuyển hàng đã kiểm tra chất lượng đến vị trí lưu trữ.",
+        endpoint:"putaway",
+        key:"tasks",
+        code:"putaway_code",
+        id:"putaway_id",
+        extra:"Các lô hàng đủ điều kiện cất kho"
+    },
+    picking: {
+        title:"Lấy hàng (Picking)",
+        description:"Lấy sản phẩm từ vị trí lưu trữ theo yêu cầu đơn hàng.",
+        endpoint:"picking",
+        key:"tasks",
+        code:"picking_code",
+        id:"picking_id",
+        extra:"Đơn hàng có thể tạo phiếu lấy hàng"
+    },
+    packing: {
+        title:"Đóng gói (Packing)",
+        description:"Đóng gói sản phẩm đã lấy và ghi nhận thông tin từng kiện hàng.",
+        endpoint:"packing",
+        key:"tasks",
+        code:"packing_code",
+        id:"packing_id",
+        extra:"Danh sách kiện hàng"
+    },
+    shipping: {
+        title:"Xuất hàng (Shipping)",
+        description:"Bàn giao kiện hàng cho đơn vị vận chuyển và theo dõi giao hàng.",
+        endpoint:"shipping",
+        key:"shipping_orders",
+        code:"shipping_code",
+        id:"shipping_order_id",
+        extra:"Thông tin chuyến xe"
+    }
+};
+
+const stage = Object.hasOwn(config, requestedStage) ? requestedStage : "receiving";
+const cfg = config[stage];
+let db = {};
+let records = [];
+let extraRecords = [];
+
+document.getElementById("pageTitle").textContent = cfg.title;
+document.getElementById("pageDescription").textContent = cfg.description;
+document.getElementById("tableTitle").textContent = "Danh sách " + cfg.title;
+document.getElementById("extraTitle").textContent = cfg.extra;
+
+/* Đánh dấu menu công đoạn hiện tại */
+document.querySelectorAll(".navigation a").forEach(a => {
+    if (a.href.includes("stage=" + stage)) {
+        a.classList.add("active");
+    }
+});
+
+function esc(value) {
+    return String(value ?? "").replace(/[&<>"']/g, c => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+    }[c]));
+}
+
+function money(value) {
+    return Number(value || 0).toLocaleString("vi-VN");
+}
+
+function statusText(value) {
+    const map = {
+        PENDING:"Chờ xử lý",
+        IN_PROGRESS:"Đang thực hiện",
+        COMPLETED:"Hoàn thành",
+        SHIPPED:"Đã xuất hàng",
+        DELIVERED:"Đã giao",
+        FAILED:"Giao thất bại",
+        IN_TRANSIT:"Đang vận chuyển",
+        PASS:"Đạt",
+        FAIL:"Không đạt"
+    };
+
+    return map[String(value || "").toUpperCase()] || value || "—";
+}
+
+function statusBadge(value) {
+    const s = String(value || "").toUpperCase();
+    return `<span class="status status-${esc(s)}">${esc(statusText(s))}</span>`;
+}
+
+function toast(message) {
+    const root = document.getElementById("toastRoot");
+    root.innerHTML = `<div class="toast">${esc(message)}</div>`;
+    setTimeout(() => root.innerHTML = "", 3500);
+}
+
+async function getJson(target) {
+    return WmsDemo.request(target);
+}
+
+async function postJson(target, data) {
+    return WmsDemo.request(target, data);
+}
+
+function hideForm() {
+    document.getElementById("formPanel").classList.add("hidden");
+    document.getElementById("formContent").innerHTML = "";
+}
+
+function showForm(title, html) {
+    document.getElementById("formTitle").textContent = title;
+    document.getElementById("formContent").innerHTML = html;
+    document.getElementById("formPanel").classList.remove("hidden");
+    document.getElementById("formPanel").scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
+
+function selectOptions(items, valueKey, labelFn, placeholder = "— Chọn —") {
+    return `<option value="">${placeholder}</option>` + (items || []).map(item =>
+        `<option value="${esc(item[valueKey])}">${esc(labelFn(item))}</option>`
+    ).join("");
+}
+
+function getStatus(row) {
+    return String(row.status || row.delivery_status || "").toUpperCase();
+}
+
+async function loadData() {
+    try {
+        let result = await getJson(cfg.endpoint);
+        db = result.data || result;
+
+        if (stage === "receiving") {
+            records = db.receipts || [];
+            extraRecords = records.flatMap(r => (r.items || []).map(i => ({
+                receipt_code:r.receipt_code,
+                sku:i.sku,
+                product_name:i.product_name,
+                expected_qty:i.expected_qty,
+                received_qty:i.received_qty,
+                unit:i.unit
+            })));
+        } else if (stage === "putaway") {
+            records = db.tasks || [];
+            extraRecords = db.batches || [];
+        } else if (stage === "picking") {
+            records = db.tasks || [];
+            extraRecords = db.orders || [];
+        } else if (stage === "packing") {
+            records = db.tasks || [];
+            extraRecords = db.packages || [];
+        } else {
+            records = db.shipping_orders || [];
+            extraRecords = db.shipments || [];
+        }
+
+        const metrics = WmsDemo.analysis().find(item => item.stage === stage);
+        document.getElementById("stage-workload").textContent = metrics.workload + " thùng cần xử lý · " + metrics.ready + " lô/đơn sẵn sàng tạo phiếu · Năng lực " + metrics.capacity + " thùng/giờ";
+        updateKpis();
+        renderTable();
+        renderExtra();
+
+    } catch (error) {
+        toast("Không tải được dữ liệu: " + error.message);
+    }
+}
+
+function updateKpis() {
+    document.getElementById("kpiTotal").textContent = records.length;
+
+    document.getElementById("kpiPending").textContent =
+        records.filter(r => getStatus(r) === "PENDING").length;
+
+    document.getElementById("kpiProgress").textContent =
+        records.filter(r => getStatus(r) === "IN_PROGRESS").length;
+
+    document.getElementById("kpiDone").textContent =
+        records.filter(r => ["COMPLETED","SHIPPED"].includes(getStatus(r))).length;
+}
+
+function renderTable() {
+    const search = (document.getElementById("searchInput").value || "").toLowerCase();
+    const filtered = records.filter(r => JSON.stringify(r).toLowerCase().includes(search));
+
+    let headers = [];
+    let rows = [];
+
+    if (stage === "receiving") {
+        headers = ["Mã phiếu","Nhà cung cấp","Nhân viên","Thời gian đến","Vị trí nhận","Số sản phẩm","Trạng thái","Thao tác"];
+
+        rows = filtered.map(r => [
+            `<b>${esc(r.receipt_code)}</b>`,
+            esc(r.supplier_name),
+            esc(r.employee_name),
+            esc(r.arrival_time),
+            esc(r.dock_number),
+            (r.items || []).length,
+            statusBadge(r.status),
+            actionButtons(r)
+        ]);
+
+    } else if (stage === "putaway") {
+        headers = ["Mã phiếu","Sản phẩm","Lô hàng","Số lượng","Vị trí đích","Nhân viên","Trạng thái","Thao tác"];
+
+        rows = filtered.map(r => [
+            `<b>${esc(r.putaway_code)}</b>`,
+            esc(r.product_name),
+            esc(r.batch_code),
+            money(r.quantity),
+            esc(r.destination_location),
+            esc(r.employee_name),
+            statusBadge(r.status),
+            actionButtons(r)
+        ]);
+
+    } else if (stage === "picking") {
+        headers = ["Mã phiếu","Đơn hàng","Nhân viên","Số dòng hàng","SL yêu cầu","SL đã lấy","Trạng thái","Thao tác"];
+
+        rows = filtered.map(r => [
+            `<b>${esc(r.picking_code)}</b>`,
+            esc(r.order_code),
+            esc(r.employee_name),
+            money(r.detail_count),
+            money(r.requested_total),
+            money(r.picked_total),
+            statusBadge(r.status),
+            actionButtons(r)
+        ]);
+
+    } else if (stage === "packing") {
+        headers = ["Mã phiếu","Đơn hàng","Nhân viên","Số kiện","SL đã đóng","Trạng thái","Thao tác"];
+
+        rows = filtered.map(r => [
+            `<b>${esc(r.packing_code)}</b>`,
+            esc(r.order_code),
+            esc(r.employee_name),
+            money(r.package_count),
+            money(r.packed_qty),
+            statusBadge(r.status),
+            actionButtons(r)
+        ]);
+
+    } else {
+        headers = ["Mã phiếu xuất","Đơn hàng","Nhân viên","Ngày tạo","Số kiện","Trạng thái","Thao tác"];
+
+        rows = filtered.map(r => [
+            `<b>${esc(r.shipping_code)}</b>`,
+            esc(r.order_code),
+            esc(r.employee_name),
+            esc(r.created_time),
+            money(r.package_count),
+            statusBadge(r.status),
+            actionButtons(r)
+        ]);
+    }
+
+    document.getElementById("tableHead").innerHTML =
+        `<tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr>`;
+
+    document.getElementById("tableBody").innerHTML = rows.length
+        ? rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")
+        : `<tr><td colspan="${headers.length}" class="empty">Chưa có dữ liệu phù hợp.</td></tr>`;
+}
+
+function actionButtons(row) {
+    const id = row[cfg.id];
+    const status = getStatus(row);
+
+    let buttons = `<button class="btn btn-light" onclick="viewDetails(${Number(id)})">Chi tiết</button>`;
+
+    if (status === "PENDING") {
+        buttons += `<button class="btn btn-primary" onclick="startTask(${Number(id)})">Bắt đầu</button>`;
+    }
+
+    if (status === "IN_PROGRESS") {
+        if (stage === "receiving") {
+            buttons += `<button class="btn btn-success" onclick="completeReceiving(${Number(id)})">Ghi nhận QC</button>`;
+        }
+
+        if (stage === "putaway") {
+            buttons += `<button class="btn btn-success" onclick="completeSimple(${Number(id)})">Hoàn tất</button>`;
+        }
+
+        if (stage === "picking") {
+            buttons += `<button class="btn btn-success" onclick="completePicking(${Number(id)})">Xác nhận lấy hàng</button>`;
+        }
+
+        if (stage === "packing") {
+            buttons += `<button class="btn btn-success" onclick="completePacking(${Number(id)})">Đóng gói</button>`;
+        }
+
+        if (stage === "shipping") {
+            buttons += `<button class="btn btn-success" onclick="showShipmentForm(${Number(id)})">Tạo chuyến xe</button>`;
+        }
+    }
+
+    return `<div class="task-actions">${buttons}</div>`;
+}
+
+function renderExtra() {
+    let headers = [];
+    let rows = [];
+
+    if (stage === "receiving") {
+        headers = ["Phiếu nhập","SKU","Tên sản phẩm","SL dự kiến","SL thực nhận","Đơn vị"];
+
+        rows = extraRecords.map(r => [
+            r.receipt_code,
+            r.sku,
+            r.product_name,
+            r.expected_qty,
+            r.received_qty ?? "—",
+            r.unit
+        ]);
+
+    } else if (stage === "putaway") {
+        headers = ["Mã lô","SKU","Sản phẩm","SL QC đạt","SL còn có thể cất"];
+
+        rows = extraRecords.map(r => [
+            r.batch_code,
+            r.sku,
+            r.product_name,
+            r.accepted_qty,
+            r.available_qty
+        ]);
+
+    } else if (stage === "picking") {
+        headers = ["Mã đơn hàng","Ngày đặt","Ngày cần giao","Mức ưu tiên","Số dòng hàng","Tổng số lượng"];
+
+        rows = extraRecords.map(r => [
+            r.order_code,
+            r.order_date,
+            r.required_date,
+            r.priority,
+            r.line_count,
+            r.total_qty
+        ]);
+
+    } else if (stage === "packing") {
+        headers = ["Mã kiện","Mã phiếu đóng gói","Loại kiện","Khối lượng","Trạng thái"];
+
+        rows = extraRecords.map(r => [
+            r.package_code,
+            r.packing_code,
+            r.package_type,
+            r.weight,
+            r.status
+        ]);
+
+    } else {
+        headers = ["Mã chuyến","Mã phiếu xuất","Đơn hàng","Đơn vị vận chuyển","Biển số xe","Trạng thái giao"];
+
+        rows = extraRecords.map(r => [
+            r.shipment_code,
+            r.shipping_code,
+            r.order_code,
+            r.carrier_name,
+            r.vehicle_number,
+            statusText(r.delivery_status)
+        ]);
+    }
+
+    document.getElementById("extraHead").innerHTML =
+        `<tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr>`;
+
+    document.getElementById("extraBody").innerHTML = rows.length
+        ? rows.map(row => `<tr>${row.map(v => `<td>${esc(v)}</td>`).join("")}</tr>`).join("")
+        : `<tr><td colspan="${headers.length}" class="empty">Chưa có dữ liệu.</td></tr>`;
+}
+
+function showCreateForm() {
+    if (stage === "receiving") createReceivingForm();
+    if (stage === "putaway") createPutawayForm();
+    if (stage === "picking") createPickingForm();
+    if (stage === "packing") createPackingForm();
+    if (stage === "shipping") createShippingForm();
+}
+
+/* =========================
+   RECEIVING
+========================= */
+
+function createReceivingForm() {
+    const products = db.products || [];
+    const suppliers = db.suppliers || [];
+    const employees = db.employees || [];
+    const locations = db.locations || [];
+
+    showForm("Tạo phiếu nhận hàng", `
+        <form id="receivingForm">
+            <div class="form-grid">
+                <div class="field">
+                    <label>Nhà cung cấp *</label>
+                    <select name="supplier_id" required>
+                        ${selectOptions(suppliers,"supplier_id",x=>x.supplier_name)}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Nhân viên phụ trách *</label>
+                    <select name="employee_id" required>
+                        ${selectOptions(employees,"employee_id",x=>x.employee_name)}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Thời gian dự kiến đến</label>
+                    <input type="datetime-local" name="arrival_time">
+                </div>
+
+                <div class="field">
+                    <label>Biển số xe</label>
+                    <input name="vehicle_number" placeholder="Ví dụ: 51C-12345">
+                </div>
+
+                <div class="field">
+                    <label>Cửa nhận hàng *</label>
+                    <select name="dock_number" required>
+                        ${selectOptions(locations.filter(location => location.location_code.startsWith("DOCK")),"location_code",x=>x.location_code)}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Số hóa đơn</label>
+                    <input name="invoice_no">
+                </div>
+
+                <div class="field">
+                    <label>Mã phiếu giao hàng</label>
+                    <input name="delivery_note_code">
+                </div>
+
+                <div class="field">
+                    <label>Mã packing list</label>
+                    <input name="packing_slip_code">
+                </div>
+
+                <div class="field">
+                    <label>Ghi chú</label>
+                    <input name="note">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Danh sách sản phẩm nhập</h3>
+                <div id="receivingItems"></div>
+                <button type="button" class="small-btn btn-light" onclick="addReceivingItem()">+ Thêm sản phẩm</button>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary">Lưu phiếu nhận hàng</button>
+                <button type="button" class="btn btn-light" onclick="hideForm()">Hủy</button>
+            </div>
+        </form>
+    `);
+
+    addReceivingItem();
+    document.getElementById("receivingForm").onsubmit = submitReceiving;
+}
+
+function addReceivingItem() {
+    const products = db.products || [];
+    const row = document.createElement("div");
+
+    row.className = "item-row";
+
+    row.innerHTML = `
+        <select class="product">
+            <option value="">Chọn sản phẩm</option>
+            ${products.map(p=>`<option value="${p.product_id}">${esc(p.sku)} - ${esc(p.product_name)}</option>`).join("")}
+        </select>
+
+        <input class="qty" type="number" min="0.01" step="1" placeholder="Số lượng">
+        <input class="mfg" type="date" title="Ngày sản xuất">
+        <input class="exp" type="date" title="Hạn sử dụng">
+
+        <button type="button" class="small-btn btn-danger" onclick="this.parentElement.remove()">Xóa</button>
+    `;
+
+    document.getElementById("receivingItems").appendChild(row);
+}
+
+async function submitReceiving(event) {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+
+    const items = [...document.querySelectorAll("#receivingItems .item-row")].map(row => ({
+        product_id:row.querySelector(".product").value,
+        expected_qty:row.querySelector(".qty").value,
+        manufacturing_date:row.querySelector(".mfg").value,
+        expiry_date:row.querySelector(".exp").value
+    })).filter(x=>x.product_id && Number(x.expected_qty)>0);
+
+    if (!items.length) {
+        return toast("Vui lòng thêm ít nhất một sản phẩm hợp lệ.");
+    }
+
+    const arrival = form.get("arrival_time");
+    const payload = Object.fromEntries(form.entries());
+
+    payload.arrival_time = arrival ? arrival.replace("T"," ") + ":00" : "";
+    payload.items = items;
+
+    try {
+        const result = await postJson(cfg.endpoint,{action:"create",...payload});
+
+        toast(result.message || "Đã tạo phiếu nhận hàng.");
+        hideForm();
+        await loadData();
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+async function completeReceiving(id) {
+    const receipt = records.find(r=>Number(r.receipt_id)===id);
+    if (!receipt) return;
+
+    const employees = db.employees || [];
+
+    const itemRows = (receipt.items || []).map(item => `
+        <tr data-id="${item.receiving_item_id}">
+            <td>${esc(item.sku)} - ${esc(item.product_name)}</td>
+            <td>${money(item.expected_qty)}</td>
+            <td>
+                <input class="received" type="number" min="0" step="1"
+                    value="${item.received_qty ?? item.expected_qty}"
+                    style="width:90px;padding:7px">
+            </td>
+            <td>
+                <input class="accepted" type="number" min="0" step="1"
+                    value="${item.received_qty ?? item.expected_qty}"
+                    style="width:90px;padding:7px">
+            </td>
+            <td>
+                <input class="rejected" type="number" min="0" step="1"
+                    value="0" style="width:90px;padding:7px">
+            </td>
+            <td>
+                <select class="qc">
+                    <option value="PASS">Đạt</option>
+                    <option value="FAIL">Không đạt</option>
+                </select>
+            </td>
+        </tr>
+    `).join("");
+
+    openModal("Ghi nhận thực nhận và kiểm tra QC", `
+        <div class="notice">
+            Tổng số lượng đạt QC và không đạt QC phải bằng số lượng thực nhận của từng sản phẩm.
+        </div>
+
+        <div class="field" style="max-width:350px;margin-bottom:15px">
+            <label>Nhân viên kiểm tra QC</label>
+            <select id="qcEmployee">
+                ${selectOptions(employees,"employee_id",x=>x.employee_name)}
+            </select>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sản phẩm</th>
+                        <th>Dự kiến</th>
+                        <th>Thực nhận</th>
+                        <th>Đạt QC</th>
+                        <th>Không đạt</th>
+                        <th>Kết quả</th>
+                    </tr>
+                </thead>
+                <tbody>${itemRows}</tbody>
+            </table>
+        </div>
+
+        <div class="form-actions">
+            <button class="btn btn-primary" onclick="submitReceivingQC(${id})">
+                Lưu kết quả QC và hoàn tất
+            </button>
+        </div>
+    `);
+}
+
+async function submitReceivingQC(id) {
+    const items = [...document.querySelectorAll("#modalRoot tbody tr[data-id]")].map(row=>({
+        receiving_item_id:Number(row.dataset.id),
+        received_qty:Number(row.querySelector(".received").value),
+        accepted_qty:Number(row.querySelector(".accepted").value),
+        rejected_qty:Number(row.querySelector(".rejected").value),
+        qc_result:row.querySelector(".qc").value,
+        qc_note:""
+    }));
+
+    if (items.some(x=>
+        x.received_qty<0 ||
+        x.accepted_qty<0 ||
+        x.rejected_qty<0 ||
+        Math.abs(x.accepted_qty+x.rejected_qty-x.received_qty)>0.01
+    )) {
+        return toast("Kiểm tra lại số lượng thực nhận, đạt và không đạt QC.");
+    }
+
+    try {
+        const result = await postJson(cfg.endpoint,{
+            action:"complete",
+            receipt_id:id,
+            qc_employee_id:Number(document.getElementById("qcEmployee").value),
+            items
+        });
+
+        closeModal();
+        toast(result.message || "Đã hoàn tất nhận hàng.");
+        await loadData();
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+/* =========================
+   PUTAWAY
+========================= */
+
+function createPutawayForm() {
+    const batches = db.batches || [];
+    const employees = db.employees || [];
+    const locations = db.locations || [];
+
+    showForm("Tạo phiếu cất hàng", `
+        <form id="putawayForm">
+            <div class="form-grid">
+                <div class="field">
+                    <label>Lô hàng QC đạt *</label>
+                    <select name="batch_id" id="putBatch" required>
+                        ${selectOptions(batches,"batch_id",x=>`${x.batch_code} - ${x.product_name} (còn ${x.available_qty})`)}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Nhân viên phụ trách *</label>
+                    <select name="employee_id" required>
+                        ${selectOptions(employees,"employee_id",x=>x.employee_name)}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Vị trí lưu trữ *</label>
+                    <select name="destination_location_id" required>
+                        ${selectOptions(locations.filter(location => location.location_code.startsWith("STO")),"location_id",x=>x.location_code)}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Số lượng cần cất *</label>
+                    <input name="quantity" type="number" min="0.01" step="1" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary">Tạo phiếu cất hàng</button>
+                <button type="button" class="btn btn-light" onclick="hideForm()">Hủy</button>
+            </div>
+        </form>
+    `);
+
+    document.getElementById("putawayForm").onsubmit = async e => {
+        e.preventDefault();
+
+        const data = Object.fromEntries(new FormData(e.target).entries());
+
+        data.batch_id = Number(data.batch_id);
+        data.employee_id = Number(data.employee_id);
+        data.destination_location_id = Number(data.destination_location_id);
+        data.quantity = Number(data.quantity);
+
+        try {
+            const r = await postJson(cfg.endpoint,{action:"create",...data});
+            toast(r.message);
+            hideForm();
+            await loadData();
+
+        } catch(err) {
+            toast(err.message);
+        }
+    };
+}
+
+/* =========================
+   PICKING
+========================= */
+
+function createPickingForm() {
+    const orders = db.orders || [];
+    const employees = db.employees || [];
+
+    showForm("Tạo phiếu lấy hàng", `
+        <form id="pickingForm">
+            <div class="form-grid">
+                <div class="field">
+                    <label>Đơn hàng *</label>
+                    <select name="order_id" required>
+                        ${selectOptions(orders,"order_id",x=>`${x.order_code} - ${x.total_qty} sản phẩm`)}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Nhân viên lấy hàng *</label>
+                    <select name="employee_id" required>
+                        ${selectOptions(employees,"employee_id",x=>x.employee_name)}
+                    </select>
+                </div>
+            </div>
+
+            <div class="notice" style="margin-top:15px">
+                Hệ thống sẽ tự động phân bổ tồn kho tại các vị trí lưu trữ STO và giữ số lượng cho phiếu Picking.
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary">Tạo phiếu Picking</button>
+                <button type="button" class="btn btn-light" onclick="hideForm()">Hủy</button>
+            </div>
+        </form>
+    `);
+
+    document.getElementById("pickingForm").onsubmit = async e => {
+        e.preventDefault();
+
+        const data = Object.fromEntries(new FormData(e.target).entries());
+
+        try {
+            const r = await postJson(cfg.endpoint,{action:"create",...data});
+            toast(r.message);
+            hideForm();
+            await loadData();
+
+        } catch(err) {
+            toast(err.message);
+        }
+    };
+}
+
+async function getPickingDetails(id) {
+    const r = await postJson("picking",{
+        action:"details",
+        picking_id:id
+    });
+
+    return r.data || [];
+}
+
+async function completePicking(id) {
+    try {
+        const details = await getPickingDetails(id);
+
+        if (!details.length) {
+            return toast("Phiếu không có chi tiết lấy hàng.");
+        }
+
+        openModal("Xác nhận số lượng lấy hàng", `
+            <div class="notice">
+                Đối chiếu số lượng thực tế. Theo quy tắc hiện tại, cần xác nhận đủ số lượng yêu cầu để hoàn tất phiếu.
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Vị trí</th>
+                            <th>Lô hàng</th>
+                            <th>SL yêu cầu</th>
+                            <th>SL thực lấy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${details.map(d=>`
+                            <tr data-id="${d.picking_detail_id}">
+                                <td>${esc(d.sku)} - ${esc(d.product_name)}</td>
+                                <td>${esc(d.location_code)}</td>
+                                <td>${esc(d.batch_code)}</td>
+                                <td>${money(d.requested_qty)}</td>
+                                <td>
+                                    <input class="pickedQty" type="number" min="0" step="1"
+                                        value="${d.requested_qty}" style="width:100px;padding:7px">
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary" onclick="submitPicking(${id})">
+                    Xác nhận hoàn tất Picking
+                </button>
+            </div>
+        `);
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+async function submitPicking(id) {
+    const picked_items = [...document.querySelectorAll("#modalRoot tbody tr[data-id]")].map(row=>({
+        detail_id:Number(row.dataset.id),
+        picked_qty:Number(row.querySelector(".pickedQty").value)
+    }));
+
+    try {
+        const r = await postJson(cfg.endpoint,{
+            action:"complete",
+            picking_id:id,
+            picked_items
+        });
+
+        closeModal();
+        toast(r.message);
+        await loadData();
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+/* =========================
+   PACKING
+========================= */
+
+function createPackingForm() {
+    const available = db.available_picking || [];
+    const employees = db.employees || [];
+
+    showForm("Tạo phiếu đóng gói", `
+        <form id="packingForm">
+            <div class="form-grid">
+                <div class="field">
+                    <label>Phiếu Picking đã hoàn thành *</label>
+                    <select name="picking_id" required>
+                        ${selectOptions(available,"picking_id",x=>`${x.picking_code} - ${x.order_code}`)}
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Nhân viên đóng gói *</label>
+                    <select name="employee_id" required>
+                        ${selectOptions(employees,"employee_id",x=>x.employee_name)}
+                    </select>
+                </div>
+            </div>
+
+            <div class="notice" style="margin-top:15px">
+                Mỗi đơn hàng chỉ được tạo một phiếu đóng gói. Bản demo tạo một kiện cho mỗi phiếu.
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary">Tạo phiếu đóng gói</button>
+                <button type="button" class="btn btn-light" onclick="hideForm()">Hủy</button>
+            </div>
+        </form>
+    `);
+
+    document.getElementById("packingForm").onsubmit = async e => {
+        e.preventDefault();
+
+        const data = Object.fromEntries(new FormData(e.target).entries());
+
+        try {
+            const r = await postJson("packing",{
+                action:"create",
+                ...data
+            });
+
+            toast(r.message);
+            hideForm();
+            await loadData();
+
+        } catch(err) {
+            toast(err.message);
+        }
+    };
+}
+
+async function completePacking(id) {
+    const task = records.find(r=>Number(r.packing_id)===id);
+    if (!task) return;
+
+    try {
+        const allPicking = await getJson("picking");
+
+        const pickingRows = (allPicking.data?.tasks || []).filter(
+            x=>Number(x.order_id)===Number(task.order_id)
+        );
+
+        const picking = pickingRows.find(
+            x=>String(x.status).toUpperCase()==="COMPLETED"
+        );
+
+        if (!picking) {
+            return toast("Không tìm thấy phiếu Picking đã hoàn thành của đơn hàng này.");
+        }
+
+        const details = await getPickingDetails(Number(picking.picking_id));
+
+        const alreadyPacked = (db.details || []).filter(
+            x=>Number(x.packing_id)===id
+        );
+
+        if (alreadyPacked.length) {
+            return toast("Phiếu này đã có chi tiết đóng gói. Không thể ghi nhận đóng gói lần nữa.");
+        }
+
+        openModal("Ghi nhận kiện hàng và sản phẩm", `
+            <div class="notice">
+                Tạo một kiện hàng và nhập đủ số lượng đã lấy cho từng dòng.
+            </div>
+
+            <div class="form-grid">
+                <div class="field">
+                    <label>Loại kiện</label>
+                    <select id="packageType">
+                        <option value="CARTON">Thùng carton</option>
+                        <option value="PALLET">Pallet</option>
+                        <option value="BAG">Bao</option>
+                        <option value="OTHER">Khác</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Khối lượng (kg)</label>
+                    <input id="packageWeight" type="number" min="0" step="1" value="1">
+                </div>
+
+                <div class="field">
+                    <label>Dài (cm)</label>
+                    <input id="packageLength" type="number" min="0" step="1">
+                </div>
+
+                <div class="field">
+                    <label>Rộng (cm)</label>
+                    <input id="packageWidth" type="number" min="0" step="1">
+                </div>
+
+                <div class="field">
+                    <label>Cao (cm)</label>
+                    <input id="packageHeight" type="number" min="0" step="1">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Sản phẩm trong kiện</h3>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>SL đã lấy</th>
+                                <th>SL đóng gói</th>
+                                <th>Tình trạng</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            ${details.map(d=>`
+                                <tr data-id="${d.picking_detail_id}">
+                                    <td>${esc(d.sku)} - ${esc(d.product_name)}</td>
+                                    <td>${money(d.picked_qty)}</td>
+                                    <td>
+                                        <input class="packQty" type="number" min="0"
+                                            max="${d.picked_qty}" step="1"
+                                            value="${d.picked_qty}"
+                                            style="width:95px;padding:7px">
+                                    </td>
+                                    <td>
+                                        <select class="condition">
+                                            <option value="GOOD">Tốt</option>
+                                            <option value="DAMAGED">Hư hỏng</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary" onclick="submitPacking(${id})">
+                    Lưu kiện hàng và hoàn tất
+                </button>
+            </div>
+        `);
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+async function submitPacking(id) {
+    const rows = [...document.querySelectorAll("#modalRoot tbody tr[data-id]")];
+
+    const items = rows.map(row=>({
+        picking_detail_id:Number(row.dataset.id),
+        packed_qty:Number(row.querySelector(".packQty").value),
+        condition_status:row.querySelector(".condition").value,
+        note:""
+    })).filter(x=>x.packed_qty>0);
+
+    if (!items.length) {
+        return toast("Vui lòng nhập số lượng đóng gói.");
+    }
+
+    const packages = [{
+        package_type:document.getElementById("packageType").value,
+        weight:Number(document.getElementById("packageWeight").value||0),
+        length:Number(document.getElementById("packageLength").value||0),
+        width:Number(document.getElementById("packageWidth").value||0),
+        height:Number(document.getElementById("packageHeight").value||0),
+        items
+    }];
+
+    try {
+        const r = await postJson("packing",{
+            action:"complete",
+            packing_id:id,
+            packages
+        });
+
+        closeModal();
+        toast(r.message);
+        await loadData();
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+/* =========================
+   SHIPPING
+========================= */
+
+async function getPackingData() {
+    const r = await getJson("packing");
+    return r.data || {};
+}
+
+async function createShippingForm() {
+    try {
+        const packingData = await getPackingData();
+
+        const completed = (packingData.tasks || []).filter(
+            x=>String(x.status).toUpperCase()==="COMPLETED"
+        );
+
+        const shippedOrderIds = records.map(x=>Number(x.order_id));
+
+        const available = completed.filter(
+            x=>!shippedOrderIds.includes(Number(x.order_id))
+        );
+
+        const employees = db.employees || [];
+
+        showForm("Tạo phiếu xuất hàng", `
+            <form id="shippingForm">
+                <div class="form-grid">
+                    <div class="field">
+                        <label>Đơn hàng đã đóng gói *</label>
+                        <select name="order_id" required>
+                            ${selectOptions(available,"order_id",x=>`${x.order_code} - ${x.packing_code}`)}
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>Nhân viên phụ trách *</label>
+                        <select name="employee_id" required>
+                            ${selectOptions(employees,"employee_id",x=>x.employee_name)}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="notice" style="margin-top:15px">
+                    Chỉ tạo phiếu xuất cho đơn hàng đã hoàn thành đóng gói.
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary">Tạo phiếu xuất hàng</button>
+                    <button type="button" class="btn btn-light" onclick="hideForm()">Hủy</button>
+                </div>
+            </form>
+        `);
+
+        document.getElementById("shippingForm").onsubmit = async e => {
+            e.preventDefault();
+
+            const data = Object.fromEntries(new FormData(e.target).entries());
+
+            try {
+                const r = await postJson("shipping",{
+                    action:"create",
+                    ...data
+                });
+
+                toast(r.message);
+                hideForm();
+                await loadData();
+
+            } catch(err) {
+                toast(err.message);
+            }
+        };
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+async function showShipmentForm(shippingId) {
+    const order = records.find(x=>Number(x.shipping_order_id)===shippingId);
+    if (!order) return;
+
+    try {
+        const packingData = await getPackingData();
+
+        const packingTasks = (packingData.tasks || []).filter(
+            x=>Number(x.order_id)===Number(order.order_id) &&
+            String(x.status).toUpperCase()==="COMPLETED"
+        );
+
+        const packingIds = packingTasks.map(x=>Number(x.packing_id));
+
+        const alreadyShipped = (db.packages || []).map(
+            x=>Number(x.packaging_unit_id)
+        );
+
+        const packages = (packingData.packages || []).filter(
+            x=>packingIds.includes(Number(x.packing_id)) &&
+            !alreadyShipped.includes(Number(x.packaging_unit_id))
+        );
+
+        openModal("Tạo chuyến xe và bàn giao kiện hàng", `
+            <div class="form-grid">
+                <div class="field">
+                    <label>Đơn vị vận chuyển *</label>
+                    <input id="carrierName" required placeholder="Tên đơn vị vận chuyển">
+                </div>
+
+                <div class="field">
+                    <label>Biển số xe</label>
+                    <input id="vehicleNumber">
+                </div>
+
+                <div class="field">
+                    <label>Tên tài xế</label>
+                    <input id="driverName">
+                </div>
+
+                <div class="field">
+                    <label>Số điện thoại tài xế</label>
+                    <input id="driverPhone">
+                </div>
+
+                <div class="field">
+                    <label>Thời gian dự kiến xuất phát</label>
+                    <input id="plannedDeparture" type="datetime-local">
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Chọn kiện hàng bàn giao</h3>
+
+                <div class="notice">
+                    Chọn các kiện thuộc đơn hàng ${esc(order.order_code)}.
+                </div>
+
+                ${
+                    packages.length
+                    ? packages.map(p=>`
+                        <label style="display:block;padding:9px;border-bottom:1px solid #edf1f6;font-size:11px">
+                            <input type="checkbox" class="shipPackage"
+                                value="${p.packaging_unit_id}" checked>
+                            ${esc(p.package_code)} · ${esc(p.package_type)} · ${esc(p.weight)} kg
+                        </label>
+                    `).join("")
+                    : '<div class="empty">Không còn kiện hàng chưa bàn giao cho đơn này.</div>'
+                }
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary"
+                    onclick="submitShipment(${shippingId})"
+                    ${packages.length?'':'disabled'}>
+                    Tạo chuyến xe
+                </button>
+            </div>
+        `);
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+async function submitShipment(shippingId) {
+    const package_ids = [...document.querySelectorAll(".shipPackage:checked")].map(
+        x=>Number(x.value)
+    );
+
+    if (!package_ids.length) {
+        return toast("Vui lòng chọn ít nhất một kiện hàng.");
+    }
+
+    const planned = document.getElementById("plannedDeparture").value;
+
+    const payload = {
+        action:"create_shipment",
+        shipping_order_id:shippingId,
+        carrier_name:document.getElementById("carrierName").value.trim(),
+        vehicle_number:document.getElementById("vehicleNumber").value.trim(),
+        driver_name:document.getElementById("driverName").value.trim(),
+        driver_phone:document.getElementById("driverPhone").value.trim(),
+        planned_departure:planned ? planned.replace("T"," ") + ":00" : "",
+        package_ids
+    };
+
+    if (!payload.carrier_name) {
+        return toast("Vui lòng nhập đơn vị vận chuyển.");
+    }
+
+    try {
+        const r = await postJson("shipping",payload);
+
+        closeModal();
+        toast(r.message);
+        await loadData();
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+/* =========================
+   BẮT ĐẦU / HOÀN TẤT
+========================= */
+
+async function startTask(id) {
+    if (!confirm("Bắt đầu thực hiện công đoạn này?")) return;
+
+    let payload = {};
+    let url = cfg.endpoint;
+    let isForm = false;
+
+    if (stage === "receiving") {
+        payload = {action:"start",receipt_id:id};
+    }
+
+    if (stage === "putaway") {
+        payload = {action:"start",putaway_id:id};
+    }
+
+    if (stage === "picking") {
+        payload = {action:"start",picking_id:id};
+        isForm = true;
+    }
+
+    if (stage === "packing") {
+        url = "packing";
+        payload = {action:"start",packing_id:id};
+    }
+
+    if (stage === "shipping") {
+        url = "shipping";
+        payload = {action:"start",shipping_order_id:id};
+    }
+
+    try {
+        const r = isForm
+            ? await postJson(url,payload)
+            : await postJson(url,payload);
+
+        toast(r.message || "Đã bắt đầu công việc.");
+        await loadData();
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+async function completeSimple(id) {
+    if (!confirm("Xác nhận hoàn tất phiếu cất hàng?")) return;
+
+    try {
+        const r = await postJson(cfg.endpoint,{
+            action:"complete",
+            putaway_id:id
+        });
+
+        toast(r.message);
+        await loadData();
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+/* =========================
+   CHI TIẾT PHIẾU
+========================= */
+
+async function viewDetails(id) {
+    const row = records.find(x=>Number(x[cfg.id])===id);
+    if (!row) return;
+
+    let html = "";
+
+    if (stage === "receiving") {
+        html = `
+            <p><b>Mã phiếu:</b> ${esc(row.receipt_code)}</p>
+            <p><b>Nhà cung cấp:</b> ${esc(row.supplier_name)}</p>
+            <p><b>Nhân viên:</b> ${esc(row.employee_name)}</p>
+            <p><b>Vị trí nhận:</b> ${esc(row.dock_number)}</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Dự kiến</th>
+                            <th>Thực nhận</th>
+                            <th>Đơn vị</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${(row.items||[]).map(i=>`
+                            <tr>
+                                <td>${esc(i.sku)} - ${esc(i.product_name)}</td>
+                                <td>${money(i.expected_qty)}</td>
+                                <td>${money(i.received_qty)}</td>
+                                <td>${esc(i.unit)}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+    } else if (stage === "picking") {
+        try {
+            const details = await getPickingDetails(id);
+
+            html = `
+                <p><b>Mã phiếu:</b> ${esc(row.picking_code)}</p>
+                <p><b>Đơn hàng:</b> ${esc(row.order_code)}</p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Vị trí</th>
+                                <th>Lô</th>
+                                <th>Yêu cầu</th>
+                                <th>Đã lấy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${details.map(d=>`
+                                <tr>
+                                    <td>${esc(d.sku)} - ${esc(d.product_name)}</td>
+                                    <td>${esc(d.location_code)}</td>
+                                    <td>${esc(d.batch_code)}</td>
+                                    <td>${money(d.requested_qty)}</td>
+                                    <td>${money(d.picked_qty)}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+        } catch(e) {
+            html = esc(e.message);
+        }
+
+    } else if (stage === "packing") {
+        const details = (db.details || []).filter(
+            x=>Number(x.packing_id)===id
+        );
+
+        html = `
+            <p><b>Mã phiếu:</b> ${esc(row.packing_code)}</p>
+            <p><b>Đơn hàng:</b> ${esc(row.order_code)}</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kiện</th>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng đóng</th>
+                            <th>Tình trạng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${details.map(d=>`
+                            <tr>
+                                <td>${esc(d.package_code)}</td>
+                                <td>${esc(d.sku)} - ${esc(d.product_name)}</td>
+                                <td>${money(d.packed_qty)}</td>
+                                <td>${esc(d.condition_status)}</td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+    } else if (stage === "shipping") {
+        const shipments = (db.shipments || []).filter(
+            x=>Number(x.shipping_order_id)===id
+        );
+
+        html = `
+            <p><b>Mã phiếu xuất:</b> ${esc(row.shipping_code)}</p>
+            <p><b>Đơn hàng:</b> ${esc(row.order_code)}</p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Mã chuyến</th>
+                            <th>Đơn vị vận chuyển</th>
+                            <th>Biển số xe</th>
+                            <th>Trạng thái giao</th>
+                            <th>Cập nhật</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${shipments.map(s=>`
+                            <tr>
+                                <td>${esc(s.shipment_code)}</td>
+                                <td>${esc(s.carrier_name)}</td>
+                                <td>${esc(s.vehicle_number)}</td>
+                                <td>${statusBadge(s.delivery_status)}</td>
+                                <td>
+                                    <button class="btn btn-light"
+                                        onclick="updateShipmentStatus(${Number(s.shipment_id)},'DELIVERED')">
+                                        Đã giao
+                                    </button>
+
+                                    <button class="btn btn-danger"
+                                        onclick="updateShipmentStatus(${Number(s.shipment_id)},'FAILED')">
+                                        Giao thất bại
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+    } else {
+        html = `
+            <p><b>Mã phiếu:</b> ${esc(row.putaway_code)}</p>
+            <p><b>Sản phẩm:</b> ${esc(row.product_name)}</p>
+            <p><b>Lô hàng:</b> ${esc(row.batch_code)}</p>
+            <p><b>Số lượng:</b> ${money(row.quantity)}</p>
+            <p><b>Vị trí đích:</b> ${esc(row.destination_location)}</p>
+        `;
+    }
+
+    openModal("Chi tiết công đoạn",html);
+}
+
+async function updateShipmentStatus(shipmentId,status) {
+    if (!confirm("Xác nhận cập nhật trạng thái chuyến xe?")) return;
+
+    try {
+        const r = await postJson("shipping",{
+            action:"update_delivery",
+            shipment_id:shipmentId,
+            delivery_status:status
+        });
+
+        toast(r.message);
+        closeModal();
+        await loadData();
+
+    } catch(e) {
+        toast(e.message);
+    }
+}
+
+/* =========================
+   MODAL
+========================= */
+
+function openModal(title,content) {
+    document.getElementById("modalRoot").innerHTML = `
+        <div class="modal-bg" onclick="if(event.target===this)closeModal()">
+            <div class="modal">
+                <div class="modal-head">
+                    <h2>${esc(title)}</h2>
+                    <button class="close" onclick="closeModal()">✕</button>
+                </div>
+
+                ${content}
+            </div>
+        </div>
+    `;
+}
+
+function closeModal() {
+    document.getElementById("modalRoot").innerHTML = "";
+}
+
+/* Tải dữ liệu khi mở trang */
+loadData();
+window.addEventListener("wms:change", loadData);
+window.addEventListener("pageshow", event => { if (event.persisted) loadData(); });
+window.addEventListener("storage", event => { if (event.key === WmsDemo.storageKey) loadData(); });
+</script>
+
+</body>
+</html>

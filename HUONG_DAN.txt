@@ -1,0 +1,31 @@
+SMARTWMS – BẢN SỬA LUỒNG DỮ LIỆU
+
+1. Giải nén và tải toàn bộ file bên trong vào thư mục gốc repo SmartWMS.
+   index.html phải nằm ngay ở thư mục gốc.
+2. Khi GitHub Pages cập nhật, trang Điểm nghẽn sẽ có mục
+   “Điều chỉnh năng lực mô phỏng”. Đây là dấu hiệu nhận biết bản sửa.
+3. Mỗi repo dùng một vùng dữ liệu riêng trên trình duyệt.
+   Vào Nhập dữ liệu → Nạp lại kịch bản Nhận hàng để trở về bộ mẫu.
+   “Lấy dữ liệu bản cũ” chỉ dùng khi muốn phục hồi dữ liệu WMS trước đây.
+   Nút Tải bản sao dữ liệu xuất toàn bộ trạng thái ra JSON để lưu trữ.
+
+KỊCH BẢN VÀ CÁCH KIỂM TRA
+- Nhận hàng có 8 phiếu chờ, tương đương 456 thùng.
+- Năng lực giả định 2 người × 40 thùng/người/giờ = 80 thùng/giờ.
+- Mục tiêu giải phóng hàng chờ trong 2 giờ, năng lực 160 thùng.
+- Tỷ lệ tải 456 / 160 = 285%, vì vậy Nhận hàng quá tải.
+- Tăng lên 6 người tại Điểm nghẽn → Áp dụng. Tỷ lệ tải còn 95%.
+- Trở lại 2 người rồi hoàn tất QC một phiếu. Hàng đạt được chuyển vào
+  danh sách lô có thể cất, tồn khả dụng chỉ tăng sau khi cất hoàn tất.
+- Khi tạo phiếu lấy hàng, tồn được giữ cho đúng đơn; khi lấy hoàn tất,
+  đơn đủ điều kiện đóng gói; đóng đủ số lượng mới được tạo phiếu xuất.
+- Tổng quan có bảng đối chiếu dòng hàng theo SKU, tổng số lượng phải khớp.
+- Hàng đủ điều kiện nhưng chưa có phiếu vẫn được tính vào tải công đoạn.
+
+PHẠM VI
+Dữ liệu và năng suất là kịch bản học tập, lưu theo trình duyệt và repo.
+Các tab cùng repo cập nhật qua cùng nguồn dữ liệu; không có cơ sở dữ liệu
+chung giữa các thiết bị. Thời gian dự kiến dựa trên lượng hàng và năng suất.
+Thời gian đã ghi nhận đo thao tác Bắt đầu/Hoàn tất trên web.
+Chưa tích hợp mô hình Random Forest. Hoạt ảnh mô tả quy trình, không tự
+hoàn tất phiếu vận hành khi bấm Chạy mô phỏng.

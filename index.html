@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WMS - Hệ thống quản lý kho</title>
+    <link rel="stylesheet" href="style.css?v=7">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        <span class="brand-icon">W</span>
+        <div>
+            <h2>WAREHOUSE</h2>
+            <small>Management System</small>
+        </div>
+    </div>
+
+    <nav class="navigation">
+        <a class="active" href="index.html">Tổng quan</a>
+        <a href="simulation.html">Kho mô phỏng</a>
+        <a href="stage.html?stage=receiving">Nhận hàng</a>
+        <a href="stage.html?stage=putaway">Cất hàng</a>
+        <a href="stage.html?stage=picking">Lấy hàng</a>
+        <a href="stage.html?stage=packing">Đóng gói</a>
+        <a href="stage.html?stage=shipping">Xuất hàng</a>
+        <a href="ai_dashboard.html">Dự kiến xử lý</a>
+        <a href="bottleneck_analysis.html">Điểm nghẽn</a>
+    </nav>
+
+    <div class="user">
+        <a class="data-import-link" href="import.html">Nhập dữ liệu</a><span class="avatar">QL</span>
+        <span>Quản lý kho</span>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">WAREHOUSE MANAGEMENT SYSTEM</p>
+            <h1>Tổng quan hoạt động kho hàng</h1>
+            <p class="subheading">SmartWMS · Dữ liệu liên thông theo phiếu và số lượng hàng.</p>
+        </div>
+        <div class="date-box">
+            <span>Ngày làm việc</span>
+            <strong id="today"></strong>
+        </div>
+    </section>
+
+    <section class="overview-grid">
+        <div class="overview-card">
+            <span class="card-icon">📦</span>
+            <p>Tổng lượng hàng nhập</p>
+          <h2>0 <small>thùng</small></h2>
+            <span class="card-note">Trong kỳ mô phỏng</span>
+        </div>
+
+        <div class="overview-card">
+            <span class="card-icon">🛒</span>
+            <p>Tổng đơn hàng</p>
+            <h2>0 <small>đơn</small></h2>
+            <span class="card-note">Trong kỳ mô phỏng</span>
+        </div>
+
+        <div class="overview-card">
+            <span class="card-icon">✓</span>
+            <p>Đơn hàng đã xuất</p>
+           <h2>0 <small>đơn</small></h2>
+            <span class="card-note positive">Chưa có dữ liệu</span>
+        </div>
+
+        <div class="overview-card">
+            <span class="card-icon">◷</span>
+            <p>Đơn hàng chưa xuất</p>
+        <h2>0 <small>đơn</small></h2>
+            <span class="card-note warning-text">Gồm đơn chưa lấy, đang xử lý và chờ xuất</span>
+        </div>
+    </section>
+
+    <section class="warehouse-section">
+        <div class="section-heading">
+            <div>
+                <h2>Sơ đồ hoạt động kho hàng</h2>
+                <p>Chọn một khu vực trên sơ đồ để xem thông tin chi tiết.</p>
+            </div>
+            <span class="live-label">● Dữ liệu mô phỏng</span>
+        </div>
+
+        <div class="warehouse-map">
+          <img src="warehouse.png" alt="Sơ đồ kho hàng">
+
+            <a class="hotspot receiving" href="stage.html?stage=receiving" aria-label="Nhận hàng" style="--x:10.6%;--y:39.6%;--w:10.9%"></a>
+
+            <a class="hotspot putaway" href="stage.html?stage=putaway" aria-label="Cất hàng" style="--x:32.5%;--y:24.4%;--w:10.2%"></a>
+
+            <a class="hotspot picking" href="stage.html?stage=picking" aria-label="Lấy hàng" style="--x:44.8%;--y:39.5%;--w:10.0%"></a>
+
+            <a class="hotspot packing" href="stage.html?stage=packing" aria-label="Đóng gói" style="--x:63.5%;--y:40.5%;--w:10.0%"></a>
+
+            <a class="hotspot shipping" href="stage.html?stage=shipping" aria-label="Xuất hàng" style="--x:83.5%;--y:28.8%;--w:10.3%"></a>
+        </div>
+
+        <p class="image-caption">
+            Bấm vào nhãn trên ảnh để mở công đoạn tương ứng.
+        </p>
+    </section>
+
+    <section class="process-section">
+        <div class="section-heading">
+            <div>
+                <h2>Tình trạng các công đoạn</h2>
+                <p>Theo dõi khối lượng công việc tại từng khu vực.</p>
+            </div>
+        </div>
+
+        <div class="process-grid">
+
+            <a class="process-card" href="stage.html?stage=receiving">
+                <div class="process-top">
+                    <span class="process-number">01</span>
+                    <span class="status stable">Chưa có phiếu</span>
+                </div>
+                <h3>Nhận hàng</h3>
+                <p>Receiving</p>
+                <div class="process-data">
+                    <span>Đang chờ <b>0 phiếu</b></span>
+                    <span>Đang xử lý <b>0 phiếu</b></span>
+                </div>
+                <div class="progress-bar"><span style="width:0%"></span></div>
+                <div class="progress-label"><span>Tiến độ</span><b>—</b></div>
+            </a>
+
+            <a class="process-card" href="stage.html?stage=putaway">
+                <div class="process-top">
+                    <span class="process-number">02</span>
+                    <span class="status stable">Chưa có phiếu</span>
+                </div>
+                <h3>Cất hàng</h3>
+                <p>Putaway</p>
+                <div class="process-data">
+                    <span>Đang chờ <b>0 phiếu</b></span>
+                    <span>Đang xử lý <b>0 phiếu</b></span>
+                </div>
+                <div class="progress-bar"><span style="width:0%"></span></div>
+                <div class="progress-label"><span>Tiến độ</span><b>—</b></div>
+            </a>
+
+            <a class="process-card" href="stage.html?stage=picking">
+                <div class="process-top">
+                    <span class="process-number">03</span>
+                    <span class="status stable">Chưa có phiếu</span>
+                </div>
+                <h3>Lấy hàng</h3>
+                <p>Picking</p>
+                <div class="process-data">
+                    <span>Đang chờ <b>0 phiếu</b></span>
+                    <span>Đang xử lý <b>0 phiếu</b></span>
+                </div>
+                <div class="progress-bar"><span style="width:0%"></span></div>
+                <div class="progress-label"><span>Tiến độ</span><b>—</b></div>
+            </a>
+
+            <a class="process-card" href="stage.html?stage=packing">
+                <div class="process-top">
+                    <span class="process-number">04</span>
+                    <span class="status stable">Chưa có phiếu</span>
+                </div>
+                <h3>Đóng gói</h3>
+                <p>Packing</p>
+                <div class="process-data">
+                    <span>Đang chờ <b>0 phiếu</b></span>
+                    <span>Đang xử lý <b>0 phiếu</b></span>
+                </div>
+                <div class="progress-bar"><span style="width:0%"></span></div>
+                <div class="progress-label"><span>Tiến độ</span><b>—</b></div>
+            </a>
+
+            <a class="process-card" href="stage.html?stage=shipping">
+                <div class="process-top">
+                    <span class="process-number">05</span>
+                    <span class="status stable">Chưa có phiếu</span>
+                </div>
+                <h3>Xuất hàng</h3>
+                <p>Shipping</p>
+                <div class="process-data">
+                    <span>Đang chờ <b>0 phiếu</b></span>
+                    <span>Đang xử lý <b>0 phiếu</b></span>
+                </div>
+                <div class="progress-bar"><span style="width:0%"></span></div>
+                <div class="progress-label"><span>Tiến độ</span><b>—</b></div>
+            </a>
+
+        </div>
+    </section>
+
+    <section class="ai-section" id="ai">
+        <div class="ai-heading">
+            <span class="ai-icon">✦</span>
+            <div>
+                <h2>Phân tích rủi ro vận hành</h2>
+                <p>Điểm rủi ro được tính từ các phiếu đang chờ và đang xử lý.</p>
+            </div>
+        </div>
+
+        <div class="ai-content" id="bottleneck">
+            <div>
+                <span class="ai-label">CẢNH BÁO ĐIỂM NGHẼN</span>
+                <h3><span id="video-summary">Phân tích điểm nghẽn theo công đoạn</span></h3>
+                <p>
+                    Tải công việc được tính từ số thùng cần xử lý và năng lực của từng công đoạn.
+                </p>
+                <a href="bottleneck_analysis.html" class="detail-link">
+                    Mở phân tích điểm nghẽn →
+                </a>
+            </div>
+
+            <div class="prediction-box">
+                <span>Tải và năng lực</span>
+                <a href="ai_dashboard.html">Xem điểm theo công đoạn</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel"><h2>Đối chiếu dòng hàng theo SKU</h2><p>Đơn vị thùng. Hàng thực nhận = hàng loại + chờ cất + tồn khả dụng + giữ cho lấy hàng + chờ đóng + chờ xuất + đã xuất.</p><div class="table-wrap"><table><thead><tr><th>SKU</th><th>Thực nhận</th><th>QC loại</th><th>Chờ cất</th><th>Tồn khả dụng</th><th>Giữ cho lấy</th><th>Chờ đóng</th><th>Chờ xuất</th><th>Đã xuất</th></tr></thead><tbody id="inventory-body"></tbody></table></div></section>
+    <footer>
+        <p>WMS Dashboard | Mô hình hệ thống quản lý kho phục vụ học tập</p>
+        <p>Dữ liệu trên website là dữ liệu mô phỏng.</p>
+    </footer>
+
+</main>
+
+<script src="wms-demo.js?v=7"></script>
+<script>
+    document.getElementById("today").textContent = new Date().toLocaleDateString("vi-VN");
+    function renderOverview() {
+        const summary = WmsDemo.overview();
+        const formatter = new Intl.NumberFormat("vi-VN", {maximumFractionDigits: 1});
+        const cards = document.querySelectorAll(".overview-grid .overview-card");
+        const counts = [summary.received, summary.orders, summary.completed, summary.orders - summary.completed];
+        cards.forEach((card, i) => {
+            card.querySelector("h2").firstChild.nodeValue = formatter.format(counts[i]) + " ";
+        });
+        cards[2].querySelector(".card-note").textContent = summary.orders
+            ? formatter.format(100 * summary.completed / summary.orders) + "% tổng đơn hàng"
+            : "Chưa có dữ liệu";
+        document.querySelectorAll(".process-card").forEach(card => {
+            const stage = new URL(card.href).searchParams.get("stage");
+            const rows = summary.stages[stage];
+            const metric = WmsDemo.analysis().find(item => item.stage === stage);
+            const pending = rows.filter(row => row.status === "PENDING").length;
+            const active = rows.filter(row => row.status === "IN_PROGRESS").length;
+            const completed = rows.length - pending - active;
+            const percent = rows.length ? Math.round(100 * completed / rows.length) : 0;
+            const status = card.querySelector(".status");
+            status.textContent = metric.risk === "HIGH" ? "Quá tải" : metric.workload ? "Có việc cần xử lý" : "Đã xử lý hết";
+            status.classList.toggle("warning", metric.risk === "HIGH");
+            const [waiting, processing] = card.querySelectorAll(".process-data b");
+            waiting.textContent = pending + " phiếu";
+            card.querySelector(".process-data").title = metric.ready + " lô/đơn chưa tạo phiếu · " + metric.workload + " thùng cần xử lý";
+            processing.textContent = active + " phiếu";
+            card.querySelector(".progress-bar span").style.width = percent + "%";
+            card.querySelector(".progress-label b").textContent = rows.length ? percent + "%" : "—";
+        });
+        const inventory = WmsDemo.inventory();
+        document.getElementById("inventory-body").innerHTML = inventory.map(item => '<tr><td>'+item.sku+'</td><td>'+item.received+'</td><td>'+item.rejected+'</td><td>'+item.toStore+'</td><td>'+item.free+'</td><td>'+item.reserved+'</td><td>'+item.toPack+'</td><td>'+item.toShip+'</td><td>'+item.shipped+'</td></tr>').join('');
+    }
+    renderOverview();
+    window.addEventListener("pageshow", renderOverview);
+    window.addEventListener("storage", renderOverview);
+    window.addEventListener("wms:change", renderOverview);
+</script>
+
+<script src="wms-video.js?v=7"></script></body>
+</html>

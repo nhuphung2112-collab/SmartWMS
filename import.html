@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Nhập dữ liệu | WMS</title>
+    <link rel="stylesheet" href="style.css?v=7">
+</head>
+<body>
+<header class="topbar">
+    <div class="brand"><span class="brand-icon">W</span><div><h2>WAREHOUSE</h2><small>Management System</small></div></div>
+    <nav class="navigation" aria-label="Điều hướng chính">
+        <a href="index.html">Tổng quan</a>
+        <a href="simulation.html">Kho mô phỏng</a>
+        <a href="stage.html?stage=receiving">Nhận hàng</a>
+        <a href="stage.html?stage=putaway">Cất hàng</a>
+        <a href="stage.html?stage=picking">Lấy hàng</a>
+        <a href="stage.html?stage=packing">Đóng gói</a>
+        <a href="stage.html?stage=shipping">Xuất hàng</a>
+        <a href="ai_dashboard.html">Dự kiến xử lý</a>
+        <a href="bottleneck_analysis.html">Điểm nghẽn</a>
+    </nav>
+    <div class="user"><a class="data-import-link" href="import.html" aria-current="page">Nhập dữ liệu</a><span class="avatar">QL</span><span>Quản lý kho</span></div>
+</header>
+<main class="container">
+    <section class="panel">
+        <h1>Nhập dữ liệu hàng nhận</h1>
+        <p>Tải CSV hoặc dán nội dung vào ô bên dưới. Dùng hai cột <code>sku</code> và <code>quantity</code>, với SKU <code>SKU-001</code> hoặc <code>SKU-002</code> và số lượng nguyên dương tính theo thùng.</p>
+        <p>Mỗi lần lưu tạo một phiếu chờ tại Nhận hàng. Sau khi xác nhận QC, lô đạt xuất hiện ở Cất hàng và trở thành tồn có thể lấy khi phiếu cất hoàn tất.</p>
+        <form id="import-form">
+            <p><label for="import-file">Chọn file CSV</label> <input id="import-file" type="file" accept=".csv,text/csv"></p>
+            <p><a href="du-lieu-mau.csv" download>Tải CSV mẫu</a></p>
+            <label for="import-data">Nội dung CSV</label>
+            <textarea id="import-data" required spellcheck="false" placeholder="sku,quantity&#10;SKU-001,10&#10;SKU-002,8"></textarea>
+            <button class="btn btn-primary" type="submit">Lưu và mở Nhận hàng</button>
+            <p id="import-status" role="status"></p>
+        </form>
+    </section>
+<section class="panel"><h2>Dữ liệu của website này</h2><p>Mỗi repo lưu dữ liệu riêng trên trình duyệt. Kịch bản mẫu có 30 đơn hàng và cao điểm tại Nhận hàng. Dữ liệu cũ được giữ trong trình duyệt để phục hồi khi cần.</p><div class="actions"><button id="export-data" class="btn">Tải bản sao dữ liệu</button><button id="reset-data" class="btn">Nạp lại kịch bản Nhận hàng</button><button id="restore-data" class="btn">Lấy dữ liệu bản cũ</button></div><p id="data-status" role="status"></p></section></main>
+<script src="wms-demo.js?v=7"></script>
+<script>
+    const fileInput = document.getElementById("import-file");
+    const dataInput = document.getElementById("import-data");
+    const status = document.getElementById("import-status");
+    const submit = document.querySelector("#import-form button");
+
+    fileInput.addEventListener("change", async () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        submit.disabled = true;
+        try {
+            dataInput.value = await file.text();
+            status.textContent = "Đã đọc CSV. Kiểm tra nội dung rồi bấm Lưu.";
+        } catch {
+            status.textContent = "Không đọc được file CSV.";
+        } finally {
+            submit.disabled = false;
+            fileInput.value = "";
+        }
+    });
+
+    document.getElementById("import-form").addEventListener("submit", async event => {
+        event.preventDefault();
+        submit.disabled = true;
+        try {
+            await WmsDemo.importReceivingCsv(dataInput.value);
+            submit.disabled = true;
+            location.assign("stage.html?stage=receiving");
+        } catch (error) {
+            submit.disabled = false;
+            status.textContent = error.message;
+        }
+    });
+</script>
+<script>
+    document.getElementById("export-data").onclick = () => {
+        const url = URL.createObjectURL(new Blob([WmsDemo.exportData()], {type:"application/json"}));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "SmartWMS-du-lieu.json";
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+    async function changeScenario(action, message) {
+        if (!confirm(message)) return;
+        try {
+            await action();
+            document.getElementById("data-status").textContent = "Đã cập nhật. Mở Tổng quan để xem dữ liệu.";
+        } catch(error) {document.getElementById("data-status").textContent = error.message;}
+    }
+    document.getElementById("reset-data").onclick = () => changeScenario(WmsDemo.resetScenario, "Thay dữ liệu hiện tại bằng kịch bản Nhận hàng? Một bản sao dữ liệu hiện tại sẽ được lưu trên trình duyệt.");
+    document.getElementById("restore-data").onclick = () => changeScenario(WmsDemo.restoreLegacy, "Lấy bộ dữ liệu của bản WMS trước đây? Bộ này có thể thuộc repo cũ cùng tài khoản GitHub. Dữ liệu hiện tại sẽ được sao lưu.");
+</script></body>
+</html>

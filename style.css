@@ -1,0 +1,416 @@
+
+/* =====================================================
+   WMS - UNIFIED HEADER
+   Đồng bộ header toàn bộ website theo mẫu Tổng quan
+===================================================== */
+
+/* Header chung: logo hàng trên, menu hàng dưới */
+.topbar {
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+        "brand user"
+        "nav nav";
+    align-items: center;
+    gap: 20px 24px;
+    min-height: auto !important;
+    padding: 14px 2.6% 18px !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e5eaf0;
+    box-shadow: 0 2px 10px rgba(35, 55, 75, 0.045);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Logo */
+.topbar .brand {
+    grid-area: brand;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+    color: #29445f;
+}
+
+/* Ô vuông chữ W */
+.topbar .brand-icon {
+    width: 64px;
+    height: 64px;
+    min-width: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eaf0f5;
+    border: 1px solid #dce6ee;
+    border-radius: 15px;
+    color: #29445f;
+    font-size: 31px;
+    font-weight: 800;
+}
+
+/* Tên thương hiệu */
+.topbar .brand h2 {
+    margin: 0;
+    color: #29445f;
+    font-size: 25px;
+    line-height: 1.35;
+    font-weight: 750;
+    letter-spacing: 0.5px;
+}
+
+.topbar .brand small {
+    display: block;
+    margin-top: 5px;
+    color: #8493a3;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+/* Hỗ trợ các trang cũ có brand viết khác cấu trúc */
+.topbar .brand:not(:has(.brand-icon)) {
+    display: grid;
+    grid-template-columns: 64px auto;
+    grid-template-rows: 34px 25px;
+    column-gap: 18px;
+    align-items: center;
+    color: #29445f;
+    font-size: 0;
+}
+
+.topbar .brand:not(:has(.brand-icon))::before {
+    content: "W";
+    grid-column: 1;
+    grid-row: 1 / 3;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eaf0f5;
+    border: 1px solid #dce6ee;
+    border-radius: 15px;
+    color: #29445f;
+    font-size: 31px;
+    font-weight: 800;
+}
+
+.topbar .brand:not(:has(.brand-icon))::after {
+    content: "WAREHOUSE";
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    color: #29445f;
+    font-size: 25px;
+    line-height: 1.35;
+    font-weight: 750;
+    letter-spacing: 0.5px;
+}
+
+.topbar .brand:not(:has(.brand-icon)) small {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    margin-top: 5px;
+    color: #8493a3;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+.topbar .brand:not(:has(.brand-icon)) small::after {
+    content: "Management System";
+    font-size: 16px;
+}
+
+.topbar .brand:not(:has(.brand-icon)) small {
+    font-size: 0;
+}
+
+/* Menu chung: hỗ trợ cả .navigation và .nav */
+.topbar .navigation,
+.topbar .nav {
+    grid-area: nav;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 7px;
+    width: 100%;
+    min-width: 0;
+}
+
+.topbar .navigation a,
+.topbar .nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 59px;
+    padding: 0 17px;
+    border-radius: 11px;
+    background: transparent;
+    color: #687b8e;
+    font-family: 'Be Vietnam Pro', Arial, sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.topbar .navigation a:hover,
+.topbar .nav a:hover {
+    color: #3477b5;
+    background: #f2f6fa;
+}
+
+.topbar .navigation a.active,
+.topbar .nav a.active {
+    color: #376b91;
+    background: #edf3f7;
+    font-weight: 600;
+}
+
+/* Khu vực người dùng */
+.topbar .user {
+    grid-area: user;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    color: #526577;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.topbar .avatar {
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 38px;
+    line-height: 1;
+    width: 38px;
+    height: 38px;
+    background: #eaf0f5;
+    color: #365b79;
+    border-radius: 50%;
+}
+
+/* Link quay lại nếu nằm trong header */
+.topbar > .back-link {
+    grid-area: user;
+    justify-self: end;
+    align-self: center;
+    margin: 0;
+    padding: 9px 13px;
+    border-radius: 8px;
+    background: #edf3f7;
+    color: #456d8b;
+    white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .topbar {
+        gap: 15px;
+        padding: 13px 3% 15px !important;
+    }
+
+    .topbar .navigation,
+    .topbar .nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        scrollbar-width: thin;
+    }
+
+    .topbar .navigation a,
+    .topbar .nav a {
+        min-height: 48px;
+        padding: 0 13px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 600px) {
+    .topbar {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "brand"
+            "user"
+            "nav";
+        gap: 12px;
+    }
+
+    .topbar .brand-icon,
+    .topbar .brand:not(:has(.brand-icon))::before {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        font-size: 24px;
+    }
+
+    .topbar .brand h2,
+    .topbar .brand:not(:has(.brand-icon))::after {
+        font-size: 20px;
+    }
+
+    .topbar .brand small,
+    .topbar .brand:not(:has(.brand-icon)) small::after {
+        font-size: 13px;
+    }
+
+    .topbar .user {
+        justify-content: flex-start;
+    }
+
+    .topbar .navigation,
+    .topbar .nav {
+        gap: 4px;
+    }
+
+    .topbar .navigation a,
+    .topbar .nav a {
+        min-height: 42px;
+        padding: 0 11px;
+        font-size: 13px;
+    }
+}
+
+/* FIX HEADER: CHUYỂN LOGO CŨ THÀNH MẪU ẢNH 1 */
+
+.topbar .brand:not(:has(.brand-icon)) {
+    display: grid !important;
+    grid-template-columns: 64px auto !important;
+    grid-template-rows: 34px 25px !important;
+    column-gap: 18px !important;
+    align-items: center !important;
+    min-width: 0 !important;
+    font-size: 0 !important;
+}
+
+/* Ẩn tên thương hiệu cũ */
+.topbar .brand:not(:has(.brand-icon)) h2 {
+    grid-column: 2;
+    grid-row: 1;
+    align-self: end;
+    margin: 0 !important;
+    font-size: 0 !important;
+    line-height: 1.35 !important;
+}
+
+/* Hiển thị tên mới */
+.topbar .brand:not(:has(.brand-icon)) h2::after {
+    content: "WAREHOUSE";
+    font-size: 25px;
+    font-weight: 750;
+    letter-spacing: 0.5px;
+    color: #29445f;
+}
+
+/* Ẩn dòng mô tả cũ */
+.topbar .brand:not(:has(.brand-icon)) small {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+    margin-top: 5px !important;
+    font-size: 0 !important;
+}
+
+/* Hiển thị dòng mô tả theo mẫu */
+.topbar .brand:not(:has(.brand-icon)) small::after {
+    content: "Management System";
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    color: #8493a3;
+}
+
+/* Tạo biểu tượng W */
+.topbar .brand:not(:has(.brand-icon))::before {
+    content: "W";
+    grid-column: 1;
+    grid-row: 1 / 3;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eaf0f5;
+    border: 1px solid #dce6ee;
+    border-radius: 15px;
+    color: #29445f;
+    font-size: 31px;
+    font-weight: 800;
+}
+
+
+/* GitHub Pages layout repair */
+:root{--ink:#263e58;--muted:#71859a;--line:#e3ebf2;--blue:#416f97;--bg:#f5f8fb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;line-height:1.5}a{color:var(--blue)}.container,.page{max-width:1260px;margin:0 auto;padding:28px 26px}.page-heading,.section-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 22px}.page-heading h1{font-size:28px;margin:4px 0}.eyebrow{font-size:11px;letter-spacing:2px;color:#6c91b1;font-weight:700}.subheading,.card-note,.date-box,.process-data,.ai-label{color:var(--muted)}.date-box{background:white;border:1px solid var(--line);border-radius:12px;padding:12px 18px;min-width:140px}.date-box span,.date-box strong{display:block}.overview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-bottom:30px}.overview-card,.process-card,.prediction-box,.ai-section,.panel,.sim-panel,.kpi{background:white;border:1px solid var(--line);border-radius:15px;padding:22px;box-shadow:0 6px 18px #274b7109}.overview-card p{margin:12px 0 4px;color:#647a90}.overview-card h2{font-size:31px;margin:0 0 5px;color:#274866}.overview-card h2 small{font-size:14px;font-weight:400}.card-icon{display:inline-grid;place-items:center;background:#edf4fa;width:40px;height:40px;border-radius:11px;color:#416f97}.card-note{font-size:12px}.positive{color:#2b9474}.warning-text{color:#bf8135}.warehouse-section,.process-section,.ai-section{margin:24px 0}.section-heading h2,.warehouse-section h2,.process-section h2{font-size:21px}.warehouse-map{position:relative;overflow:hidden;background:white;border:1px solid var(--line);border-radius:15px;padding:15px;min-height:310px}.warehouse-map img{width:100%;height:auto;display:block;object-fit:contain;border-radius:10px}.hotspot{position:absolute;background:#ffffffec;color:#365a7a;border:1px solid #c7dbe9;border-radius:9px;padding:6px 9px;font-size:12px;box-shadow:0 3px 12px #183b5920}.image-caption{color:var(--muted);font-size:13px}.process-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:15px}.process-card{padding:18px}.process-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.process-number{color:#93a9bd;font-size:13px;font-weight:700}.process-card h3{font-size:16px;margin:12px 0}.process-data{font-size:13px}.status{display:inline-block;padding:5px 10px;border-radius:20px;font-size:12px;background:#e9f5ee;color:#2b8660}.status.warning{background:#fff1d9;color:#b77c24}.progress-bar{height:9px;background:#e9eff5;border-radius:20px;overflow:hidden}.progress-bar>span,.progress-bar>div{display:block;height:100%;background:#75a2c7;border-radius:20px}.progress-label{font-size:12px;color:#7b8ca0}.detail-link{font-size:13px;text-decoration:none;font-weight:600}.ai-section{display:flex;flex-wrap:wrap;gap:18px;align-items:center}.ai-heading{font-weight:700}.ai-content{flex:1;min-width:240px}.ai-icon{font-size:28px}.prediction-box{background:#f0f6fc;flex:1}.ai-label{font-size:13px}.live-label{font-size:12px;color:#278361}.sim-layout{display:grid;grid-template-columns:2fr 1fr;gap:18px}.sim-panel{margin-bottom:15px}.sim-controls{display:flex;gap:10px;flex-wrap:wrap}.sim-btn,.btn{border:1px solid #c8d8e7;border-radius:9px;background:white;padding:10px 16px;cursor:pointer}.sim-btn.primary,.btn-primary{background:#426f97;color:white}.sim-stage-tabs{display:flex;flex-wrap:wrap;gap:8px}.sim-stage-tab{border:1px solid #d7e4ef;padding:10px;border-radius:8px;cursor:pointer}.sim-stage-tab.active{background:#eaf3fa}.warehouse-scene{min-height:260px;background:#f0f6fc;border-radius:12px;padding:18px}.sim-progress-track{height:10px;background:#e3ebf3;border-radius:15px;overflow:hidden}.sim-progress-fill{height:100%;background:#6195bf}.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.kpi-value{font-size:26px;font-weight:700}.panel{margin:18px 0}.hidden{display:none!important}.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}th{background:#f4f8fb}.actions{display:flex;gap:10px;flex-wrap:wrap}.search{padding:10px;border:1px solid var(--line);border-radius:8px}@media(max-width:1000px){.overview-grid,.kpis{grid-template-columns:repeat(2,1fr)}.process-grid{grid-template-columns:repeat(3,1fr)}.sim-layout{grid-template-columns:1fr}}@media(max-width:600px){.container,.page{padding:16px}.overview-grid,.process-grid,.kpis{grid-template-columns:1fr}.page-heading{display:block}.overview-card h2{font-size:26px}}
+
+/* v2 navigation and links */
+.topbar .navigation{grid-column:1/-1;display:flex;gap:8px;flex-wrap:wrap;padding-top:14px}.topbar .navigation a{padding:12px 15px;border-radius:10px;text-decoration:none;color:#58718b;font-weight:500}.topbar .navigation a.active,.topbar .navigation a:hover{background:#eaf2f8;color:#315f85}.process-card{text-decoration:none;color:inherit}.process-card:hover{border-color:#aac9e2}.process-data span{display:block;margin:5px 0}.progress-label{display:flex;justify-content:space-between;margin-top:7px}.topbar{background:#fff}.topbar .user{grid-column:2;grid-row:1}
+
+/* Hit areas follow the labels embedded in the warehouse image. */
+.warehouse-map { padding: 0; min-height: 0; }
+.warehouse-map .hotspot {
+    inset: auto;
+    left: var(--x);
+    top: var(--y);
+    width: var(--w);
+    height: 10.3%;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+}
+.warehouse-map .hotspot:hover, .warehouse-map .hotspot:focus-visible {
+    outline: 3px solid #146bc5;
+    outline-offset: 2px;
+}
+
+.topbar .data-import-link {
+    padding: 7px 10px;
+    border: 1px solid #bfd4e5;
+    border-radius: 8px;
+    background: #edf5fc;
+    color: #274866;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.topbar .data-import-link:hover,
+.topbar .data-import-link:focus-visible {
+    background: #dcecf9;
+}
+
+#import-data {
+    display: block;
+    width: 100%;
+    min-height: 130px;
+    margin: 8px 0 16px;
+    padding: 12px;
+    border: 1px solid #bfd4e5;
+    border-radius: 8px;
+}
+
+/* Layout aligned with the supplied walkthrough. */
+body {background:#f5f6f9;color:#34434f;font-family:"Segoe UI",Arial,sans-serif;}
+.topbar {background:#fff;border-bottom:1px solid #eef0f3;box-shadow:0 3px 12px #24374405;}
+.topbar .navigation a {font-weight:500;border-radius:4px;padding:10px 12px;}
+.topbar .navigation a.active {background:#edf3f4;color:#324d5b;}
+.overview-card,.panel,.process-card,.ai-section,.sim-panel,.warehouse-section {
+border:1px solid #edf0f2;border-radius:7px;background:white;box-shadow:0 3px 12px #24374404;}
+.warehouse-section {padding:24px;}
+.overview-card h2 {font-size:27px;color:#34434f;}
+.ai-section {display:block;}
+.comparison {display:grid;grid-template-columns:100px 1fr 90px;align-items:center;gap:15px;margin:12px 0;font-size:13px;}
+.comparison>div {height:9px;background:#edf0f3;border-radius:7px;}
+.comparison i {display:block;height:100%;border-radius:7px;background:#6389a3;}
+.comparison b {font-weight:500;text-align:right;}
+.chart-group {margin:24px 0;}
+@media(max-width:600px){.comparison{grid-template-columns:75px 1fr 70px;gap:6px;}.warehouse-section{padding:10px;}}
+.capacity-controls {display:flex;gap:16px;align-items:end;flex-wrap:wrap;}
+.capacity-controls label {display:grid;gap:6px;flex:1;min-width:150px;}
+.capacity-controls input,.capacity-controls select {width:100%;padding:10px;border:1px solid #c8d8e7;border-radius:7px;background:white;}
+@media(min-width:700px){.topbar .brand-icon{width:44px;height:44px;min-width:44px;font-size:24px;border-radius:8px;}.topbar .brand h2{font-size:20px;}.topbar .brand small{font-size:12px;}.topbar{gap:14px 24px;}}

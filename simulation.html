@@ -381,6 +381,80 @@
                 padding: 10px 7px;
             }
         }
+
+/* Công đoạn bình thường */
+.sim-stage-tab {
+    background: #ffffff !important;
+    color: #334155 !important;
+    border: 2px solid #d5e0ea !important;
+    border-radius: 12px !important;
+    opacity: 1 !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+
+.sim-stage-tab span,
+.sim-stage-tab strong {
+    color: #334155 !important;
+    opacity: 1 !important;
+}
+
+/* Công đoạn đang được chọn */
+.sim-stage-tab.active {
+    background: #1674c3 !important;
+    border-color: #0e5eab !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    box-shadow: 0 5px 15px rgba(22,116,195,.25);
+    transform: translateY(-2px);
+}
+
+.sim-stage-tab.active span,
+.sim-stage-tab.active strong {
+    color: #ffffff !important;
+}
+
+/* Nút chạy mô phỏng */
+#simPlayBtn {
+    background: #16a34a !important;
+    border: 1px solid #15803d !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    opacity: 1 !important;
+}
+
+#simPlayBtn:hover:not(:disabled) {
+    background: #15803d !important;
+}
+
+#simPlayBtn:disabled {
+    background: #86bfa0 !important;
+    color: #ffffff !important;
+    cursor: not-allowed;
+}
+
+/* Các khung trong kho mô phỏng */
+.sim-panel,
+.warehouse-scene {
+    background: #ffffff !important;
+    border: 2px solid #dce5ef !important;
+    border-radius: 14px !important;
+    box-shadow: 0 3px 12px rgba(30,50,80,.06);
+}
+
+.sim-panel {
+    padding: 20px !important;
+}
+
+.warehouse-scene {
+    background: #f8fbff !important;
+    padding: 20px !important;
+}
+
+/* Tăng độ rõ của tiêu đề */
+.sim-panel-heading h2 {
+    color: #243b53 !important;
+    font-weight: 700 !important;
+}        
     </style>
 </head>
 

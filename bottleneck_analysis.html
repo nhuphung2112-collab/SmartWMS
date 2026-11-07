@@ -2,24 +2,603 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phân tích điểm nghẽn | SmartWMS</title>
 
-    <title>Phân tích điểm nghẽn | SmartWMS</title>
+<link rel="stylesheet" href="style.css?v=7">
+<link rel="stylesheet" href="smartwms-unified.css?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- CSS gốc -->
-    <link rel="stylesheet" href="style.css?v=7">
+<style>
+/* ===== TRANG PHÂN TÍCH ĐIỂM NGHẼN ===== */
 
-    <!-- Font chữ chung -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+body[data-mode="bottleneck"] {
+    font-family: "Be Vietnam Pro", sans-serif;
+    background: #f4f6fa;
+    color: #294866;
+}
 
-    <!-- CSS đồng bộ toàn website -->
-    <link rel="stylesheet" href="smartwms-unified.css?v=1">
+.bn-main {
+    width: calc(100% - 64px);
+    max-width: 1320px;
+    margin: 38px auto 70px;
+}
+
+.bn-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.bn-eyebrow {
+    color: #6487a9;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.bn-heading h1 {
+    color: #294866;
+    font-size: 29px;
+    margin: 10px 0;
+}
+
+.bn-heading p,
+.bn-subtitle {
+    color: #788ca2;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.bn-back {
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #dce6f0;
+    border-radius: 9px;
+    color: #365f83;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+/* ===== CẢNH BÁO CHÍNH ===== */
+
+.bn-alert {
+    background: #fff7f5;
+    border: 1px solid #f0d6d0;
+    border-left: 5px solid #d65a4c;
+    border-radius: 15px;
+    padding: 26px;
+    margin-bottom: 20px;
+}
+
+.bn-alert.medium {
+    background: #fffbf1;
+    border-color: #efdfb8;
+    border-left-color: #c89532;
+}
+
+.bn-alert.low {
+    background: #f1faf5;
+    border-color: #cfe8da;
+    border-left-color: #31946b;
+}
+
+.bn-alert-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.bn-alert-label {
+    color: #b4483d;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.bn-alert.medium .bn-alert-label {
+    color: #a6771e;
+}
+
+.bn-alert.low .bn-alert-label {
+    color: #287d58;
+}
+
+.bn-badge {
+    display: inline-flex;
+    padding: 8px 13px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #ffe8e4;
+    color: #b43e31;
+}
+
+.bn-badge.medium {
+    background: #fff0d0;
+    color: #9d6c13;
+}
+
+.bn-badge.low {
+    background: #e3f4e9;
+    color: #267c56;
+}
+
+.bn-alert h2 {
+    color: #294866;
+    font-size: 26px;
+    margin: 18px 0 9px;
+}
+
+.bn-alert-description {
+    color: #7d8997;
+    font-size: 12px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.bn-alert-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.bn-alert-metric {
+    background: #fff;
+    border: 1px solid #e9e7e5;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+.bn-alert-metric span {
+    display: block;
+    color: #8191a3;
+    font-size: 11px;
+    margin-bottom: 9px;
+}
+
+.bn-alert-metric strong {
+    display: block;
+    color: #294866;
+    font-size: 23px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.bn-alert-metric .bn-danger {
+    color: #c34e40;
+}
+
+.bn-alert.medium .bn-danger {
+    color: #a6771e;
+}
+
+.bn-alert.low .bn-danger {
+    color: #287d58;
+}
+
+.bn-progress {
+    height: 9px;
+    background: #e9eef3;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.bn-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #d65a4c;
+    border-radius: 20px;
+    transition: width .3s ease;
+}
+
+.bn-alert.medium .bn-progress-fill {
+    background: #c89532;
+}
+
+.bn-alert.low .bn-progress-fill {
+    background: #31946b;
+}
+
+.bn-progress-caption {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+    font-size: 11px;
+    color: #8192a5;
+}
+
+/* ===== KPI ===== */
+
+.bn-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.bn-kpi {
+    background: #fff;
+    border: 1px solid #e2eaf2;
+    border-radius: 12px;
+    padding: 20px;
+    min-width: 0;
+}
+
+.bn-kpi-label {
+    display: block;
+    color: #778ca2;
+    font-size: 11px;
+    margin-bottom: 12px;
+}
+
+.bn-kpi strong {
+    display: block;
+    color: #294866;
+    font-size: 21px;
+    overflow-wrap: anywhere;
+}
+
+.bn-kpi small {
+    display: block;
+    color: #8798a9;
+    font-size: 11px;
+    line-height: 1.7;
+    margin-top: 9px;
+}
+
+/* ===== KHUNG NỘI DUNG ===== */
+
+.bn-panel {
+    background: #fff;
+    border: 1px solid #e2eaf2;
+    border-radius: 15px;
+    padding: 26px;
+    margin-bottom: 20px;
+}
+
+.bn-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+}
+
+.bn-panel h2 {
+    color: #294866;
+    font-size: 19px;
+    margin: 0 0 8px;
+}
+
+.bn-panel p {
+    color: #788ca2;
+    font-size: 12px;
+    line-height: 1.8;
+    margin: 0;
+}
+
+.bn-info-badge {
+    display: inline-block;
+    background: #eef4fa;
+    color: #537697;
+    border-radius: 30px;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* ===== BẢNG ===== */
+
+.bn-table-wrap {
+    overflow-x: auto;
+}
+
+.bn-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.bn-table th {
+    padding: 14px 12px;
+    background: #f3f7fb;
+    color: #54708b;
+    font-size: 11px;
+    text-align: left;
+    font-weight: 700;
+}
+
+.bn-table td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #e8eef4;
+    color: #354e67;
+}
+
+.bn-table tr:last-child td {
+    border-bottom: none;
+}
+
+.bn-table tr.highlight td {
+    background: #fff9f7;
+}
+
+.bn-table a {
+    color: #2879bd;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.bn-load {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.bn-load-track {
+    width: 65px;
+    height: 6px;
+    background: #e8eef4;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.bn-load-fill {
+    display: block;
+    height: 100%;
+    background: #648caa;
+}
+
+.bn-load-fill.high {
+    background: #d65a4c;
+}
+
+.bn-load-fill.medium {
+    background: #c89532;
+}
+
+.bn-status {
+    display: inline-block;
+    background: #e8f5ed;
+    color: #267c56;
+    padding: 6px 10px;
+    border-radius: 30px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.bn-status.high {
+    background: #ffe9e5;
+    color: #b43e31;
+}
+
+.bn-status.medium {
+    background: #fff3d9;
+    color: #9d6c13;
+}
+
+/* ===== BIỂU ĐỒ ===== */
+
+.bn-chart-item {
+    margin-bottom: 21px;
+}
+
+.bn-chart-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 9px;
+    font-size: 12px;
+    color: #294866;
+}
+
+.bn-chart-track {
+    height: 10px;
+    background: #edf2f6;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.bn-chart-fill {
+    height: 100%;
+    background: #648caa;
+    border-radius: 20px;
+}
+
+.bn-chart-note {
+    color: #8798a9;
+    font-size: 11px;
+    margin-top: 8px;
+}
+
+/* ===== FORM + ĐỀ XUẤT ===== */
+
+.bn-bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.bn-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.bn-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #45627f;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.bn-field.full {
+    grid-column: 1 / -1;
+}
+
+.bn-field input,
+.bn-field select {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid #d5e2ed;
+    border-radius: 8px;
+    background: #fff;
+    color: #294866;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.bn-field input:focus,
+.bn-field select:focus {
+    outline: 2px solid #b7d5ec;
+    border-color: #2879bd;
+}
+
+.bn-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 17px;
+    background: #2879bd;
+    color: #fff !important;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.bn-btn:hover {
+    background: #1d639c;
+}
+
+.bn-form .bn-btn {
+    grid-column: 1 / -1;
+}
+
+.bn-form-status {
+    color: #287d58 !important;
+    font-size: 11px !important;
+    margin-top: 12px !important;
+    min-height: 18px;
+}
+
+.bn-recommend {
+    background: #f5f9fd;
+    border: 1px solid #dce8f3;
+    border-radius: 12px;
+    padding: 21px;
+}
+
+.bn-recommend h3 {
+    color: #294866;
+    font-size: 18px;
+    margin: 0 0 12px;
+}
+
+.bn-recommend p {
+    color: #536e87;
+    font-size: 12px;
+    line-height: 1.9;
+}
+
+.bn-actions {
+    padding-left: 20px;
+    margin: 16px 0;
+    color: #536e87;
+    font-size: 12px;
+    line-height: 1.9;
+}
+
+.bn-actions li {
+    margin-bottom: 8px;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 1000px) {
+    .bn-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .bn-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .bn-main {
+        width: calc(100% - 28px);
+        margin: 24px auto;
+    }
+
+    .bn-heading {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .bn-heading h1 {
+        font-size: 23px;
+    }
+
+    .bn-alert,
+    .bn-panel {
+        padding: 17px;
+    }
+
+    .bn-alert h2 {
+        font-size: 21px;
+    }
+
+    .bn-alert-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .bn-kpi-grid {
+        gap: 9px;
+    }
+
+    .bn-kpi {
+        padding: 13px;
+    }
+
+    .bn-kpi strong {
+        font-size: 17px;
+    }
+
+    .bn-form {
+        grid-template-columns: 1fr;
+    }
+
+    .bn-field.full,
+    .bn-form .bn-btn {
+        grid-column: auto;
+    }
+}
+</style>
 </head>
 
 <body data-mode="bottleneck">
+
+<!-- THANH ĐIỀU HƯỚNG -->
 
 <header class="topbar">
     <div class="brand">
@@ -40,8 +619,7 @@
         <a href="stage.html?stage=shipping">Xuất hàng</a>
         <a href="ai_dashboard.html">Dự đoán AI</a>
         <a href="bottleneck_analysis.html"
-           class="active"
-           aria-current="page">
+           class="active" aria-current="page">
             Điểm nghẽn
         </a>
     </nav>
@@ -55,39 +633,705 @@
     </div>
 </header>
 
-<main class="container">
+<main class="bn-main">
 
-    <div class="page-heading">
+    <!-- TIÊU ĐỀ -->
+
+    <div class="bn-heading">
         <div>
+            <span class="bn-eyebrow">
+                WAREHOUSE PERFORMANCE
+            </span>
             <h1>Phân tích điểm nghẽn kho hàng</h1>
             <p>
-                Phân tích 5 công đoạn từ dữ liệu phiếu dùng chung.
+                Theo dõi tải công việc, năng lực xử lý
+                và đề xuất điều phối tại 5 công đoạn.
             </p>
         </div>
 
-        <a class="btn" href="index.html">
+        <a class="bn-back" href="index.html">
             ← Quay lại Tổng quan
         </a>
     </div>
 
-    <section class="panel">
-        <p id="video-summary"></p>
+    <!-- CẢNH BÁO CHÍNH -->
 
-        <p class="card-note">
-            Tỷ lệ tải = số thùng cần xử lý ÷ năng lực trong 2 giờ.
-            Trên 100% là quá tải, từ 50% đến 100% cần theo dõi.
-            Năng suất và nhân sự là giả định có thể điều chỉnh
-            ở trang Điểm nghẽn.
+    <section class="bn-alert" id="bn-alert" aria-live="polite">
+
+        <div class="bn-alert-top">
+            <span class="bn-alert-label">
+                ● KẾT QUẢ PHÂN TÍCH ĐIỂM NGHẼN
+            </span>
+
+            <span class="bn-badge" id="bn-risk-badge">
+                Đang phân tích
+            </span>
+        </div>
+
+        <h2 id="bn-headline">
+            Đang phân tích dữ liệu...
+        </h2>
+
+        <p class="bn-alert-description" id="bn-description">
+            Kết quả dựa trên khối lượng công việc
+            và năng lực xử lý trong 2 giờ.
         </p>
+
+        <div class="bn-alert-metrics">
+
+            <div class="bn-alert-metric">
+                <span>Khối lượng cần xử lý</span>
+                <strong id="bn-workload">—</strong>
+            </div>
+
+            <div class="bn-alert-metric">
+                <span>Tỷ lệ tải trong 2 giờ</span>
+                <strong id="bn-percent" class="bn-danger">—</strong>
+            </div>
+
+            <div class="bn-alert-metric">
+                <span>Thời gian giải phóng ước tính</span>
+                <strong id="bn-queue">—</strong>
+            </div>
+
+        </div>
+
+        <div class="bn-progress">
+            <div class="bn-progress-fill"
+                 id="bn-progress-fill"></div>
+        </div>
+
+        <div class="bn-progress-caption">
+            <span>Mức sử dụng năng lực</span>
+            <span>Ngưỡng quá tải: trên 100%</span>
+        </div>
+
     </section>
 
-    <div id="video-results"></div>
+    <!-- CHỈ SỐ KPI -->
+
+    <div class="bn-kpi-grid" id="bn-kpis"></div>
+
+    <!-- BẢNG 5 CÔNG ĐOẠN -->
+
+    <section class="bn-panel">
+
+        <div class="bn-panel-header">
+            <div>
+                <h2>Khối lượng và năng lực theo công đoạn</h2>
+                <p>
+                    So sánh khối lượng chờ xử lý,
+                    năng lực và mức độ tải của 5 công đoạn.
+                </p>
+            </div>
+
+            <span class="bn-info-badge">
+                Khung đánh giá: 2 giờ
+            </span>
+        </div>
+
+        <div class="bn-table-wrap">
+            <table class="bn-table">
+                <thead>
+                    <tr>
+                        <th>Công đoạn</th>
+                        <th>Phiếu chờ</th>
+                        <th>Đang xử lý</th>
+                        <th>Sẵn sàng tạo phiếu</th>
+                        <th>Thùng cần xử lý</th>
+                        <th>Năng lực / 2 giờ</th>
+                        <th>Tỷ lệ tải</th>
+                        <th>Đánh giá</th>
+                    </tr>
+                </thead>
+
+                <tbody id="bn-table-body"></tbody>
+            </table>
+        </div>
+
+    </section>
+
+    <!-- BIỂU ĐỒ THỜI GIAN -->
+
+    <section class="bn-panel">
+
+        <div class="bn-panel-header">
+            <div>
+                <h2>Thời gian xử lý trung bình một phiếu</h2>
+                <p>
+                    So sánh thời gian xử lý ước tính
+                    giữa các công đoạn.
+                </p>
+            </div>
+        </div>
+
+        <div id="bn-chart"></div>
+
+        <p>
+            Thời gian thực tế chỉ được hiển thị
+            khi hệ thống có ghi nhận thao tác.
+        </p>
+
+    </section>
+
+    <!-- ĐIỀU CHỈNH + ĐỀ XUẤT -->
+
+    <div class="bn-bottom-grid">
+
+        <section class="bn-panel">
+
+            <div class="bn-panel-header">
+                <div>
+                    <h2>Điều chỉnh năng lực mô phỏng</h2>
+                    <p>
+                        Chọn công đoạn và thay đổi nhân sự,
+                        năng suất để đánh giá khả năng giảm nghẽn.
+                    </p>
+                </div>
+            </div>
+
+            <form class="bn-form" id="bn-capacity-form">
+
+                <label class="bn-field full">
+                    Công đoạn
+                    <select name="stage" required>
+                        <option value="receiving">Nhận hàng</option>
+                        <option value="putaway">Cất hàng</option>
+                        <option value="picking">Lấy hàng</option>
+                        <option value="packing">Đóng gói</option>
+                        <option value="shipping">Xuất hàng</option>
+                    </select>
+                </label>
+
+                <label class="bn-field">
+                    Số nhân viên
+                    <input
+                        type="number"
+                        name="workers"
+                        min="1"
+                        max="20"
+                        step="1"
+                        required
+                    >
+                </label>
+
+                <label class="bn-field">
+                    Năng suất (thùng/người/giờ)
+                    <input
+                        type="number"
+                        name="perHour"
+                        min="1"
+                        max="500"
+                        step="1"
+                        required
+                    >
+                </label>
+
+                <button type="submit" class="bn-btn">
+                    Áp dụng năng lực mới
+                </button>
+
+            </form>
+
+            <p class="bn-form-status"
+               id="bn-capacity-status"
+               role="status"></p>
+
+        </section>
+
+        <section class="bn-panel">
+
+            <div class="bn-panel-header">
+                <div>
+                    <h2>Đề xuất xử lý ưu tiên</h2>
+                    <p>
+                        Khuyến nghị dựa trên công đoạn
+                        có tỷ lệ tải cao nhất.
+                    </p>
+                </div>
+
+                <span class="bn-badge" id="bn-action-badge">
+                    Đang phân tích
+                </span>
+            </div>
+
+            <div class="bn-recommend">
+
+                <h3 id="bn-action-title">
+                    Đang phân tích...
+                </h3>
+
+                <p id="bn-action-text"></p>
+
+                <ol class="bn-actions"
+                    id="bn-action-list"></ol>
+
+                <a class="bn-btn"
+                   id="bn-action-link"
+                   href="stage.html?stage=receiving">
+                    Mở công đoạn →
+                </a>
+
+            </div>
+
+        </section>
+
+    </div>
 
 </main>
 
-<!-- JavaScript xử lý dữ liệu và phân tích -->
 <script src="wms-demo.js?v=7"></script>
-<script src="wms-video.js?v=7"></script>
+
+<script>
+(function () {
+    "use strict";
+
+    const stageNames = {
+        receiving: "Nhận hàng",
+        putaway: "Cất hàng",
+        picking: "Lấy hàng",
+        packing: "Đóng gói",
+        shipping: "Xuất hàng"
+    };
+
+    const riskNames = {
+        HIGH: "Quá tải",
+        MEDIUM: "Cần theo dõi",
+        LOW: "Trong năng lực"
+    };
+
+    const recommendations = {
+        receiving: [
+            "Ưu tiên phiếu đến trước và tăng nhân sự kiểm đếm.",
+            "Hoàn tất QC để chuyển hàng đạt sang Cất hàng.",
+            "Theo dõi tải tại Cất hàng sau khi tăng tốc nhận hàng."
+        ],
+        putaway: [
+            "Ưu tiên các lô đã đạt QC đang chờ cất.",
+            "Phân bổ vị trí lưu trữ để hạn chế di chuyển vòng.",
+            "Theo dõi lượng tồn chuyển sang công đoạn Lấy hàng."
+        ],
+        picking: [
+            "Ưu tiên các đơn đến hạn xử lý.",
+            "Kiểm tra vị trí tồn kho để tránh lấy hàng sai.",
+            "Chuyển phiếu hoàn thành sang Đóng gói kịp thời."
+        ],
+        packing: [
+            "Ưu tiên phiếu Lấy hàng đã hoàn thành.",
+            "Bố trí nhân sự và vật tư đóng gói hợp lý.",
+            "Kiểm tra số lượng kiện trước khi chuyển sang Xuất hàng."
+        ],
+        shipping: [
+            "Ưu tiên đơn đã đóng gói và sẵn sàng xuất.",
+            "Chuẩn bị phương tiện, lịch xe và nhân sự bàn giao.",
+            "Đối chiếu kiện hàng và cập nhật trạng thái xuất kho."
+        ]
+    };
+
+    const $ = id => document.getElementById(id);
+
+    const format = value =>
+        Number(value || 0).toLocaleString("vi-VN", {
+            maximumFractionDigits: 1
+        });
+
+    let stats = [];
+
+    function getRiskClass(risk) {
+        return risk === "HIGH"
+            ? "high"
+            : risk === "MEDIUM"
+                ? "medium"
+                : "low";
+    }
+
+    function render() {
+        if (
+            !window.WmsDemo ||
+            typeof WmsDemo.analysis !== "function"
+        ) {
+            return;
+        }
+
+        stats = WmsDemo.analysis();
+
+        if (!Array.isArray(stats) || !stats.length) {
+            return;
+        }
+
+        const worst = [...stats].sort(
+            (a, b) =>
+                Number(b.loadPercent || 0) -
+                Number(a.loadPercent || 0)
+        )[0];
+
+        const workload = Number(worst.workload || 0);
+        const percent = Number(worst.loadPercent || 0);
+        const risk = workload <= 0 ? "LOW" : worst.risk;
+        const riskClass = getRiskClass(risk);
+        const stageName = stageNames[worst.stage];
+
+        // ===== CẢNH BÁO CHÍNH =====
+
+        $("bn-alert").className =
+            "bn-alert " + (
+                riskClass === "high" ? "" : riskClass
+            );
+
+        $("bn-risk-badge").className =
+            "bn-badge " + riskClass;
+
+        $("bn-risk-badge").textContent =
+            riskNames[risk];
+
+        $("bn-headline").textContent =
+            workload <= 0
+                ? "Không phát hiện điểm nghẽn hiện tại"
+                : stageName + (
+                    risk === "HIGH"
+                        ? " đang quá tải"
+                        : risk === "MEDIUM"
+                            ? " cần theo dõi"
+                            : " đang trong năng lực"
+                );
+
+        $("bn-description").textContent =
+            workload <= 0
+                ? "Các công đoạn hiện không có khối lượng cần xử lý."
+                : "Đây là công đoạn có tỷ lệ sử dụng năng lực cao nhất trong hệ thống.";
+
+        $("bn-workload").textContent =
+            format(workload) + " thùng";
+
+        $("bn-percent").textContent =
+            format(percent) + "%";
+
+        $("bn-queue").textContent =
+            format(worst.queueMinutes) + " phút";
+
+        $("bn-progress-fill").style.width =
+            Math.min(100, Math.max(0, percent)) + "%";
+
+        // ===== KPI =====
+
+        const totalWaiting = stats.reduce(
+            (sum, item) => sum + Number(item.waiting || 0),
+            0
+        );
+
+        const totalTickets = stats.reduce(
+            (sum, item) => sum + Number(item.total || 0),
+            0
+        );
+
+        const kpis = [
+            {
+                label: "Công đoạn cần ưu tiên",
+                value: stageName,
+                note: riskNames[risk]
+            },
+            {
+                label: "Năng lực xử lý",
+                value: format(worst.capacity) + " thùng/giờ",
+                note:
+                    worst.workers + " người × " +
+                    format(worst.perHour) +
+                    " thùng/người/giờ"
+            },
+            {
+                label: "Phiếu đang chờ",
+                value: format(totalWaiting) + " phiếu",
+                note: "Tổng trên 5 công đoạn"
+            },
+            {
+                label: "Tổng số phiếu",
+                value: format(totalTickets) + " phiếu",
+                note: "Bao gồm các trạng thái hiện có"
+            }
+        ];
+
+        $("bn-kpis").innerHTML = kpis.map(item => `
+            <div class="bn-kpi">
+                <span class="bn-kpi-label">
+                    ${item.label}
+                </span>
+                <strong>${item.value}</strong>
+                <small>${item.note}</small>
+            </div>
+        `).join("");
+
+        // ===== BẢNG CÔNG ĐOẠN =====
+
+        $("bn-table-body").innerHTML = stats.map(item => {
+            const cls = getRiskClass(item.risk);
+            const load = Number(item.loadPercent || 0);
+            const highlight =
+                item.stage === worst.stage && workload > 0;
+
+            return `
+                <tr class="${highlight ? "highlight" : ""}">
+                    <td>
+                        <a href="stage.html?stage=${item.stage}">
+                            ${stageNames[item.stage]}
+                        </a>
+                    </td>
+
+                    <td>${format(item.waiting)}</td>
+                    <td>${format(item.active)}</td>
+                    <td>${format(item.ready)}</td>
+
+                    <td>
+                        <strong>${format(item.workload)}</strong>
+                    </td>
+
+                    <td>${format(item.capacity * 2)}</td>
+
+                    <td>
+                        <div class="bn-load">
+                            <span class="bn-load-track">
+                                <span
+                                    class="bn-load-fill ${cls}"
+                                    style="width:${Math.min(100, Math.max(0, load))}%">
+                                </span>
+                            </span>
+                            <strong>${format(load)}%</strong>
+                        </div>
+                    </td>
+
+                    <td>
+                        <span class="bn-status ${cls}">
+                            ${riskNames[item.risk]}
+                        </span>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+
+        // ===== BIỂU ĐỒ THỜI GIAN =====
+
+        const maxAverage = Math.max(
+            1,
+            ...stats.map(item => Number(item.average || 0))
+        );
+
+        $("bn-chart").innerHTML = stats.map(item => {
+            const average = Number(item.average || 0);
+            const width = 100 * average / maxAverage;
+
+            const actualText =
+                item.actual === null
+                    ? "Chưa ghi nhận thời gian thực tế"
+                    : "Thời gian thực tế: " +
+                      format(item.actual) + " phút";
+
+            return `
+                <div class="bn-chart-item">
+
+                    <div class="bn-chart-heading">
+                        <strong>${stageNames[item.stage]}</strong>
+                        <strong>${format(average)} phút</strong>
+                    </div>
+
+                    <div class="bn-chart-track">
+                        <div
+                            class="bn-chart-fill"
+                            style="width:${width}%">
+                        </div>
+                    </div>
+
+                    <div class="bn-chart-note">
+                        ${actualText}
+                    </div>
+
+                </div>
+            `;
+        }).join("");
+
+        // ===== ĐỀ XUẤT XỬ LÝ =====
+
+        const requiredWorkers = workload > 0
+            ? Math.ceil(
+                workload / (2 * Number(worst.perHour))
+            )
+            : 0;
+
+        const extraWorkers = Math.max(
+            0,
+            requiredWorkers - Number(worst.workers)
+        );
+
+        $("bn-action-badge").className =
+            "bn-badge " + riskClass;
+
+        $("bn-action-badge").textContent =
+            riskNames[risk];
+
+        $("bn-action-title").textContent =
+            risk === "HIGH"
+                ? "Ưu tiên giảm tải tại " + stageName
+                : risk === "MEDIUM"
+                    ? "Theo dõi công đoạn " + stageName
+                    : "Duy trì vận hành ổn định";
+
+        if (risk === "HIGH") {
+            $("bn-action-text").textContent =
+                "Để xử lý " + format(workload) +
+                " thùng trong 2 giờ với năng suất " +
+                format(worst.perHour) +
+                " thùng/người/giờ, cần khoảng " +
+                format(requiredWorkers) +
+                " nhân viên. Hiện đang có " +
+                format(worst.workers) +
+                " nhân viên. " +
+                (
+                    extraWorkers > 0
+                        ? "Ước tính cần bổ sung " +
+                          format(extraWorkers) + " người."
+                        : "Cần rà soát lại cách phân bổ công việc."
+                );
+
+        } else if (risk === "MEDIUM") {
+            $("bn-action-text").textContent =
+                "Công đoạn " + stageName +
+                " đang sử dụng " + format(percent) +
+                "% năng lực trong 2 giờ. " +
+                "Cần theo dõi để hạn chế nguy cơ ùn tắc.";
+
+        } else {
+            $("bn-action-text").textContent =
+                workload > 0
+                    ? "Khối lượng hiện nằm trong năng lực xử lý dự kiến."
+                    : "Các công đoạn hiện không có khối lượng chờ xử lý.";
+        }
+
+        $("bn-action-list").innerHTML =
+            recommendations[worst.stage]
+                .map(text => `<li>${text}</li>`)
+                .join("");
+
+        $("bn-action-link").href =
+            "stage.html?stage=" + worst.stage;
+
+        // ===== ĐỒNG BỘ FORM =====
+
+        const form = $("bn-capacity-form");
+        const select = form.elements.stage;
+        const previousStage = select.value;
+
+        if (
+            stats.some(item => item.stage === previousStage)
+        ) {
+            select.value = previousStage;
+        } else {
+            select.value = worst.stage;
+        }
+
+        fillForm();
+    }
+
+    // ===== TỰ ĐIỀN THÔNG SỐ KHI CHỌN CÔNG ĐOẠN =====
+
+    function fillForm() {
+        const form = $("bn-capacity-form");
+        const selectedStage = form.elements.stage.value;
+
+        const item = stats.find(
+            row => row.stage === selectedStage
+        );
+
+        if (!item) return;
+
+        form.elements.workers.value = item.workers;
+        form.elements.perHour.value = item.perHour;
+    }
+
+    $("bn-capacity-form")
+        .elements.stage
+        .addEventListener("change", fillForm);
+
+    // ===== ÁP DỤNG NĂNG LỰC MỚI =====
+
+    $("bn-capacity-form").addEventListener(
+        "submit",
+        async function (event) {
+            event.preventDefault();
+
+            const form = event.currentTarget;
+
+            const stage = form.elements.stage.value;
+            const workers = Number(form.elements.workers.value);
+            const perHour = Number(form.elements.perHour.value);
+
+            const status = $("bn-capacity-status");
+
+            if (
+                !Number.isInteger(workers) ||
+                workers < 1 ||
+                workers > 20 ||
+                !Number.isInteger(perHour) ||
+                perHour < 1 ||
+                perHour > 500
+            ) {
+                status.textContent =
+                    "Vui lòng nhập 1–20 nhân viên và " +
+                    "1–500 thùng/người/giờ.";
+                return;
+            }
+
+            try {
+                await WmsDemo.setCapacity(
+                    stage,
+                    workers,
+                    perHour
+                );
+
+                render();
+
+                status.textContent =
+                    "Đã cập nhật năng lực cho " +
+                    stageNames[stage] +
+                    ". Các chỉ số và đề xuất đã được tính lại.";
+
+            } catch (error) {
+                status.textContent =
+                    error.message ||
+                    "Không thể cập nhật năng lực.";
+            }
+        }
+    );
+
+    // ===== KHỞI TẠO =====
+
+    function safeRender() {
+        try {
+            render();
+        } catch (error) {
+            console.error(
+                "Lỗi phân tích điểm nghẽn:",
+                error
+            );
+
+            $("bn-headline").textContent =
+                "Không thể tải dữ liệu phân tích";
+        }
+    }
+
+    safeRender();
+
+    window.addEventListener("pageshow", safeRender);
+    window.addEventListener("wms:change", safeRender);
+
+    window.addEventListener("storage", function (event) {
+        if (
+            window.WmsDemo &&
+            event.key === WmsDemo.storageKey
+        ) {
+            safeRender();
+        }
+    });
+
+})();
+</script>
 
 </body>
 </html>

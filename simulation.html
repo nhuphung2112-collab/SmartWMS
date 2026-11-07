@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WMS - Kho mô phỏng</title>
-    <link rel="stylesheet" href="style.css?v=7">
+    <link rel="stylesheet" href="style.css">
 
     <style>
         /* CSS riêng cho trang mô phỏng */
@@ -403,12 +403,12 @@
         <a href="stage.html?stage=picking">Lấy hàng</a>
         <a href="stage.html?stage=packing">Đóng gói</a>
         <a href="stage.html?stage=shipping">Xuất hàng</a>
-        <a href="ai_dashboard.html">Dự kiến xử lý</a>
-        <a href="bottleneck_analysis.html">Điểm nghẽn</a>
+        <a href="ai_dashboard.php">Dự đoán AI</a>
+        <a href="ai_dashboard.php">Điểm nghẽn</a>
     </nav>
 
     <div class="user">
-        <a class="data-import-link" href="import.html">Nhập dữ liệu</a><span class="avatar">QL</span>
+        <span class="avatar">QL</span>
         <span>Quản lý kho</span>
     </div>
 </header>
@@ -433,7 +433,7 @@
         <div class="sim-panel">
             <div class="sim-panel-heading">
                 <h2>Sơ đồ kho hàng</h2>
-                <span class="sim-live" id="simLive">● Sẵn sàng</span>
+                <span class="sim-live">● Đang mô phỏng</span>
             </div>
 
             <div class="sim-stage-tabs" id="simStageTabs">
@@ -601,8 +601,6 @@
                         <rect x="28" y="7" width="11" height="9" fill="#fff" stroke="#a98051" stroke-width=".7"/>
                     </g>
 
-                    <rect id="simZone" x="25" y="85" width="175" height="295" rx="10"
-                          fill="none" stroke="#1675c5" stroke-width="4" pointer-events="none"/>
                     <!-- Nhãn mô tả vị trí hoạt động -->
                     <g id="sceneLabel">
                         <rect x="300" y="400" width="300" height="42" rx="8" fill="#fff" stroke="#dce4e9"/>
@@ -668,7 +666,6 @@
                 chất lượng trước khi xác nhận nhập.
             </p>
 
-            <p id="simQueue" aria-live="polite"></p>
             <h3 class="sim-info-title">Các bước thực hiện</h3>
             <ol class="sim-steps" id="simSteps">
                 <li><span class="sim-step-no">1</span><span>Xe tải đến khu vực tiếp nhận</span></li>
@@ -699,7 +696,6 @@
 
 </main>
 
-<script src="wms-demo.js?v=7"></script>
 <script>
     const simStages = [
         {
@@ -767,7 +763,6 @@
     let simIndex = 0;
     let simTimer = null;
     let simPlaying = false;
-    const stageKeys = ["receiving", "putaway", "picking", "packing", "shipping"];
 
     const $ = id => document.getElementById(id);
 
@@ -804,9 +799,7 @@
         if (simIndex === 0) {
             forklift.style.transform = "translate(75px, 300px)";
             load.style.transform = "translate(125px, 265px)";
-            worker.style.transform = "translate(155px, 175px)";
-            forklift.style.transform = "translate(40px, 300px)";
-            load.style.transform = "translate(93px, 295px)";
+            worker.style.transform = "translate(160px, 190px)";
             receivePallet.style.opacity = "1";
             receivePallet2.style.opacity = "1";
         }
@@ -846,9 +839,6 @@
             receivePallet2.style.opacity = "0.15";
         }
 
-        const zones = [[25, 175], [225, 150], [375, 150], [550, 150], [725, 150]];
-        $("simZone").setAttribute("x", zones[simIndex][0]);
-        $("simZone").setAttribute("width", zones[simIndex][1]);
         $("sceneLabelText").textContent = simStages[simIndex].label;
     }
 
@@ -881,13 +871,7 @@
         });
 
         $("simStatus").textContent =
-            simPlaying ? "● Đang mô phỏng" : "● Đang xem công đoạn";
-        $("simLive").textContent = simPlaying ? "● Đang chạy" : "● Xem mô phỏng";
-        const rows = WmsDemo.overview().stages[stageKeys[simIndex]];
-        const metrics = WmsDemo.analysis().find(item => item.stage === stageKeys[simIndex]);
-        const waiting = rows.filter(row => row.status === "PENDING").length;
-        const active = rows.filter(row => row.status === "IN_PROGRESS").length;
-        $("simQueue").textContent = rows.length + " phiếu · " + waiting + " chờ · " + active + " đang xử lý · " + metrics.workload + " thùng cần xử lý";
+            simIndex === 4 ? "● Hoàn tất quy trình" : "● Đang mô phỏng";
 
         simUpdateScene();
     }
@@ -914,9 +898,12 @@
     function simPlay() {
         if (simPlaying) return;
 
-        simIndex = 0;
+        if (simIndex >= 4) {
+            simIndex = 0;
+            simUpdate();
+        }
+
         simPlaying = true;
-        simUpdate();
         $("simPlayBtn").textContent = "▶ Đang chạy";
 
         simTimer = setInterval(() => {
@@ -926,7 +913,6 @@
             } else {
                 simStopTimer();
                 $("simStatus").textContent = "● Hoàn tất quy trình";
-                $("simLive").textContent = "● Hoàn tất";
             }
         }, 2500);
     }
@@ -934,12 +920,13 @@
     function simPause() {
         simStopTimer();
         $("simStatus").textContent = "Ⅱ Đã tạm dừng";
-        $("simLive").textContent = "● Tạm dừng";
     }
 
     function simReplay() {
         simStopTimer();
-        simPlay();
+        simIndex = 0;
+        simUpdate();
+        $("simStatus").textContent = "● Đã bắt đầu lại";
     }
 
     // Chọn trực tiếp từng công đoạn
@@ -957,9 +944,6 @@
 
     // Khởi tạo giao diện
     simUpdate();
-    window.addEventListener("storage", simUpdate);
-    window.addEventListener("pageshow", simUpdate);
-    window.addEventListener("wms:change", simUpdate);
 </script>
 
 </body>

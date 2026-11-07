@@ -31,7 +31,8 @@
     </nav>
 
     <div class="user">
-        <a class="data-import-link" href="import.html">Nhập dữ liệu</a><span class="avatar">QL</span>
+        <a class="data-import-link" href="import.html">Nhập dữ liệu</a>
+        <span class="avatar">QL</span>
         <span>Quản lý kho</span>
     </div>
 </header>
@@ -54,7 +55,7 @@
         <div class="overview-card">
             <span class="card-icon">📦</span>
             <p>Tổng lượng hàng nhập</p>
-          <h2>0 <small>thùng</small></h2>
+            <h2>0 <small>thùng</small></h2>
             <span class="card-note">Trong kỳ mô phỏng</span>
         </div>
 
@@ -68,14 +69,14 @@
         <div class="overview-card">
             <span class="card-icon">✓</span>
             <p>Đơn hàng đã xuất</p>
-           <h2>0 <small>đơn</small></h2>
+            <h2>0 <small>đơn</small></h2>
             <span class="card-note positive">Chưa có dữ liệu</span>
         </div>
 
         <div class="overview-card">
             <span class="card-icon">◷</span>
             <p>Đơn hàng chưa xuất</p>
-        <h2>0 <small>đơn</small></h2>
+            <h2>0 <small>đơn</small></h2>
             <span class="card-note warning-text">Gồm đơn chưa lấy, đang xử lý và chờ xuất</span>
         </div>
     </section>
@@ -90,16 +91,12 @@
         </div>
 
         <div class="warehouse-map">
-          <img src="warehouse.png" alt="Sơ đồ kho hàng">
+            <img src="warehouse.png" alt="Sơ đồ kho hàng">
 
             <a class="hotspot receiving" href="stage.html?stage=receiving" aria-label="Nhận hàng" style="--x:10.6%;--y:39.6%;--w:10.9%"></a>
-
             <a class="hotspot putaway" href="stage.html?stage=putaway" aria-label="Cất hàng" style="--x:32.5%;--y:24.4%;--w:10.2%"></a>
-
             <a class="hotspot picking" href="stage.html?stage=picking" aria-label="Lấy hàng" style="--x:44.8%;--y:39.5%;--w:10.0%"></a>
-
             <a class="hotspot packing" href="stage.html?stage=packing" aria-label="Đóng gói" style="--x:63.5%;--y:40.5%;--w:10.0%"></a>
-
             <a class="hotspot shipping" href="stage.html?stage=shipping" aria-label="Xuất hàng" style="--x:83.5%;--y:28.8%;--w:10.3%"></a>
         </div>
 
@@ -224,28 +221,54 @@
         </div>
     </section>
 
-    <section class="panel"><h2>Đối chiếu dòng hàng theo SKU</h2><p>Đơn vị thùng. Hàng thực nhận = hàng loại + chờ cất + tồn khả dụng + giữ cho lấy hàng + chờ đóng + chờ xuất + đã xuất.</p><div class="table-wrap"><table><thead><tr><th>SKU</th><th>Thực nhận</th><th>QC loại</th><th>Chờ cất</th><th>Tồn khả dụng</th><th>Giữ cho lấy</th><th>Chờ đóng</th><th>Chờ xuất</th><th>Đã xuất</th></tr></thead><tbody id="inventory-body"></tbody></table></div></section>
-    <footer>
-        <p>WMS Dashboard | Mô hình hệ thống quản lý kho phục vụ học tập</p>
-        <p>Dữ liệu trên website là dữ liệu mô phỏng.</p>
-    </footer>
+    <section class="panel">
+        <h2>Đối chiếu dòng hàng theo SKU</h2>
+        <p>Đơn vị thùng. Hàng thực nhận = hàng loại + chờ cất + tồn khả dụng + giữ cho lấy hàng + chờ đóng + chờ xuất + đã xuất.</p>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Thực nhận</th>
+                        <th>QC loại</th>
+                        <th>Chờ cất</th>
+                        <th>Tồn khả dụng</th>
+                        <th>Giữ cho lấy</th>
+                        <th>Chờ đóng</th>
+                        <th>Chờ xuất</th>
+                        <th>Đã xuất</th>
+                    </tr>
+                </thead>
+                <tbody id="inventory-body"></tbody>
+            </table>
+        </div>
+    </section>
 
 </main>
 
 <script src="wms-demo.js?v=7"></script>
 <script>
     document.getElementById("today").textContent = new Date().toLocaleDateString("vi-VN");
+
     function renderOverview() {
         const summary = WmsDemo.overview();
         const formatter = new Intl.NumberFormat("vi-VN", {maximumFractionDigits: 1});
         const cards = document.querySelectorAll(".overview-grid .overview-card");
-        const counts = [summary.received, summary.orders, summary.completed, summary.orders - summary.completed];
+        const counts = [
+            summary.received,
+            summary.orders,
+            summary.completed,
+            summary.orders - summary.completed
+        ];
+
         cards.forEach((card, i) => {
             card.querySelector("h2").firstChild.nodeValue = formatter.format(counts[i]) + " ";
         });
+
         cards[2].querySelector(".card-note").textContent = summary.orders
             ? formatter.format(100 * summary.completed / summary.orders) + "% tổng đơn hàng"
             : "Chưa có dữ liệu";
+
         document.querySelectorAll(".process-card").forEach(card => {
             const stage = new URL(card.href).searchParams.get("stage");
             const rows = summary.stages[stage];
@@ -255,23 +278,47 @@
             const completed = rows.length - pending - active;
             const percent = rows.length ? Math.round(100 * completed / rows.length) : 0;
             const status = card.querySelector(".status");
-            status.textContent = metric.risk === "HIGH" ? "Quá tải" : metric.workload ? "Có việc cần xử lý" : "Đã xử lý hết";
+
+            status.textContent = metric.risk === "HIGH"
+                ? "Quá tải"
+                : metric.workload
+                    ? "Có việc cần xử lý"
+                    : "Đã xử lý hết";
+
             status.classList.toggle("warning", metric.risk === "HIGH");
+
             const [waiting, processing] = card.querySelectorAll(".process-data b");
             waiting.textContent = pending + " phiếu";
-            card.querySelector(".process-data").title = metric.ready + " lô/đơn chưa tạo phiếu · " + metric.workload + " thùng cần xử lý";
+            card.querySelector(".process-data").title =
+                metric.ready + " lô/đơn chưa tạo phiếu · " +
+                metric.workload + " thùng cần xử lý";
             processing.textContent = active + " phiếu";
             card.querySelector(".progress-bar span").style.width = percent + "%";
-            card.querySelector(".progress-label b").textContent = rows.length ? percent + "%" : "—";
+            card.querySelector(".progress-label b").textContent =
+                rows.length ? percent + "%" : "—";
         });
+
         const inventory = WmsDemo.inventory();
-        document.getElementById("inventory-body").innerHTML = inventory.map(item => '<tr><td>'+item.sku+'</td><td>'+item.received+'</td><td>'+item.rejected+'</td><td>'+item.toStore+'</td><td>'+item.free+'</td><td>'+item.reserved+'</td><td>'+item.toPack+'</td><td>'+item.toShip+'</td><td>'+item.shipped+'</td></tr>').join('');
+        document.getElementById("inventory-body").innerHTML = inventory.map(item =>
+            '<tr><td>' + item.sku +
+            '</td><td>' + item.received +
+            '</td><td>' + item.rejected +
+            '</td><td>' + item.toStore +
+            '</td><td>' + item.free +
+            '</td><td>' + item.reserved +
+            '</td><td>' + item.toPack +
+            '</td><td>' + item.toShip +
+            '</td><td>' + item.shipped +
+            '</td></tr>'
+        ).join('');
     }
+
     renderOverview();
     window.addEventListener("pageshow", renderOverview);
     window.addEventListener("storage", renderOverview);
     window.addEventListener("wms:change", renderOverview);
 </script>
 
-<script src="wms-video.js?v=7"></script></body>
+<script src="wms-video.js?v=7"></script>
+</body>
 </html>

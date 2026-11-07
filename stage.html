@@ -396,6 +396,26 @@ tr:last-child td{border-bottom:0}
     .item-row>*:first-child{grid-column:span 2}
 }
 </style>
+
+<style>
+/* SMARTWMS - XÓA CẢ HAI KHUNG THÔNG BÁO */
+
+/* Khung số thùng, lô/đơn và năng lực */
+#stage-workload {
+    display: none !important;
+}
+
+/* Khung thông báo dữ liệu mô phỏng */
+main.page > p.notice:not(#stage-workload) {
+    display: none !important;
+}
+
+/* Ẩn cả khung thông báo nếu dùng thẻ div */
+main.page > div.notice {
+    display: none !important;
+}
+</style>
+
 </head>
 
 <body>

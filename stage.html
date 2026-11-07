@@ -1,6 +1,25 @@
 
 <!DOCTYPE html>
 <html lang="vi">
+
+<style>
+/* Ẩn thông báo mô phỏng dài ở đầu trang */
+main.page > p.notice:not(#stage-workload) {
+    display: none !important;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Đổi tên menu thành Dự đoán AI
+    document.querySelectorAll(".navigation a").forEach(function(link) {
+        if (link.getAttribute("href") === "ai_dashboard.html") {
+            link.textContent = "Dự đoán AI";
+        }
+    });
+});
+</script>
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

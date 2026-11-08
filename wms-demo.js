@@ -627,5 +627,19 @@ async function importStageScenario(stage, csvText) {
         };
     });
 }
-    return {request, overview, importReceivingCsv, analysis, inventory, setCapacity, resetScenario, restoreLegacy, exportData, storageKey: key};
+    
+    return {
+        request,
+        overview,
+        importReceivingCsv,
+        importStageScenario,
+        analysis,
+        inventory,
+        setCapacity,
+        resetScenario,
+        restoreLegacy,
+        exportData,
+        storageKey: key
+    };
 })();
+

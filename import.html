@@ -26,15 +26,37 @@
 </header>
 <main class="container">
     <section class="panel">
-        <h1>Nhập dữ liệu hàng nhận</h1>
+        <h1>Nhập dữ liệu mô phỏng SmartWMS</h1>
         <p>Tải CSV hoặc dán nội dung vào ô bên dưới. Dùng hai cột <code>sku</code> và <code>quantity</code>, với SKU <code>SKU-001</code> hoặc <code>SKU-002</code> và số lượng nguyên dương tính theo thùng.</p>
         <p>Mỗi lần lưu tạo một phiếu chờ tại Nhận hàng. Sau khi xác nhận QC, lô đạt xuất hiện ở Cất hàng và trở thành tồn có thể lấy khi phiếu cất hoàn tất.</p>
         <form id="import-form">
+<div style="margin-bottom:20px">
+    <label for="import-stage">
+        <strong>Chọn công đoạn nhập dữ liệu</strong>
+    </label>
+
+    <select id="import-stage"
+        style="display:block;width:100%;padding:12px;margin-top:10px;
+        border:1px solid #dce5ef;border-radius:8px">
+
+        <option value="receiving">Nhận hàng</option>
+        <option value="putaway">Cất hàng</option>
+        <option value="picking">Lấy hàng</option>
+        <option value="packing">Đóng gói</option>
+        <option value="shipping">Xuất hàng</option>
+    </select>
+
+    <p style="font-size:13px;color:#64748b">
+        Dữ liệu mới sẽ được cộng dồn vào kho hiện tại.
+        Hệ thống tự tạo lịch sử các công đoạn trước
+        và giữ công đoạn được chọn ở trạng thái chờ xử lý.
+    </p>
+</div>
             <p><label for="import-file">Chọn file CSV</label> <input id="import-file" type="file" accept=".csv,text/csv"></p>
             <p><a href="du-lieu-mau.csv" download>Tải CSV mẫu</a></p>
             <label for="import-data">Nội dung CSV</label>
             <textarea id="import-data" required spellcheck="false" placeholder="sku,quantity&#10;SKU-001,10&#10;SKU-002,8"></textarea>
-            <button class="btn btn-primary" type="submit">Lưu và mở Nhận hàng</button>
+            <button class="btn btn-primary" type="submit">Cộng dữ liệu và mở công đoạn</button>
             <p id="import-status" role="status"></p>
         </form>
     </section>
@@ -65,9 +87,15 @@
         event.preventDefault();
         submit.disabled = true;
         try {
-            await WmsDemo.importReceivingCsv(dataInput.value);
+            
+const selectedStage = document.getElementById("import-stage").value;
+
+await WmsDemo.importStageScenario(
+    selectedStage,
+    dataInput.value
+);
             submit.disabled = true;
-            location.assign("stage.html?stage=receiving");
+          location.assign("stage.html?stage=" + selectedStage);
         } catch (error) {
             submit.disabled = false;
             status.textContent = error.message;

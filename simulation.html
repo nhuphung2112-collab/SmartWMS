@@ -1,1025 +1,974 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WMS - Kho mô phỏng</title>
-    <link rel="stylesheet" href="style.css">
-
-    <style>
-        /* CSS riêng cho trang mô phỏng */
-        .sim-page {
-            padding-bottom: 35px;
-        }
-
-        .sim-intro {
-            margin-bottom: 22px;
-        }
-
-        .sim-intro h1 {
-            margin-bottom: 8px;
-        }
-
-        .sim-intro p {
-            color: var(--muted);
-            margin: 0;
-        }
-
-        .sim-layout {
-            display: grid;
-            grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.85fr);
-            gap: 20px;
-            align-items: stretch;
-        }
-
-        .sim-panel {
-            background: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            min-width: 0;
-        }
-
-        .sim-panel-heading {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .sim-panel-heading h2 {
-            font-size: 18px;
-            color: var(--navy);
-            margin: 0;
-        }
-
-        .sim-live {
-            color: var(--teal);
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .sim-stage-tabs {
-            display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .sim-stage-tab {
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            background: #f8fafb;
-            color: var(--text);
-            padding: 11px 5px;
-            cursor: pointer;
-            text-align: center;
-            font-family: inherit;
-            transition: .2s;
-        }
-
-        .sim-stage-tab span {
-            display: block;
-            font-size: 11px;
-            color: var(--muted);
-            margin-bottom: 4px;
-        }
-
-        .sim-stage-tab strong {
-            display: block;
-            font-size: 12px;
-        }
-
-        .sim-stage-tab.active {
-            background: var(--navy);
-            border-color: var(--navy);
-            color: white;
-        }
-
-        .sim-stage-tab.active span {
-            color: #dce7ef;
-        }
-
-        .warehouse-scene {
-            background: #f3f6f8;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .warehouse-scene svg {
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-
-        .sim-legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px 18px;
-            padding: 13px 2px 2px;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .sim-legend span {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .sim-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 3px;
-            display: inline-block;
-        }
-
-        .sim-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 9px;
-            margin-top: 17px;
-        }
-
-        .sim-btn {
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px 15px;
-            font-family: inherit;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            background: white;
-            color: var(--text);
-            transition: .2s;
-        }
-
-        .sim-btn:hover {
-            border-color: var(--blue);
-            color: var(--navy);
-        }
-
-        .sim-btn.primary {
-            background: var(--navy);
-            border-color: var(--navy);
-            color: white;
-        }
-
-        .sim-btn.primary:hover {
-            background: var(--navy-dark);
-        }
-
-        .sim-progress {
-            margin-top: 17px;
-        }
-
-        .sim-progress-top {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            font-size: 12px;
-            color: var(--muted);
-            margin-bottom: 7px;
-        }
-
-        .sim-progress-track {
-            height: 7px;
-            border-radius: 20px;
-            background: #e9eef2;
-            overflow: hidden;
-        }
-
-        .sim-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--teal);
-            border-radius: inherit;
-            transition: width .25s ease;
-        }
-
-        .sim-caption {
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.6;
-            margin: 13px 0 0;
-        }
-
-        .sim-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sim-stage-number {
-            color: var(--blue);
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-
-        .sim-details h2 {
-            color: var(--navy);
-            font-size: 23px;
-            margin: 0 0 4px;
-        }
-
-        .sim-en {
-            color: var(--muted);
-            font-size: 13px;
-            margin-bottom: 17px;
-        }
-
-        .sim-description {
-            color: var(--text);
-            font-size: 13px;
-            line-height: 1.7;
-            margin: 0 0 20px;
-        }
-
-        .sim-info-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--navy);
-            margin: 0 0 10px;
-        }
-
-        .sim-steps {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 20px;
-            display: grid;
-            gap: 10px;
-        }
-
-        .sim-steps li {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-            color: var(--text);
-            font-size: 12px;
-            line-height: 1.5;
-        }
-
-        .sim-step-no {
-            flex: 0 0 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: #edf2f6;
-            color: var(--navy);
-            display: grid;
-            place-items: center;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .sim-role {
-            padding: 14px;
-            background: #f2f6f8;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            margin-top: auto;
-        }
-
-        .sim-role strong {
-            display: block;
-            color: var(--navy);
-            font-size: 12px;
-            margin-bottom: 7px;
-        }
-
-        .sim-role p {
-            margin: 0;
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.65;
-        }
-
-        .sim-note {
-            margin-top: 18px;
-            padding: 13px 15px;
-            background: #fffaf2;
-            border: 1px solid #f0e4d0;
-            border-radius: 10px;
-            color: #806b4c;
-            font-size: 12px;
-            line-height: 1.6;
-        }
-
-        .sim-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #edf6f3;
-            color: #438477;
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        /* Các đối tượng trong sơ đồ SVG */
-        .sim-moving {
-            transition: transform 1s ease;
-        }
-
-        .sim-hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .sim-visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .sim-object {
-            transition: opacity .35s ease;
-        }
-
-        @media(max-width: 900px) {
-            .sim-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .sim-details {
-                min-height: auto;
-            }
-        }
-
-        @media(max-width: 560px) {
-            .sim-panel {
-                padding: 13px;
-            }
-
-            .sim-stage-tabs {
-                gap: 4px;
-            }
-
-            .sim-stage-tab {
-                padding: 9px 2px;
-            }
-
-            .sim-stage-tab strong {
-                font-size: 10px;
-            }
-
-            .sim-stage-tab span {
-                font-size: 10px;
-            }
-
-            .sim-controls {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .sim-btn {
-                padding: 10px 7px;
-            }
-        }
-
-/* Công đoạn bình thường */
-.sim-stage-tab {
-    background: #ffffff !important;
-    color: #334155 !important;
-    border: 2px solid #d5e0ea !important;
-    border-radius: 12px !important;
-    opacity: 1 !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,.05);
-}
-
-.sim-stage-tab span,
-.sim-stage-tab strong {
-    color: #334155 !important;
-    opacity: 1 !important;
-}
-
-/* Công đoạn đang được chọn */
-.sim-stage-tab.active {
-    background: #1674c3 !important;
-    border-color: #0e5eab !important;
-    color: #ffffff !important;
-    opacity: 1 !important;
-    box-shadow: 0 5px 15px rgba(22,116,195,.25);
-    transform: translateY(-2px);
-}
-
-.sim-stage-tab.active span,
-.sim-stage-tab.active strong {
-    color: #ffffff !important;
-}
-
-/* Nút chạy mô phỏng */
-#simPlayBtn {
-    background: #16a34a !important;
-    border: 1px solid #15803d !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    opacity: 1 !important;
-}
-
-#simPlayBtn:hover:not(:disabled) {
-    background: #15803d !important;
-}
-
-#simPlayBtn:disabled {
-    background: #86bfa0 !important;
-    color: #ffffff !important;
-    cursor: not-allowed;
-}
-
-/* Các khung trong kho mô phỏng */
-.sim-panel,
-.warehouse-scene {
-    background: #ffffff !important;
-    border: 2px solid #dce5ef !important;
-    border-radius: 14px !important;
-    box-shadow: 0 3px 12px rgba(30,50,80,.06);
-}
-
-.sim-panel {
-    padding: 20px !important;
-}
-
-.warehouse-scene {
-    background: #f8fbff !important;
-    padding: 20px !important;
-}
-
-/* Tăng độ rõ của tiêu đề */
-.sim-panel-heading h2 {
-    color: #243b53 !important;
-    font-weight: 700 !important;
-}        
-    </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kho mô phỏng | SmartWMS</title>
+<link rel="stylesheet" href="style.css?v=7">
 <link rel="stylesheet" href="smartwms-unified.css?v=1">
+
+<style>
+:root {
+  --sim-blue:#1769b1;
+  --sim-navy:#173550;
+  --sim-green:#16a34a;
+  --sim-border:#dce5ef;
+  --sim-muted:#64748b;
+}
+
+.sim-page { padding-bottom:40px; }
+.sim-header { margin:22px 0; }
+.sim-header h1 { margin:0 0 8px;color:var(--sim-navy); }
+.sim-header p { color:var(--sim-muted);line-height:1.6; }
+
+.sim-grid {
+  display:grid;
+  grid-template-columns:minmax(0,1.7fr) minmax(290px,0.85fr);
+  gap:18px;
+  align-items:start;
+}
+
+.sim-card {
+  background:white;
+  border:2px solid var(--sim-border);
+  border-radius:15px;
+  padding:20px;
+  box-shadow:0 4px 14px rgba(30,50,80,.05);
+  min-width:0;
+}
+
+.sim-card h2 {
+  color:var(--sim-navy);
+  font-size:18px;
+  margin:0 0 14px;
+}
+
+.sim-tabs {
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:8px;
+  margin:16px 0;
+}
+
+.sim-tab {
+  background:#fff;
+  color:#334155;
+  border:2px solid #d5e0ea;
+  border-radius:11px;
+  padding:12px 5px;
+  font:inherit;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.sim-tab small {
+  display:block;
+  margin-top:5px;
+  font-size:11px;
+  font-weight:400;
+}
+
+.sim-tab.active {
+  background:var(--sim-blue);
+  color:#fff;
+  border-color:#105b9b;
+  transform:translateY(-3px);
+  box-shadow:0 6px 14px rgba(23,105,177,.23);
+}
+
+.sim-tab.active small { color:#fff; }
+
+.sim-scene {
+  background:#f5f9fd;
+  border:2px solid var(--sim-border);
+  border-radius:14px;
+  padding:14px;
+  overflow:hidden;
+}
+
+.sim-scene svg {
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.sim-controls {
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:17px;
+}
+
+.sim-btn {
+  padding:11px 16px;
+  border:1px solid #cbd5e1;
+  border-radius:9px;
+  background:white;
+  color:#334155;
+  font:inherit;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+#simPlayBtn {
+  background:#16a34a;
+  color:#fff;
+  border-color:#15803d;
+}
+
+#simPlayBtn:hover { background:#15803d; }
+
+.sim-btn:disabled {
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.sim-progress {
+  height:9px;
+  border-radius:30px;
+  background:#e2e8f0;
+  overflow:hidden;
+  margin-top:15px;
+}
+
+#simProgressBar {
+  height:100%;
+  width:0%;
+  background:#16a34a;
+  transition:width .4s ease;
+}
+
+.sim-muted {
+  color:var(--sim-muted);
+  font-size:13px;
+  line-height:1.6;
+}
+
+.sim-metrics {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin:15px 0;
+}
+
+.sim-metric {
+  border:1px solid var(--sim-border);
+  border-radius:11px;
+  background:#f8fbff;
+  padding:13px;
+}
+
+.sim-metric small {
+  display:block;
+  color:var(--sim-muted);
+  font-size:12px;
+  margin-bottom:7px;
+}
+
+.sim-metric strong {
+  color:var(--sim-navy);
+  font-size:23px;
+}
+
+.sim-status {
+  display:inline-block;
+  padding:7px 11px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.sim-status.LOW { background:#dcfce7;color:#166534; }
+.sim-status.MEDIUM { background:#fef3c7;color:#92400e; }
+.sim-status.HIGH { background:#fee2e2;color:#b91c1c; }
+
+.sim-alert {
+  border:1px solid #fecaca;
+  background:#fff1f2;
+  color:#991b1b;
+  border-radius:10px;
+  padding:13px;
+  margin-top:14px;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.sim-alert.ok {
+  border-color:#bbf7d0;
+  background:#f0fdf4;
+  color:#166534;
+}
+
+.sim-stage-link {
+  display:inline-block;
+  margin-top:15px;
+  color:#1769b1;
+  font-weight:700;
+  text-decoration:none;
+}
+
+.sim-table-wrap { overflow-x:auto; }
+
+.sim-table {
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+
+.sim-table th,.sim-table td {
+  padding:12px 9px;
+  text-align:left;
+  border-bottom:1px solid #e5edf5;
+}
+
+.sim-table th {
+  color:#64748b;
+  background:#f8fafc;
+}
+
+.sim-table tr.selected {
+  background:#eff6ff;
+  font-weight:700;
+}
+
+.sim-table tr {
+  cursor:pointer;
+}
+
+.sim-badge {
+  font-size:11px;
+  padding:5px 8px;
+  border-radius:15px;
+  white-space:nowrap;
+}
+
+.sim-badge.LOW { background:#dcfce7;color:#166534; }
+.sim-badge.MEDIUM { background:#fef3c7;color:#92400e; }
+.sim-badge.HIGH { background:#fee2e2;color:#b91c1c; }
+
+.sim-footer {
+  margin-top:18px;
+}
+
+.sim-legend {
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+  font-size:12px;
+  color:#64748b;
+  margin-top:12px;
+}
+
+.sim-dot {
+  display:inline-block;
+  width:10px;
+  height:10px;
+  border-radius:3px;
+  margin-right:5px;
+}
+
+.sim-error {
+  color:#b91c1c;
+  padding:12px;
+}
+
+@media(max-width:950px) {
+  .sim-grid { grid-template-columns:1fr; }
+}
+
+@media(max-width:600px) {
+  .sim-card { padding:13px; }
+  .sim-tabs { gap:4px; }
+  .sim-tab { font-size:10px;padding:9px 3px; }
+  .sim-tab small { font-size:9px; }
+  .sim-controls { display:grid;grid-template-columns:1fr 1fr; }
+  .sim-btn { padding:10px 6px; }
+  .sim-metrics { gap:7px; }
+}
+</style>
 </head>
 
 <body>
 
 <header class="topbar">
-    <div class="brand">
-        <span class="brand-icon">W</span>
-        <div>
-            <h2>WAREHOUSE</h2>
-            <small>Management System</small>
-        </div>
+  <div class="brand">
+    <span class="brand-icon">W</span>
+    <div>
+      <h2>WAREHOUSE</h2>
+      <small>Management System</small>
     </div>
+  </div>
 
-    <nav class="navigation">
-        <a href="index.html">Tổng quan</a>
-        <a class="active" href="simulation.html">Kho mô phỏng</a>
-        <a href="stage.html?stage=receiving">Nhận hàng</a>
-        <a href="stage.html?stage=putaway">Cất hàng</a>
-        <a href="stage.html?stage=picking">Lấy hàng</a>
-        <a href="stage.html?stage=packing">Đóng gói</a>
-        <a href="stage.html?stage=shipping">Xuất hàng</a>
-        <a href="ai_dashboard.php">Dự đoán AI</a>
-        <a href="ai_dashboard.php">Điểm nghẽn</a>
-    </nav>
+  <nav class="navigation" aria-label="Điều hướng chính">
+    <a href="index.html">Tổng quan</a>
+    <a href="simulation.html" aria-current="page">Kho mô phỏng</a>
+    <a href="stage.html?stage=receiving">Nhận hàng</a>
+    <a href="stage.html?stage=putaway">Cất hàng</a>
+    <a href="stage.html?stage=picking">Lấy hàng</a>
+    <a href="stage.html?stage=packing">Đóng gói</a>
+    <a href="stage.html?stage=shipping">Xuất hàng</a>
+    <a href="ai_dashboard.html">Dự đoán AI</a>
+    <a href="bottleneck_analysis.html">Điểm nghẽn</a>
+  </nav>
 
-    <div class="user">
-        <span class="avatar">QL</span>
-        <span>Quản lý kho</span>
-    </div>
+  <div class="user">
+    <a class="data-import-link" href="import.html">Nhập dữ liệu</a>
+    <span class="avatar">QL</span>
+    <span>Quản lý kho</span>
+  </div>
 </header>
 
 <main class="container sim-page">
 
-    <section class="page-heading sim-intro">
-        <div>
-            <p class="eyebrow">WAREHOUSE OPERATION SIMULATION</p>
-            <h1>Mô phỏng quy trình vận hành kho</h1>
-            <p>Quan sát cách hàng hóa di chuyển qua 5 công đoạn xử lý trong kho.</p>
-        </div>
-        <div class="date-box">
-            <span>Chế độ</span>
-            <strong>Mô phỏng</strong>
-        </div>
+  <div class="sim-header">
+    <h1>Kho mô phỏng SmartWMS</h1>
+    <p>
+      Theo dõi luồng hàng qua 5 công đoạn.
+      Khối lượng công việc và cảnh báo được lấy
+      từ dữ liệu SmartWMS hiện tại.
+    </p>
+  </div>
+
+  <div class="sim-grid">
+
+    <section class="sim-card">
+      <h2>Sơ đồ vận hành kho</h2>
+
+      <div class="sim-tabs" id="simTabs"></div>
+
+      <div class="sim-scene">
+        <svg viewBox="0 0 900 420"
+             xmlns="http://www.w3.org/2000/svg"
+             role="img"
+             aria-label="Sơ đồ luồng hàng qua năm công đoạn kho">
+
+          <defs>
+            <marker id="simArrow"
+                    markerWidth="9"
+                    markerHeight="9"
+                    refX="7"
+                    refY="4"
+                    orient="auto">
+              <path d="M0 0 L8 4 L0 8 Z" fill="#94a3b8"/>
+            </marker>
+          </defs>
+
+          <rect x="15" y="15" width="870" height="390"
+                rx="18" fill="#edf4fa" stroke="#d7e3ee"
+                stroke-width="2"/>
+
+          <text x="38" y="48"
+                font-size="16" font-weight="700"
+                fill="#284763">
+            SMART WAREHOUSE • LIVE DATA
+          </text>
+
+          <g id="simPaths" stroke="#94a3b8"
+             stroke-width="4" fill="none"
+             marker-end="url(#simArrow)">
+            <path d="M165 195 H205"/>
+            <path d="M335 195 H375"/>
+            <path d="M505 195 H545"/>
+            <path d="M675 195 H715"/>
+          </g>
+
+          <g id="simBoxes"></g>
+
+          <g id="simCart" transform="translate(45,290)">
+            <rect x="0" y="0" width="64" height="32"
+                  rx="5" fill="#16a34a"/>
+            <rect x="7" y="-14" width="48" height="17"
+                  rx="3" fill="#86efac"/>
+            <circle cx="14" cy="36" r="8" fill="#334155"/>
+            <circle cx="51" cy="36" r="8" fill="#334155"/>
+          </g>
+
+          <text x="38" y="375"
+                font-size="13" fill="#64748b">
+            Xe hàng minh họa • Không tự thay đổi dữ liệu kho
+          </text>
+        </svg>
+      </div>
+
+      <div class="sim-legend">
+        <span><i class="sim-dot" style="background:#1769b1"></i>Đang chọn</span>
+        <span><i class="sim-dot" style="background:#16a34a"></i>Bình thường</span>
+        <span><i class="sim-dot" style="background:#f59e0b"></i>Cần theo dõi</span>
+        <span><i class="sim-dot" style="background:#dc2626"></i>Quá tải</span>
+      </div>
+
+      <div class="sim-controls">
+        <button id="simPlayBtn" class="sim-btn" type="button">
+          ▶ Chạy mô phỏng
+        </button>
+        <button id="simPauseBtn" class="sim-btn" type="button">
+          ⏸ Tạm dừng
+        </button>
+        <button id="simNextBtn" class="sim-btn" type="button">
+          Bước tiếp
+        </button>
+        <button id="simReplayBtn" class="sim-btn" type="button">
+          ↻ Chạy lại
+        </button>
+      </div>
+
+      <div class="sim-progress">
+        <div id="simProgressBar"></div>
+      </div>
+
+      <p class="sim-muted" id="simPlaybackStatus">
+        Chọn Chạy mô phỏng để xem luồng hàng.
+      </p>
     </section>
 
-    <section class="sim-layout">
+    <aside class="sim-card">
+      <h2 id="simStageTitle">Nhận hàng</h2>
+      <p class="sim-muted" id="simStageDescription"></p>
 
-        <!-- KHU VỰC MÔ PHỎNG -->
-        <div class="sim-panel">
-            <div class="sim-panel-heading">
-                <h2>Sơ đồ kho hàng</h2>
-                <span class="sim-live">● Đang mô phỏng</span>
-            </div>
-
-            <div class="sim-stage-tabs" id="simStageTabs">
-                <button class="sim-stage-tab active" data-stage="0">
-                    <span>01</span><strong>Nhận hàng</strong>
-                </button>
-                <button class="sim-stage-tab" data-stage="1">
-                    <span>02</span><strong>Cất hàng</strong>
-                </button>
-                <button class="sim-stage-tab" data-stage="2">
-                    <span>03</span><strong>Lấy hàng</strong>
-                </button>
-                <button class="sim-stage-tab" data-stage="3">
-                    <span>04</span><strong>Đóng gói</strong>
-                </button>
-                <button class="sim-stage-tab" data-stage="4">
-                    <span>05</span><strong>Xuất hàng</strong>
-                </button>
-            </div>
-
-            <div class="warehouse-scene">
-                <svg viewBox="0 0 900 490" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sơ đồ mô phỏng hoạt động kho hàng">
-
-                    <defs>
-                        <pattern id="floorGrid" width="35" height="35" patternUnits="userSpaceOnUse">
-                            <path d="M35 0H0V35" fill="none" stroke="#e2e9ed" stroke-width="1"/>
-                        </pattern>
-                    </defs>
-
-                    <!-- Nền kho -->
-                    <rect x="0" y="0" width="900" height="490" fill="#f5f8fa"/>
-                    <rect x="0" y="0" width="900" height="490" fill="url(#floorGrid)"/>
-
-                    <!-- Tiêu đề sơ đồ -->
-                    <text x="25" y="30" font-size="14" font-weight="700" fill="#304253">WAREHOUSE FLOOR PLAN</text>
-                    <text x="25" y="49" font-size="10" fill="#84929d">Sơ đồ minh họa các khu vực chức năng</text>
-
-                    <!-- Khu vực nhận hàng -->
-                    <rect x="25" y="85" width="175" height="295" rx="10" fill="#e8f0f5" stroke="#9bb3c4" stroke-width="2"/>
-                    <rect x="25" y="85" width="175" height="38" rx="10" fill="#527fa5"/>
-                    <path d="M25 113H200" stroke="#527fa5" stroke-width="20"/>
-                    <text x="112" y="109" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">RECEIVING</text>
-                    <text x="112" y="145" text-anchor="middle" font-size="11" fill="#527fa5">KHU NHẬN HÀNG</text>
-
-                    <!-- Pallet nhận hàng -->
-                    <g id="receivePallet" class="sim-object">
-                        <rect x="57" y="235" width="58" height="43" rx="3" fill="#c9975c" stroke="#9c7548"/>
-                        <path d="M57 248H115 M57 262H115" stroke="#9c7548" stroke-width="2"/>
-                        <rect x="53" y="279" width="66" height="8" rx="2" fill="#a77c4c"/>
-                        <rect x="65" y="287" width="8" height="8" fill="#8b6943"/>
-                        <rect x="99" y="287" width="8" height="8" fill="#8b6943"/>
-                    </g>
-
-                    <g id="receivePallet2" class="sim-object">
-                        <rect x="132" y="235" width="48" height="43" rx="3" fill="#d5ad7b" stroke="#a98051"/>
-                        <path d="M132 248H180 M132 262H180" stroke="#a98051" stroke-width="2"/>
-                        <rect x="128" y="279" width="56" height="8" rx="2" fill="#a77c4c"/>
-                    </g>
-
-                    <!-- Cửa nhận -->
-                    <rect x="55" y="330" width="115" height="28" rx="4" fill="#d3e1e9" stroke="#8ca9bc"/>
-                    <text x="112" y="348" text-anchor="middle" font-size="10" font-weight="700" fill="#527fa5">DOCK IN</text>
-
-                    <!-- Khu vực lưu kho -->
-                    <rect x="225" y="85" width="300" height="295" rx="10" fill="#edf3f5" stroke="#9db5bf" stroke-width="2"/>
-                    <rect x="225" y="85" width="300" height="38" rx="10" fill="#438d87"/>
-                    <path d="M225 113H525" stroke="#438d87" stroke-width="20"/>
-                    <text x="375" y="109" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">STORAGE AREA</text>
-                    <text x="375" y="145" text-anchor="middle" font-size="11" fill="#438d87">KHU LƯU TRỮ HÀNG HÓA</text>
-
-                    <!-- Kệ hàng A -->
-                    <g id="storageRack">
-                        <rect x="260" y="170" width="230" height="12" rx="2" fill="#526c7c"/>
-                        <rect x="260" y="230" width="230" height="10" rx="2" fill="#526c7c"/>
-                        <rect x="260" y="290" width="230" height="10" rx="2" fill="#526c7c"/>
-                        <rect x="260" y="170" width="8" height="140" fill="#526c7c"/>
-                        <rect x="482" y="170" width="8" height="140" fill="#526c7c"/>
-
-                        <g fill="#c9975c" stroke="#a77c4c">
-                            <rect x="278" y="190" width="48" height="38" rx="3"/>
-                            <rect x="340" y="190" width="48" height="38" rx="3"/>
-                            <rect x="402" y="190" width="48" height="38" rx="3"/>
-                            <rect x="278" y="250" width="48" height="38" rx="3"/>
-                            <rect x="340" y="250" width="48" height="38" rx="3"/>
-                            <rect x="402" y="250" width="48" height="38" rx="3"/>
-                        </g>
-
-                        <g stroke="#a77c4c" stroke-width="2">
-                            <path d="M278 202H326 M278 214H326 M340 202H388 M340 214H388 M402 202H450 M402 214H450"/>
-                            <path d="M278 262H326 M278 274H326 M340 262H388 M340 274H388 M402 262H450 M402 274H450"/>
-                        </g>
-                    </g>
-
-                    <text x="375" y="330" text-anchor="middle" font-size="11" font-weight="700" fill="#438d87">RACK A - 02</text>
-                    <text x="375" y="347" text-anchor="middle" font-size="10" fill="#84929d">Vị trí lưu trữ hàng hóa</text>
-
-                    <!-- Khu vực đóng gói -->
-                    <rect x="550" y="85" width="150" height="295" rx="10" fill="#f2eef7" stroke="#b4a8cb" stroke-width="2"/>
-                    <rect x="550" y="85" width="150" height="38" rx="10" fill="#8a80ad"/>
-                    <path d="M550 113H700" stroke="#8a80ad" stroke-width="20"/>
-                    <text x="625" y="109" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">PACKING</text>
-                    <text x="625" y="145" text-anchor="middle" font-size="11" fill="#8a80ad">KHU ĐÓNG GÓI</text>
-
-                    <!-- Bàn đóng gói -->
-                    <rect x="575" y="240" width="100" height="12" rx="3" fill="#8a80ad"/>
-                    <rect x="583" y="252" width="8" height="58" fill="#7b729b"/>
-                    <rect x="659" y="252" width="8" height="58" fill="#7b729b"/>
-                    <rect x="603" y="211" width="42" height="28" rx="3" fill="#d9c99e" stroke="#b5a77f"/>
-                    <path d="M624 211V239" stroke="#b5a77f" stroke-width="2"/>
-                    <text x="625" y="330" text-anchor="middle" font-size="10" fill="#8a80ad">PACKING TABLE</text>
-
-                    <!-- Khu vực xuất hàng -->
-                    <rect x="725" y="85" width="150" height="295" rx="10" fill="#fbf2e8" stroke="#d6b88e" stroke-width="2"/>
-                    <rect x="725" y="85" width="150" height="38" rx="10" fill="#c9975c"/>
-                    <path d="M725 113H875" stroke="#c9975c" stroke-width="20"/>
-                    <text x="800" y="109" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">SHIPPING</text>
-                    <text x="800" y="145" text-anchor="middle" font-size="11" fill="#a77c4c">KHU XUẤT HÀNG</text>
-
-                    <!-- Xe tải -->
-                    <g id="truck">
-                        <rect x="752" y="235" width="75" height="43" rx="5" fill="#7895a9" stroke="#52758c" stroke-width="2"/>
-                        <rect x="827" y="247" width="29" height="31" rx="4" fill="#527fa5"/>
-                        <rect x="832" y="251" width="17" height="12" rx="2" fill="#dce8ef"/>
-                        <circle cx="770" cy="282" r="9" fill="#52616b"/>
-                        <circle cx="770" cy="282" r="4" fill="#dce3e8"/>
-                        <circle cx="839" cy="282" r="9" fill="#52616b"/>
-                        <circle cx="839" cy="282" r="4" fill="#dce3e8"/>
-                        <text x="802" y="261" text-anchor="middle" font-size="9" font-weight="700" fill="#fff">WMS</text>
-                    </g>
-
-                    <text x="800" y="330" text-anchor="middle" font-size="10" fill="#a77c4c">DOCK OUT</text>
-
-                    <!-- Xe nâng -->
-                    <g id="forklift" class="sim-moving">
-                        <rect x="0" y="0" width="54" height="32" rx="5" fill="#e0ad55" stroke="#a77c4c" stroke-width="2"/>
-                        <rect x="10" y="-19" width="27" height="22" rx="4" fill="#d9e5eb" stroke="#7895a9"/>
-                        <circle cx="12" cy="34" r="7" fill="#52616b"/>
-                        <circle cx="43" cy="34" r="7" fill="#52616b"/>
-                        <rect x="48" y="-5" width="5" height="48" fill="#52616b"/>
-                        <rect x="52" y="38" width="30" height="4" rx="2" fill="#52616b"/>
-                        <rect x="54" y="31" width="26" height="4" rx="2" fill="#52616b"/>
-                        <text x="26" y="20" text-anchor="middle" font-size="8" font-weight="700" fill="#624a25">FL</text>
-                    </g>
-
-                    <!-- Pallet đang được vận chuyển -->
-                    <g id="movingLoad" class="sim-moving">
-                        <rect x="0" y="0" width="35" height="27" rx="3" fill="#c9975c" stroke="#a77c4c"/>
-                        <path d="M0 9H35 M0 18H35" stroke="#a77c4c" stroke-width="1.5"/>
-                        <rect x="-3" y="27" width="41" height="5" rx="2" fill="#a77c4c"/>
-                    </g>
-
-                    <!-- Nhân viên kho -->
-                    <g id="worker" class="sim-object">
-                        <circle cx="0" cy="0" r="9" fill="#e5bd98"/>
-                        <path d="M-8 -7Q0 -18 9 -7" fill="#527fa5"/>
-                        <rect x="-8" y="10" width="16" height="27" rx="5" fill="#527fa5"/>
-                        <path d="M-5 37L-7 52 M5 37L8 52" stroke="#52616b" stroke-width="5" stroke-linecap="round"/>
-                        <path d="M-8 16L-17 29 M8 16L17 27" stroke="#e5bd98" stroke-width="5" stroke-linecap="round"/>
-                    </g>
-
-                    <!-- Thùng hàng sau đóng gói -->
-                    <g id="packedBox" class="sim-object">
-                        <rect x="0" y="0" width="45" height="35" rx="3" fill="#d6b77e" stroke="#a98051" stroke-width="1.5"/>
-                        <path d="M22 0V35 M0 12H45" stroke="#a98051" stroke-width="1.5"/>
-                        <rect x="28" y="7" width="11" height="9" fill="#fff" stroke="#a98051" stroke-width=".7"/>
-                    </g>
-
-                    <!-- Nhãn mô tả vị trí hoạt động -->
-                    <g id="sceneLabel">
-                        <rect x="300" y="400" width="300" height="42" rx="8" fill="#fff" stroke="#dce4e9"/>
-                        <circle cx="320" cy="421" r="5" fill="#438d87"/>
-                        <text id="sceneLabelText" x="335" y="425" font-size="12" font-weight="700" fill="#304253">Khu vực nhận hàng</text>
-                    </g>
-
-                    <!-- Mũi tên luồng hàng -->
-                    <g fill="none" stroke="#9aabb6" stroke-width="2" stroke-dasharray="5 5">
-                        <path d="M200 205H225"/>
-                        <path d="M525 205H550"/>
-                        <path d="M700 205H725"/>
-                    </g>
-                    <g fill="#9aabb6">
-                        <path d="M220 200L226 205L220 210Z"/>
-                        <path d="M545 200L551 205L545 210Z"/>
-                        <path d="M720 200L726 205L720 210Z"/>
-                    </g>
-                </svg>
-            </div>
-
-            <div class="sim-legend">
-                <span><i class="sim-dot" style="background:#527fa5"></i>Nhận hàng</span>
-                <span><i class="sim-dot" style="background:#438d87"></i>Lưu kho</span>
-                <span><i class="sim-dot" style="background:#8a80ad"></i>Đóng gói</span>
-                <span><i class="sim-dot" style="background:#c9975c"></i>Xuất hàng</span>
-            </div>
-
-            <div class="sim-progress">
-                <div class="sim-progress-top">
-                    <span>Tiến trình mô phỏng</span>
-                    <strong id="simProgressText">1/5 công đoạn</strong>
-                </div>
-                <div class="sim-progress-track">
-                    <div class="sim-progress-fill" id="simProgressFill"></div>
-                </div>
-            </div>
-
-            <div class="sim-controls">
-                <button class="sim-btn primary" id="simPlayBtn">▶ Chạy mô phỏng</button>
-                <button class="sim-btn" id="simPauseBtn">Ⅱ Tạm dừng</button>
-                <button class="sim-btn" id="simReplayBtn">↻ Xem lại</button>
-                <button class="sim-btn" id="simNextBtn">Công đoạn tiếp →</button>
-            </div>
-
-            <p class="sim-caption">
-                Sơ đồ mang tính minh họa quy trình vận hành kho. Nhấn vào từng công đoạn
-                hoặc sử dụng nút điều khiển để theo dõi luồng xử lý hàng hóa.
-            </p>
+      <div class="sim-metrics">
+        <div class="sim-metric">
+          <small>Khối lượng cần xử lý</small>
+          <strong id="simWorkload">0</strong>
         </div>
 
-        <!-- THÔNG TIN CÔNG ĐOẠN -->
-        <aside class="sim-panel sim-details">
-            <div>
-                <span class="sim-stage-number" id="simStageNumber">CÔNG ĐOẠN 01 / 05</span>
-                <h2 id="simStageName">Nhận hàng</h2>
-                <div class="sim-en" id="simStageEnglish">Receiving</div>
-                <span class="sim-status" id="simStatus">● Đang mô phỏng</span>
-            </div>
+        <div class="sim-metric">
+          <small>Đang chờ (thùng)</small>
+          <strong id="simWaitingQty">0</strong>
+        </div>
 
-            <p class="sim-description" id="simDescription">
-                Xe tải giao hàng đến cửa nhập. Nhân viên quét mã và kiểm tra số lượng,
-                chất lượng trước khi xác nhận nhập.
-            </p>
+        <div class="sim-metric">
+          <small>Đang xử lý (thùng)</small>
+          <strong id="simActiveQty">0</strong>
+        </div>
 
-            <h3 class="sim-info-title">Các bước thực hiện</h3>
-            <ol class="sim-steps" id="simSteps">
-                <li><span class="sim-step-no">1</span><span>Xe tải đến khu vực tiếp nhận</span></li>
-                <li><span class="sim-step-no">2</span><span>Dỡ pallet bằng xe nâng</span></li>
-                <li><span class="sim-step-no">3</span><span>Quét mã và đối chiếu chứng từ</span></li>
-            </ol>
+        <div class="sim-metric">
+          <small>Số phiếu chờ</small>
+          <strong id="simWaiting">0</strong>
+        </div>
 
-            <div class="sim-role">
-                <strong>Vai trò của hệ thống WMS</strong>
-                <p id="simRole">
-                    WMS tạo phiếu nhận hàng, ghi nhận mã SKU/pallet, số lượng thực nhận
-                    và cập nhật trạng thái kiểm tra.
-                </p>
-            </div>
+        <div class="sim-metric">
+          <small>Năng lực / giờ</small>
+          <strong id="simCapacity">0</strong>
+        </div>
 
-            <div class="sim-note">
-                <strong>Lưu ý:</strong> Đây là mô hình mô phỏng trực quan phục vụ học tập,
-                không phải dữ liệu vận hành trực tiếp từ một kho hàng thực tế.
-            </div>
-        </aside>
+        <div class="sim-metric">
+          <small>Tỷ lệ tải</small>
+          <strong id="simLoad">0%</strong>
+        </div>
+      </div>
 
-    </section>
+      <p>
+        <span id="simRisk" class="sim-status LOW">
+          Bình thường
+        </span>
+      </p>
 
-    <footer>
-        <p>WMS Dashboard | Mô hình hệ thống quản lý kho phục vụ học tập</p>
-        <p>Dữ liệu trên website là dữ liệu mô phỏng.</p>
-    </footer>
+      <div id="simAlert" class="sim-alert ok"></div>
+
+      <a id="simStageLink"
+         class="sim-stage-link"
+         href="stage.html?stage=receiving">
+        Mở công đoạn để xử lý phiếu
+      </a>
+    </aside>
+  </div>
+
+  <section class="sim-card sim-footer">
+    <h2>Tổng hợp hoạt động 5 công đoạn</h2>
+
+    <div class="sim-table-wrap">
+      <table class="sim-table">
+        <thead>
+          <tr>
+            <th>Công đoạn</th>
+            <th>Chờ xử lý</th>
+            <th>Đang xử lý</th>
+            <th>Tải / 2 giờ</th>
+            <th>Cảnh báo</th>
+          </tr>
+        </thead>
+        <tbody id="simTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="sim-card sim-footer">
+    <h2>Thông tin dữ liệu</h2>
+    <p class="sim-muted" id="simDataSummary"></p>
+    <p class="sim-muted">
+      Tỷ lệ tải được tính bằng khối lượng công việc
+      chia cho năng lực xử lý trong 2 giờ.
+      Trên 100% là quá tải, từ 50% đến 100%
+      là mức cần theo dõi.
+      Đây là cảnh báo dựa trên quy tắc, không phải
+      kết quả của mô hình AI đã huấn luyện.
+    </p>
+  </section>
 
 </main>
 
+<script src="wms-demo.js?v=9"></script>
+
 <script>
-    const simStages = [
-        {
-            name: "Nhận hàng",
-            en: "Receiving",
-            desc: "Xe tải giao hàng đến cửa nhập. Nhân viên quét mã và kiểm tra số lượng, chất lượng trước khi xác nhận nhập.",
-            steps: [
-                "Xe tải đến khu vực tiếp nhận",
-                "Dỡ pallet bằng xe nâng",
-                "Quét mã và đối chiếu chứng từ"
-            ],
-            role: "WMS tạo phiếu nhận hàng, ghi nhận mã SKU/pallet, số lượng thực nhận và cập nhật trạng thái kiểm tra.",
-            label: "Khu vực nhận hàng"
-        },
-        {
-            name: "Cất hàng",
-            en: "Putaway",
-            desc: "Hệ thống phân bổ ô kệ phù hợp; xe nâng chuyển pallet từ khu nhận hàng đến vị trí được chỉ định.",
-            steps: [
-                "WMS đề xuất ô kệ A-02",
-                "Xe nâng vận chuyển pallet đến dãy kệ",
-                "Quét mã vị trí để xác nhận lưu kho"
-            ],
-            role: "WMS quản lý vị trí bin/location, hướng dẫn đường đưa hàng vào kệ và cập nhật tồn kho theo vị trí.",
-            label: "Di chuyển hàng đến kệ A-02"
-        },
-        {
-            name: "Lấy hàng",
-            en: "Picking",
-            desc: "Khi có đơn xuất, nhân viên nhận danh sách hàng cần lấy và di chuyển đến đúng vị trí lưu trữ.",
-            steps: [
-                "Nhận danh sách picking trên thiết bị",
-                "Di chuyển đến kệ và lấy đúng SKU",
-                "Quét xác nhận số lượng đã lấy"
-            ],
-            role: "WMS phân bổ nhiệm vụ picking, chỉ dẫn vị trí SKU, hỗ trợ tối ưu tuyến lấy và giảm nhầm lẫn.",
-            label: "Lấy hàng từ kệ A-02"
-        },
-        {
-            name: "Đóng gói",
-            en: "Packing",
-            desc: "Hàng đã lấy được đưa đến bàn đóng gói để kiểm tra, đóng thùng và dán nhãn vận chuyển.",
-            steps: [
-                "Đối chiếu sản phẩm với đơn hàng",
-                "Đóng thùng và in nhãn kiện",
-                "Xác nhận kiện hàng sẵn sàng xuất"
-            ],
-            role: "WMS kiểm tra đối chiếu đơn, ghi nhận kiện đóng gói và liên kết nhãn với đơn hàng để truy xuất.",
-            label: "Đóng thùng và dán nhãn"
-        },
-        {
-            name: "Xuất hàng",
-            en: "Shipping",
-            desc: "Kiện hàng được đưa đến cửa xuất, quét xác nhận và xếp lên xe vận chuyển để bàn giao.",
-            steps: [
-                "Quét mã kiện tại cửa xuất",
-                "Đối chiếu đơn và chứng từ giao hàng",
-                "Bàn giao cho xe vận chuyển"
-            ],
-            role: "WMS kiểm tra kiện và lệnh xuất, ghi nhận quét tại cửa xuất, xác nhận bàn giao; cập nhật tồn kho theo thời điểm ghi nhận xuất hàng và đồng bộ trạng thái.",
-            label: "Bàn giao hàng cho xe vận chuyển"
-        }
-    ];
+(() => {
+  "use strict";
 
-    let simIndex = 0;
-    let simTimer = null;
-    let simPlaying = false;
+  const STAGES = [
+    {
+      id:"receiving",
+      name:"Nhận hàng",
+      short:"Nhận",
+      description:"Tiếp nhận hàng từ nhà cung cấp, kiểm đếm và kiểm tra chất lượng."
+    },
+    {
+      id:"putaway",
+      name:"Cất hàng",
+      short:"Cất",
+      description:"Đưa hàng đã đạt kiểm tra vào vị trí lưu trữ trong kho."
+    },
+    {
+      id:"picking",
+      name:"Lấy hàng",
+      short:"Lấy",
+      description:"Lấy hàng từ vị trí lưu trữ theo đơn hàng cần xử lý."
+    },
+    {
+      id:"packing",
+      name:"Đóng gói",
+      short:"Đóng",
+      description:"Kiểm tra, đóng kiện và chuẩn bị hàng cho công đoạn xuất kho."
+    },
+    {
+      id:"shipping",
+      name:"Xuất hàng",
+      short:"Xuất",
+      description:"Bàn giao kiện hàng cho đơn vị vận chuyển và cập nhật giao hàng."
+    }
+  ];
 
-    const $ = id => document.getElementById(id);
+  const $ = id => document.getElementById(id);
+  const fmt = n => Number(n || 0).toLocaleString("vi-VN");
 
-    function simStopTimer() {
-        if (simTimer) {
-            clearInterval(simTimer);
-            simTimer = null;
-        }
-        simPlaying = false;
-        $("simPlayBtn").textContent = "▶ Chạy mô phỏng";
+  let selected = 0;
+  let playing = false;
+  let timer = null;
+  let progress = 0;
+  let metrics = [];
+
+  function riskText(risk) {
+    return {
+      LOW:"Bình thường",
+      MEDIUM:"Cần theo dõi",
+      HIGH:"Cảnh báo quá tải"
+    }[risk] || "Chưa xác định";
+  }
+
+  function riskColor(risk) {
+    return {
+      LOW:"#16a34a",
+      MEDIUM:"#f59e0b",
+      HIGH:"#dc2626"
+    }[risk] || "#94a3b8";
+  }
+
+  function readMetrics() {
+    if (
+      typeof WmsDemo === "undefined" ||
+      typeof WmsDemo.analysis !== "function"
+    ) {
+      throw new Error("Không tải được dữ liệu từ wms-demo.js.");
     }
 
-    function simUpdateScene() {
-        const forklift = $("forklift");
-        const load = $("movingLoad");
-        const worker = $("worker");
-        const packedBox = $("packedBox");
-        const receivePallet = $("receivePallet");
-        const receivePallet2 = $("receivePallet2");
-        const truck = $("truck");
+    const data = WmsDemo.analysis();
 
-        // Đưa các đối tượng về vị trí ban đầu
-        forklift.style.transform = "translate(75px, 300px)";
-        load.style.transform = "translate(125px, 265px)";
-        worker.style.transform = "translate(610px, 190px)";
-        packedBox.style.transform = "translate(600px, 190px)";
-
-        receivePallet.style.opacity = "1";
-        receivePallet2.style.opacity = "1";
-        packedBox.style.opacity = "0";
-        truck.style.opacity = "1";
-
-        // Điều chỉnh hoạt động theo từng công đoạn
-        if (simIndex === 0) {
-            forklift.style.transform = "translate(75px, 300px)";
-            load.style.transform = "translate(125px, 265px)";
-            worker.style.transform = "translate(160px, 190px)";
-            receivePallet.style.opacity = "1";
-            receivePallet2.style.opacity = "1";
-        }
-
-        if (simIndex === 1) {
-            forklift.style.transform = "translate(260px, 300px)";
-            load.style.transform = "translate(300px, 205px)";
-            worker.style.transform = "translate(340px, 190px)";
-            receivePallet.style.opacity = "0.25";
-            receivePallet2.style.opacity = "0.25";
-        }
-
-        if (simIndex === 2) {
-            forklift.style.transform = "translate(390px, 300px)";
-            load.style.transform = "translate(410px, 265px)";
-            worker.style.transform = "translate(430px, 190px)";
-            receivePallet.style.opacity = "0.25";
-            receivePallet2.style.opacity = "0.25";
-        }
-
-        if (simIndex === 3) {
-            forklift.style.transform = "translate(555px, 300px)";
-            load.style.transform = "translate(600px, 205px)";
-            worker.style.transform = "translate(635px, 190px)";
-            packedBox.style.opacity = "1";
-            receivePallet.style.opacity = "0.2";
-            receivePallet2.style.opacity = "0.2";
-        }
-
-        if (simIndex === 4) {
-            forklift.style.transform = "translate(735px, 300px)";
-            load.style.transform = "translate(770px, 205px)";
-            worker.style.transform = "translate(800px, 190px)";
-            packedBox.style.transform = "translate(770px, 205px)";
-            packedBox.style.opacity = "1";
-            receivePallet.style.opacity = "0.15";
-            receivePallet2.style.opacity = "0.15";
-        }
-
-        $("sceneLabelText").textContent = simStages[simIndex].label;
+    if (!Array.isArray(data)) {
+      throw new Error("Dữ liệu phân tích không đúng định dạng.");
     }
 
-    function simUpdate() {
-        const stage = simStages[simIndex];
+    metrics = STAGES.map(stage => {
+      const found = data.find(x => x.stage === stage.id);
 
-        $("simStageNumber").textContent =
-            "CÔNG ĐOẠN 0" + (simIndex + 1) + " / 05";
+      if (!found) {
+        throw new Error("Thiếu dữ liệu công đoạn " + stage.name);
+      }
 
-        $("simStageName").textContent = stage.name;
-        $("simStageEnglish").textContent = stage.en;
-        $("simDescription").textContent = stage.desc;
-        $("simRole").textContent = stage.role;
+      return found;
+    });
+  }
 
-        $("simSteps").innerHTML = stage.steps.map((step, index) => `
-            <li>
-                <span class="sim-step-no">${index + 1}</span>
-                <span>${step}</span>
-            </li>
-        `).join("");
+  function renderTabs() {
+    const root = $("simTabs");
+    root.replaceChildren();
 
-        $("simProgressText").textContent =
-            (simIndex + 1) + "/5 công đoạn";
+    STAGES.forEach((stage, index) => {
+      const btn = document.createElement("button");
 
-        $("simProgressFill").style.width =
-            ((simIndex + 1) * 20) + "%";
+      btn.type = "button";
+      btn.className = "sim-tab" + (
+        index === selected ? " active" : ""
+      );
 
-        document.querySelectorAll(".sim-stage-tab").forEach((tab, index) => {
-            tab.classList.toggle("active", index === simIndex);
-        });
+      btn.innerHTML =
+        "<span>" + (index + 1) + ". " + stage.name + "</span>" +
+        "<small>" + fmt(metrics[index].workload) +
+        " thùng</small>";
 
-        $("simStatus").textContent =
-            simIndex === 4 ? "● Hoàn tất quy trình" : "● Đang mô phỏng";
+      btn.setAttribute(
+        "aria-pressed",
+        index === selected ? "true" : "false"
+      );
 
-        simUpdateScene();
-    }
+      btn.addEventListener("click", () => selectStage(index));
+      root.append(btn);
+    });
+  }
 
-    function simSelect(index) {
-        simStopTimer();
+  function renderScene() {
+    const root = $("simBoxes");
+    root.replaceChildren();
 
-        if (index < 0) index = 0;
-        if (index > 4) index = 4;
+    const positions = [35,205,375,545,715];
 
-        simIndex = index;
-        simUpdate();
-    }
+    STAGES.forEach((stage, index) => {
+      const metric = metrics[index];
+      const x = positions[index];
+      const active = index === selected;
+      const color = active
+        ? "#1769b1"
+        : riskColor(metric.risk);
 
-    function simNext() {
-        if (simIndex < 4) {
-            simIndex++;
-            simUpdate();
-        } else {
-            simStopTimer();
-        }
-    }
+      const group = document.createElementNS(
+        "http://www.w3.org/2000/svg","g"
+      );
 
-    function simPlay() {
-        if (simPlaying) return;
+      const rect = document.createElementNS(
+        "http://www.w3.org/2000/svg","rect"
+      );
 
-        if (simIndex >= 4) {
-            simIndex = 0;
-            simUpdate();
-        }
+      rect.setAttribute("x",x);
+      rect.setAttribute("y",135);
+      rect.setAttribute("width",130);
+      rect.setAttribute("height",120);
+      rect.setAttribute("rx",12);
+      rect.setAttribute("fill",active ? "#eaf4ff" : "#fff");
+      rect.setAttribute("stroke",color);
+      rect.setAttribute("stroke-width",active ? 5 : 3);
 
-        simPlaying = true;
-        $("simPlayBtn").textContent = "▶ Đang chạy";
+      group.append(rect);
 
-        simTimer = setInterval(() => {
-            if (simIndex < 4) {
-                simIndex++;
-                simUpdate();
-            } else {
-                simStopTimer();
-                $("simStatus").textContent = "● Hoàn tất quy trình";
-            }
-        }, 2500);
-    }
+      function addText(y,value,size,weight,fill) {
+        const t = document.createElementNS(
+          "http://www.w3.org/2000/svg","text"
+        );
 
-    function simPause() {
-        simStopTimer();
-        $("simStatus").textContent = "Ⅱ Đã tạm dừng";
-    }
+        t.setAttribute("x",x + 65);
+        t.setAttribute("y",y);
+        t.setAttribute("text-anchor","middle");
+        t.setAttribute("font-size",size);
+        t.setAttribute("font-weight",weight);
+        t.setAttribute("fill",fill);
+        t.textContent = value;
+        group.append(t);
+      }
 
-    function simReplay() {
-        simStopTimer();
-        simIndex = 0;
-        simUpdate();
-        $("simStatus").textContent = "● Đã bắt đầu lại";
-    }
+      addText(164,stage.short,15,700,"#173550");
+      addText(199,fmt(metric.workload),24,800,color);
+      addText(221,"thùng cần xử lý",10,400,"#64748b");
+      addText(
+        241,
+        Math.round(metric.loadPercent) + "% tải",
+        11,700,color
+      );
 
-    // Chọn trực tiếp từng công đoạn
-    document.querySelectorAll(".sim-stage-tab").forEach(tab => {
-        tab.addEventListener("click", () => {
-            simSelect(Number(tab.dataset.stage));
-        });
+      root.append(group);
     });
 
-    // Điều khiển mô phỏng
-    $("simPlayBtn").addEventListener("click", simPlay);
-    $("simPauseBtn").addEventListener("click", simPause);
-    $("simReplayBtn").addEventListener("click", simReplay);
-    $("simNextBtn").addEventListener("click", simNext);
+    const cartX = [68,238,408,578,748][selected];
 
-    // Khởi tạo giao diện
-    simUpdate();
+    $("simCart").setAttribute(
+      "transform",
+      "translate(" + cartX + ",290)"
+    );
+  }
+
+  function renderDetails() {
+    const stage = STAGES[selected];
+    const m = metrics[selected];
+
+    $("simStageTitle").textContent = stage.name;
+    $("simStageDescription").textContent = stage.description;
+
+    $("simWorkload").textContent = fmt(m.workload);
+    $("simWaitingQty").textContent = fmt(m.waitingQty);
+    $("simActiveQty").textContent = fmt(m.activeQty);
+    $("simWaiting").textContent = fmt(m.waiting);
+    $("simCapacity").textContent = fmt(m.capacity);
+    $("simLoad").textContent =
+      Number(m.loadPercent).toFixed(1) + "%";
+
+    const risk = $("simRisk");
+    risk.className = "sim-status " + m.risk;
+    risk.textContent = riskText(m.risk);
+
+    const alert = $("simAlert");
+
+    if (m.risk === "HIGH") {
+      alert.className = "sim-alert";
+      alert.textContent =
+        "CẢNH BÁO: " + stage.name +
+        " đang vượt năng lực xử lý trong 2 giờ. " +
+        "Khối lượng " + fmt(m.workload) +
+        " thùng, năng lực " +
+        fmt(m.capacity * 2) +
+        " thùng/2 giờ. Cần kiểm tra và điều phối nguồn lực.";
+    } else if (m.risk === "MEDIUM") {
+      alert.className = "sim-alert";
+      alert.style.background = "#fffbeb";
+      alert.style.borderColor = "#fde68a";
+      alert.style.color = "#92400e";
+      alert.textContent =
+        "CẦN THEO DÕI: Công đoạn đang sử dụng " +
+        Number(m.loadPercent).toFixed(1) +
+        "% năng lực trong 2 giờ.";
+    } else {
+      alert.className = "sim-alert ok";
+      alert.removeAttribute("style");
+      alert.textContent =
+        "Công đoạn đang nằm trong ngưỡng tải bình thường.";
+    }
+
+    if (m.risk !== "MEDIUM") {
+      alert.removeAttribute("style");
+    }
+
+    $("simStageLink").href =
+      "stage.html?stage=" + stage.id;
+  }
+
+  function renderTable() {
+    const tbody = $("simTableBody");
+    tbody.replaceChildren();
+
+    STAGES.forEach((stage,index) => {
+      const m = metrics[index];
+      const tr = document.createElement("tr");
+
+      if (index === selected) tr.className = "selected";
+
+      const cells = [
+        stage.name,
+        fmt(m.waitingQty) + " thùng",
+        fmt(m.activeQty) + " thùng",
+        Number(m.loadPercent).toFixed(1) + "%",
+        riskText(m.risk)
+      ];
+
+      cells.forEach((value,i) => {
+        const td = document.createElement("td");
+        td.textContent = value;
+
+        if (i === 4) {
+          td.className = "sim-badge " + m.risk;
+        }
+
+        tr.append(td);
+      });
+
+      tr.addEventListener("click",() => selectStage(index));
+      tbody.append(tr);
+    });
+  }
+
+  function renderSummary() {
+    const total = metrics.reduce(
+      (sum,m) => sum + Number(m.workload || 0),0
+    );
+
+    const high = metrics.filter(m => m.risk === "HIGH");
+    const medium = metrics.filter(m => m.risk === "MEDIUM");
+
+    $("simDataSummary").textContent =
+      "Tổng khối lượng công việc tại 5 công đoạn: " +
+      fmt(total) + " thùng-lượt công đoạn. " +
+      "Quá tải: " + high.length +
+      " công đoạn. Cần theo dõi: " +
+      medium.length + " công đoạn. " +
+      "Lưu ý: Đây là tổng khối lượng theo công đoạn, " +
+      "không phải số thùng hàng duy nhất trong kho.";
+  }
+
+  function render() {
+    readMetrics();
+    renderTabs();
+    renderScene();
+    renderDetails();
+    renderTable();
+    renderSummary();
+  }
+
+  function selectStage(index) {
+    selected = Math.max(0,Math.min(4,index));
+    progress = selected * 20;
+    updateProgress();
+
+    try {
+      render();
+    } catch (error) {
+      showError(error);
+    }
+  }
+
+  function updateProgress() {
+    $("simProgressBar").style.width =
+      Math.min(100,progress) + "%";
+  }
+
+  function updatePlayback(message) {
+    $("simPlaybackStatus").textContent = message;
+  }
+
+  function stopTimer() {
+    playing = false;
+
+    if (timer !== null) {
+      clearInterval(timer);
+      timer = null;
+    }
+
+    $("simPlayBtn").textContent = "▶ Chạy mô phỏng";
+  }
+
+  function advance() {
+    if (selected >= 4) {
+      progress = 100;
+      updateProgress();
+      stopTimer();
+
+      updatePlayback(
+        "Đã xem hết luồng mô phỏng. " +
+        "Dữ liệu nghiệp vụ không bị thay đổi."
+      );
+
+      return;
+    }
+
+    selected++;
+    progress = (selected + 1) * 20;
+    updateProgress();
+
+    try {
+      render();
+
+      updatePlayback(
+        "Đang minh họa: " + STAGES[selected].name +
+        " • Khối lượng " +
+        fmt(metrics[selected].workload) + " thùng."
+      );
+    } catch (error) {
+      stopTimer();
+      showError(error);
+    }
+  }
+
+  function play() {
+    if (playing) return;
+
+    if (selected === 4) {
+      selected = 0;
+      progress = 0;
+      updateProgress();
+    }
+
+    try {
+      render();
+    } catch (error) {
+      showError(error);
+      return;
+    }
+
+    playing = true;
+    $("simPlayBtn").textContent = "▶ Đang chạy";
+
+    updatePlayback(
+      "Đang minh họa: " + STAGES[selected].name
+    );
+
+    timer = setInterval(advance,1800);
+  }
+
+  function pause() {
+    stopTimer();
+    updatePlayback(
+      "Đã tạm dừng tại " + STAGES[selected].name + "."
+    );
+  }
+
+  function replay() {
+    stopTimer();
+    selected = 0;
+    progress = 0;
+    updateProgress();
+
+    try {
+      render();
+      updatePlayback("Đã đưa mô phỏng về Nhận hàng.");
+    } catch (error) {
+      showError(error);
+    }
+  }
+
+  function showError(error) {
+    console.error("SmartWMS Simulation:",error);
+
+    updatePlayback(
+      "Lỗi đọc dữ liệu: " +
+      (error.message || "Không xác định")
+    );
+  }
+
+  $("simPlayBtn").addEventListener("click",play);
+  $("simPauseBtn").addEventListener("click",pause);
+
+  $("simNextBtn").addEventListener("click",() => {
+    stopTimer();
+    advance();
+  });
+
+  $("simReplayBtn").addEventListener("click",replay);
+
+  window.addEventListener("pageshow",() => {
+    try { render(); } catch(error) { showError(error); }
+  });
+
+  window.addEventListener("storage",event => {
+    if (event.key === WmsDemo.storageKey) {
+      try { render(); } catch(error) { showError(error); }
+    }
+  });
+
+  window.addEventListener("wms:change",() => {
+    try { render(); } catch(error) { showError(error); }
+  });
+
+  document.addEventListener("visibilitychange",() => {
+    if (document.hidden && playing) pause();
+  });
+
+  progress = 20;
+  updateProgress();
+
+  try {
+    render();
+    updatePlayback(
+      "Dữ liệu đã được tải. Nhấn Chạy mô phỏng để bắt đầu."
+    );
+  } catch(error) {
+    showError(error);
+  }
+})();
 </script>
 
 </body>

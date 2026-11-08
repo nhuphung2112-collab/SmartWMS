@@ -1011,7 +1011,17 @@ const WmsDemo = (() => {
 
                 const id = nextId();
 
-                state.shipments.push({
+               state.shipments.push({
+    ...data,
+    shipping_order_id: row.shipping_order_id,
+    package_ids: ids,
+    shipment_id: id,
+    shipment_code: "TRIP-" + id,
+    shipping_code: row.shipping_code,
+    order_id: row.order_id,
+    order_code: row.order_code,
+    delivery_status: "PENDING"
+});
                     ...data,
                     package_ids: ids,
                     shipment_id: id,

@@ -295,3 +295,28 @@ body .status {font-size:11px !important;}
     grid-template-columns: 1fr !important;
   }
 }
+
+/* FIX: GIỮ TOÀN BỘ MENU TRÊN MỘT HÀNG */
+
+@media (min-width: 1051px) {
+    body .topbar .navigation,
+    body .topbar .nav {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        gap: 5px !important;
+        white-space: nowrap !important;
+        scrollbar-width: thin;
+    }
+
+    body .topbar .navigation a,
+    body .topbar .nav a {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+        padding: 12px 11px !important;
+        font-size: 14px !important;
+    }
+}

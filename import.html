@@ -1,124 +1,609 @@
+
 <!doctype html>
 <html lang="vi">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Nhập dữ liệu | WMS</title>
-    <link rel="stylesheet" href="style.css?v=7">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nhập dữ liệu mô phỏng | SmartWMS</title>
 
-<link rel="stylesheet" href="smartwms-unified.css?v=1">
+  <link rel="stylesheet" href="style.css?v=7">
+  <link rel="stylesheet" href="smartwms-unified.css?v=1">
+
+  <style>
+    .import-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(270px, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .import-card {
+      background: #fff;
+      border: 1px solid #e2eaf3;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 18px;
+    }
+
+    .import-card h1 {
+      margin: 0 0 12px;
+      color: #193b5b;
+      font-size: 25px;
+    }
+
+    .import-card h2 {
+      margin: 0 0 12px;
+      color: #193b5b;
+      font-size: 18px;
+    }
+
+    .import-card p {
+      line-height: 1.7;
+      color: #52667e;
+    }
+
+    .import-field {
+      margin: 17px 0;
+    }
+
+    .import-field label {
+      display: block;
+      font-weight: 600;
+      color: #29445f;
+      margin-bottom: 8px;
+    }
+
+    .import-field select,
+    .import-field textarea,
+    .import-field input[type=file] {
+      box-sizing: border-box;
+      width: 100%;
+      border: 1px solid #cbd9e8;
+      border-radius: 9px;
+      padding: 12px;
+      font: inherit;
+      color: #233b53;
+      background: white;
+    }
+
+    .import-field textarea {
+      min-height: 170px;
+      resize: vertical;
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 13px;
+    }
+
+    .import-help {
+      font-size: 13px;
+      color: #667d94;
+    }
+
+    .import-notice {
+      background: #eef6ff;
+      border: 1px solid #d7e8fa;
+      border-radius: 9px;
+      padding: 12px 14px;
+      color: #365b7b;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .import-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .import-actions .btn {
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .import-actions .btn-primary {
+      background: #2379bd;
+      color: white;
+    }
+
+    .import-actions .btn-primary:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .import-status {
+      min-height: 22px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    .import-status.error {
+      color: #b42318;
+    }
+
+    .import-status.success {
+      color: #157347;
+    }
+
+    .stage-summary {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .stage-summary th,
+    .stage-summary td {
+      padding: 11px 8px;
+      border-bottom: 1px solid #e9eef5;
+      text-align: left;
+    }
+
+    .stage-summary th {
+      color: #637890;
+      background: #f5f8fc;
+    }
+
+    .stage-summary td:last-child,
+    .stage-summary th:last-child {
+      text-align: right;
+    }
+
+    .stage-summary tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .import-footer {
+      margin-top: 20px;
+    }
+
+    @media (max-width: 850px) {
+      .import-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .import-card {
+        padding: 18px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 <header class="topbar">
-    <div class="brand"><span class="brand-icon">W</span><div><h2>WAREHOUSE</h2><small>Management System</small></div></div>
-    <nav class="navigation" aria-label="Điều hướng chính">
-        <a href="index.html">Tổng quan</a>
-        <a href="simulation.html">Kho mô phỏng</a>
-        <a href="stage.html?stage=receiving">Nhận hàng</a>
-        <a href="stage.html?stage=putaway">Cất hàng</a>
-        <a href="stage.html?stage=picking">Lấy hàng</a>
-        <a href="stage.html?stage=packing">Đóng gói</a>
-        <a href="stage.html?stage=shipping">Xuất hàng</a>
-        <a href="ai_dashboard.html">Dự kiến xử lý</a>
-        <a href="bottleneck_analysis.html">Điểm nghẽn</a>
-    </nav>
-    <div class="user"><a class="data-import-link" href="import.html" aria-current="page">Nhập dữ liệu</a><span class="avatar">QL</span><span>Quản lý kho</span></div>
+  <div class="brand">
+    <span class="brand-icon">W</span>
+    <div>
+      <h2>WAREHOUSE</h2>
+      <small>Management System</small>
+    </div>
+  </div>
+
+  <nav class="navigation" aria-label="Điều hướng chính">
+    <a href="index.html">Tổng quan</a>
+    <a href="simulation.html">Kho mô phỏng</a>
+    <a href="stage.html?stage=receiving">Nhận hàng</a>
+    <a href="stage.html?stage=putaway">Cất hàng</a>
+    <a href="stage.html?stage=picking">Lấy hàng</a>
+    <a href="stage.html?stage=packing">Đóng gói</a>
+    <a href="stage.html?stage=shipping">Xuất hàng</a>
+    <a href="ai_dashboard.html">Dự đoán AI</a>
+    <a href="bottleneck_analysis.html">Điểm nghẽn</a>
+  </nav>
+
+  <div class="user">
+    <a class="data-import-link" href="import.html" aria-current="page">
+      Nhập dữ liệu
+    </a>
+    <span class="avatar">QL</span>
+    <span>Quản lý kho</span>
+  </div>
 </header>
+
 <main class="container">
-    <section class="panel">
-        <h1>Nhập dữ liệu mô phỏng SmartWMS</h1>
-        <p>Tải CSV hoặc dán nội dung vào ô bên dưới. Dùng hai cột <code>sku</code> và <code>quantity</code>, với SKU <code>SKU-001</code> hoặc <code>SKU-002</code> và số lượng nguyên dương tính theo thùng.</p>
-        <p>Mỗi lần lưu tạo một phiếu chờ tại Nhận hàng. Sau khi xác nhận QC, lô đạt xuất hiện ở Cất hàng và trở thành tồn có thể lấy khi phiếu cất hoàn tất.</p>
-        <form id="import-form">
-<div style="margin-bottom:20px">
-    <label for="import-stage">
-        <strong>Chọn công đoạn nhập dữ liệu</strong>
-    </label>
+  <div class="import-layout">
 
-    <select id="import-stage"
-        style="display:block;width:100%;padding:12px;margin-top:10px;
-        border:1px solid #dce5ef;border-radius:8px">
+    <section class="import-card">
+      <h1>Nhập dữ liệu mô phỏng SmartWMS</h1>
 
-        <option value="receiving">Nhận hàng</option>
-        <option value="putaway">Cất hàng</option>
-        <option value="picking">Lấy hàng</option>
-        <option value="packing">Đóng gói</option>
-        <option value="shipping">Xuất hàng</option>
-    </select>
+      <p>
+        Chọn một trong 5 công đoạn và nhập dữ liệu hàng hóa.
+        Mỗi lần nhập sẽ <strong>cộng thêm dữ liệu mới</strong>
+        vào kho đang chạy, không ghi đè các phiếu hiện có.
+      </p>
 
-    <p style="font-size:13px;color:#64748b">
-        Dữ liệu mới sẽ được cộng dồn vào kho hiện tại.
-        Hệ thống tự tạo lịch sử các công đoạn trước
-        và giữ công đoạn được chọn ở trạng thái chờ xử lý.
-    </p>
-</div>
-            <p><label for="import-file">Chọn file CSV</label> <input id="import-file" type="file" accept=".csv,text/csv"></p>
-            <p><a href="du-lieu-mau.csv" download>Tải CSV mẫu</a></p>
-            <label for="import-data">Nội dung CSV</label>
-            <textarea id="import-data" required spellcheck="false" placeholder="sku,quantity&#10;SKU-001,10&#10;SKU-002,8"></textarea>
-            <button class="btn btn-primary" type="submit">Cộng dữ liệu và mở công đoạn</button>
-            <p id="import-status" role="status"></p>
-        </form>
+      <div class="import-notice">
+        Hệ thống tự tạo lịch sử nghiệp vụ cho các công đoạn trước.
+        Công đoạn bạn chọn sẽ nhận phiếu mới ở trạng thái
+        <strong>chờ xử lý</strong>.
+        Hàng chỉ được chuyển sang công đoạn sau khi hoàn thành
+        thao tác tương ứng.
+      </div>
+
+      <form id="import-form">
+
+        <div class="import-field">
+          <label for="import-stage">
+            Công đoạn muốn nhập dữ liệu
+          </label>
+
+          <select id="import-stage" required>
+            <option value="receiving">1. Nhận hàng</option>
+            <option value="putaway">2. Cất hàng</option>
+            <option value="picking">3. Lấy hàng</option>
+            <option value="packing">4. Đóng gói</option>
+            <option value="shipping">5. Xuất hàng</option>
+          </select>
+        </div>
+
+        <div class="import-field">
+          <label for="import-file">Tải file CSV</label>
+
+          <input
+            id="import-file"
+            type="file"
+            accept=".csv,text/csv"
+          >
+
+          <p class="import-help">
+            <a href="du-lieu-mau.csv" download>
+              Tải CSV mẫu
+            </a>
+            · Hỗ trợ SKU-001 và SKU-002, đơn vị thùng.
+          </p>
+        </div>
+
+        <div class="import-field">
+          <label for="import-data">Nội dung CSV</label>
+
+          <textarea
+            id="import-data"
+            required
+            spellcheck="false"
+            placeholder="sku,quantity&#10;SKU-001,200&#10;SKU-002,100"
+          ></textarea>
+
+          <p class="import-help">
+            Định dạng: <code>sku,quantity</code>.
+            Số lượng phải là số nguyên dương.
+            Tối đa 100 dòng mỗi lần nhập.
+          </p>
+        </div>
+
+        <div class="import-actions">
+          <button
+            id="import-submit"
+            class="btn btn-primary"
+            type="submit"
+          >
+            Cộng dữ liệu và mở công đoạn
+          </button>
+
+          <button
+            id="import-clear"
+            class="btn"
+            type="button"
+          >
+            Xóa nội dung nhập
+          </button>
+        </div>
+
+        <p
+          id="import-status"
+          class="import-status"
+          role="status"
+          aria-live="polite"
+        ></p>
+      </form>
     </section>
-<section class="panel"><h2>Dữ liệu của website này</h2><p>Mỗi repo lưu dữ liệu riêng trên trình duyệt. Kịch bản mẫu có 30 đơn hàng và cao điểm tại Nhận hàng. Dữ liệu cũ được giữ trong trình duyệt để phục hồi khi cần.</p><div class="actions"><button id="export-data" class="btn">Tải bản sao dữ liệu</button><button id="reset-data" class="btn">Nạp lại kịch bản Nhận hàng</button><button id="restore-data" class="btn">Lấy dữ liệu bản cũ</button></div><p id="data-status" role="status"></p></section></main>
-<script src="wms-demo.js?v=7"></script>
+
+    <aside class="import-card">
+      <h2>Khối lượng công việc hiện tại</h2>
+
+      <p class="import-help">
+        Dữ liệu đang lưu trên trình duyệt này,
+        được đọc chung bởi các trang SmartWMS.
+      </p>
+
+      <table class="stage-summary">
+        <thead>
+          <tr>
+            <th>Công đoạn</th>
+            <th>Thùng đang chờ / xử lý</th>
+          </tr>
+        </thead>
+
+        <tbody id="stage-summary-body">
+          <tr>
+            <td colspan="2">Đang tải...</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="import-actions">
+        <a class="btn" href="index.html">
+          Xem Tổng quan
+        </a>
+
+        <a class="btn" href="bottleneck_analysis.html">
+          Xem Điểm nghẽn
+        </a>
+      </div>
+    </aside>
+  </div>
+
+  <section class="import-card import-footer">
+    <h2>Quản lý dữ liệu mô phỏng</h2>
+
+    <p>
+      Trước khi thử kịch bản lớn, hãy tải bản sao dữ liệu.
+      <strong>Nạp lại kịch bản</strong> sẽ thay thế trạng thái kho hiện tại;
+      chức năng <strong>nhập dữ liệu</strong> ở trên chỉ cộng thêm.
+    </p>
+
+    <div class="import-actions">
+      <button id="export-data" type="button" class="btn">
+        Tải bản sao dữ liệu
+      </button>
+
+      <button id="reset-data" type="button" class="btn">
+        Nạp lại kịch bản Nhận hàng
+      </button>
+
+      <button id="restore-data" type="button" class="btn">
+        Lấy dữ liệu bản cũ
+      </button>
+    </div>
+
+    <p
+      id="data-status"
+      class="import-status"
+      role="status"
+    ></p>
+  </section>
+</main>
+
+<script src="wms-demo.js?v=9"></script>
+
 <script>
-    const fileInput = document.getElementById("import-file");
-    const dataInput = document.getElementById("import-data");
-    const status = document.getElementById("import-status");
-    const submit = document.querySelector("#import-form button");
+(() => {
+  const fileInput = document.getElementById("import-file");
+  const dataInput = document.getElementById("import-data");
+  const status = document.getElementById("import-status");
+  const submit = document.getElementById("import-submit");
+  const stageInput = document.getElementById("import-stage");
+  const dataStatus = document.getElementById("data-status");
 
-    fileInput.addEventListener("change", async () => {
-        const file = fileInput.files[0];
-        if (!file) return;
-        submit.disabled = true;
-        try {
-            dataInput.value = await file.text();
-            status.textContent = "Đã đọc CSV. Kiểm tra nội dung rồi bấm Lưu.";
-        } catch {
-            status.textContent = "Không đọc được file CSV.";
-        } finally {
-            submit.disabled = false;
-            fileInput.value = "";
+  const stageNames = {
+    receiving: "Nhận hàng",
+    putaway: "Cất hàng",
+    picking: "Lấy hàng",
+    packing: "Đóng gói",
+    shipping: "Xuất hàng"
+  };
+
+  function showStatus(element, message, type = "") {
+    element.textContent = message;
+    element.classList.remove("error", "success");
+
+    if (type) {
+      element.classList.add(type);
+    }
+  }
+
+  function refreshSummary() {
+    const tbody = document.getElementById("stage-summary-body");
+
+    try {
+      const result = WmsDemo.analysis();
+      tbody.replaceChildren();
+
+      for (const item of result) {
+        const tr = document.createElement("tr");
+        const name = document.createElement("td");
+        const qty = document.createElement("td");
+
+        name.textContent = stageNames[item.stage] || item.stage;
+
+        qty.textContent = Number(
+          item.workload || 0
+        ).toLocaleString("vi-VN");
+
+        tr.append(name, qty);
+        tbody.append(tr);
+      }
+
+    } catch (error) {
+      tbody.replaceChildren();
+
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+
+      td.colSpan = 2;
+      td.textContent = "Không đọc được dữ liệu: " + error.message;
+
+      tr.append(td);
+      tbody.append(tr);
+    }
+  }
+
+  fileInput.addEventListener("change", async () => {
+    const file = fileInput.files[0];
+
+    if (!file) return;
+
+    submit.disabled = true;
+
+    try {
+      dataInput.value = await file.text();
+
+      showStatus(
+        status,
+        "Đã đọc file CSV. Kiểm tra nội dung rồi nhấn Cộng dữ liệu."
+      );
+
+    } catch (error) {
+      showStatus(
+        status,
+        "Không đọc được CSV: " + error.message,
+        "error"
+      );
+
+    } finally {
+      submit.disabled = false;
+      fileInput.value = "";
+    }
+  });
+
+  document.getElementById("import-clear").addEventListener(
+    "click",
+    () => {
+      dataInput.value = "";
+      showStatus(status, "");
+    }
+  );
+
+  document.getElementById("import-form").addEventListener(
+    "submit",
+    async event => {
+      event.preventDefault();
+
+      submit.disabled = true;
+
+      showStatus(
+        status,
+        "Đang tạo phiếu và đồng bộ dữ liệu..."
+      );
+
+      try {
+        if (
+          typeof WmsDemo.importStageScenario !== "function"
+        ) {
+          throw new Error(
+            "Không tìm thấy importStageScenario(). " +
+            "Kiểm tra phiên bản wms-demo.js đã lưu trên GitHub."
+          );
         }
-    });
 
-    document.getElementById("import-form").addEventListener("submit", async event => {
-        event.preventDefault();
-        submit.disabled = true;
-        try {
-            
-const selectedStage = document.getElementById("import-stage").value;
+        const selectedStage = stageInput.value;
 
-await WmsDemo.importStageScenario(
-    selectedStage,
-    dataInput.value
-);
-            submit.disabled = true;
-          location.assign("stage.html?stage=" + selectedStage);
-        } catch (error) {
-            submit.disabled = false;
-            status.textContent = error.message;
-        }
-    });
-</script>
-<script>
-    document.getElementById("export-data").onclick = () => {
-        const url = URL.createObjectURL(new Blob([WmsDemo.exportData()], {type:"application/json"}));
+        const result = await WmsDemo.importStageScenario(
+          selectedStage,
+          dataInput.value
+        );
+
+        showStatus(
+          status,
+          "Đã cộng thêm " +
+          Number(result.importedQty).toLocaleString("vi-VN") +
+          " thùng vào " +
+          stageNames[selectedStage] +
+          ".",
+          "success"
+        );
+
+        refreshSummary();
+
+        location.assign(
+          "stage.html?stage=" +
+          encodeURIComponent(selectedStage)
+        );
+
+      } catch (error) {
+        submit.disabled = false;
+
+        showStatus(
+          status,
+          "Lỗi: " + error.message,
+          "error"
+        );
+      }
+    }
+  );
+
+  document.getElementById("export-data").addEventListener(
+    "click",
+    () => {
+      try {
+        const url = URL.createObjectURL(
+          new Blob(
+            [WmsDemo.exportData()],
+            {type: "application/json"}
+          )
+        );
+
         const link = document.createElement("a");
+
         link.href = url;
         link.download = "SmartWMS-du-lieu.json";
         link.click();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-    };
-    async function changeScenario(action, message) {
-        if (!confirm(message)) return;
-        try {
-            await action();
-            document.getElementById("data-status").textContent = "Đã cập nhật. Mở Tổng quan để xem dữ liệu.";
-        } catch(error) {document.getElementById("data-status").textContent = error.message;}
+
+        setTimeout(
+          () => URL.revokeObjectURL(url),
+          1000
+        );
+
+        showStatus(
+          dataStatus,
+          "Đã tạo bản sao dữ liệu.",
+          "success"
+        );
+
+      } catch (error) {
+        showStatus(
+          dataStatus,
+          error.message,
+          "error"
+        );
+      }
     }
-    document.getElementById("reset-data").onclick = () => changeScenario(WmsDemo.resetScenario, "Thay dữ liệu hiện tại bằng kịch bản Nhận hàng? Một bản sao dữ liệu hiện tại sẽ được lưu trên trình duyệt.");
-    document.getElementById("restore-data").onclick = () => changeScenario(WmsDemo.restoreLegacy, "Lấy bộ dữ liệu của bản WMS trước đây? Bộ này có thể thuộc repo cũ cùng tài khoản GitHub. Dữ liệu hiện tại sẽ được sao lưu.");
-</script></body>
+  );
+
+  async function changeScenario(action, message) {
+    if (!confirm(message)) return;
+
+    try {
+      await action();
+      refreshSummary();
+
+      showStatus(
+        dataStatus,
+        "Đã cập nhật dữ liệu. Bạn có thể mở Tổng quan để kiểm tra.",
+        "success"
+      );
+
+    } catch (error) {
+      showStatus(
+        dataStatus,
+        "Lỗi: " + error.message,
+        "error"
+      );
+    }
+  }
+
+  document.getElementById("reset-data").addEventListener(
+    "click",
+    () => changeScenario(
+      WmsDemo.resetScenario,
+      "Thay toàn bộ dữ liệu hiện tại bằng kịch bản Nhận hàng? " +
+      "Dữ liệu cũ sẽ được sao lưu trong trình duyệt."
+    )
+  );
+
+  document.getElementById("restore-data").addEventListener(
+    "click",
+    () => changeScenario(
+      WmsDemo.restoreLegacy,
+      "Khôi phục dữ liệu từ phiên bản WMS cũ? " +
+      "Trạng thái hiện tại sẽ được sao lưu."
+    )
+  );
+
+  window.addEventListener("storage", refreshSummary);
+  window.addEventListener("wms:change", refreshSummary);
+
+  refreshSummary();
+})();
+</script>
+
+</body>
 </html>

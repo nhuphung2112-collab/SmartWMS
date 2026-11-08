@@ -436,5 +436,196 @@ const WmsDemo = (() => {
         return JSON.stringify(read(), null, 2);
     }
 
+async function importStageScenario(stage, csvText) {
+    if (!stages[stage]) {
+        throw new Error("Công đoạn không hợp lệ.");
+    }
+
+    const lines = String(csvText || "")
+        .replace(/^\uFEFF/, "")
+        .trim()
+        .split(/\r?\n/);
+
+    const delimiter = (lines[0] || "").includes(";") ? ";" : ",";
+    const split = line => line.split(delimiter).map(x => x.trim());
+
+    const header = split(lines[0] || "").map(x => x.toLowerCase());
+
+    if (header.join(",") !== "sku,quantity") {
+        throw new Error("CSV phải có hai cột: sku,quantity.");
+    }
+
+    const items = [];
+
+    for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+
+        const cells = split(lines[i]);
+        const product = products.find(
+            p => p.sku === String(cells[0]).toUpperCase()
+        );
+        const qty = Number(cells[1]);
+
+        if (
+            cells.length !== 2 ||
+            !product ||
+            !Number.isSafeInteger(qty) ||
+            qty <= 0
+        ) {
+            throw new Error(
+                "Dữ liệu không hợp lệ tại dòng " + (i + 1)
+            );
+        }
+
+        items.push({product_id: product.product_id, qty});
+    }
+
+    if (!items.length) {
+        throw new Error("CSV chưa có dữ liệu.");
+    }
+
+    if (items.length > 100) {
+        throw new Error("Mỗi lần chỉ nhập tối đa 100 dòng.");
+    }
+
+    return locked(() => {
+        // Làm việc trên bản sao để tránh lưu dữ liệu dở dang.
+        const state = structuredClone(read());
+
+        const run = (step, action, data = {}) =>
+            execute(step, {
+                action,
+                employee_id: 1,
+                ...data
+            }, state);
+
+        const create = (step, data) => {
+            run(step, "create", data);
+            return state[stages[step][0]].at(-1);
+        };
+
+        const start = (step, row) => run(step, "start", row);
+
+        const completeReceiving = receipt => {
+            start("receiving", receipt);
+
+            run("receiving", "complete", {
+                receipt_id: receipt.receipt_id,
+                items: receipt.items.map(item => ({
+                    receiving_item_id: item.receiving_item_id,
+                    received_qty: item.expected_qty,
+                    accepted_qty: item.expected_qty,
+                    rejected_qty: 0,
+                    qc_result: "PASS"
+                }))
+            });
+        };
+
+        for (const item of items) {
+            // 1. Tạo phiếu nhận hàng mới.
+            const receipt = create("receiving", {
+                supplier_id: 1,
+                dock_number: "DOCK-01",
+                arrival_time: new Date().toLocaleString("vi-VN"),
+                note: "Kịch bản cộng dồn",
+                items: [{
+                    product_id: item.product_id,
+                    expected_qty: item.qty
+                }]
+            });
+
+            // Nhập tại Nhận hàng: giữ phiếu ở trạng thái chờ.
+            if (stage === "receiving") continue;
+
+            // 2. Hoàn thành Nhận hàng để có lô hợp lệ.
+            completeReceiving(receipt);
+
+            const batch = state.batches.at(-1);
+
+            // 3. Tạo phiếu Cất hàng.
+            const putaway = create("putaway", {
+                batch_id: batch.batch_id,
+                quantity: item.qty,
+                destination_location_id: item.product_id + 1
+            });
+
+            if (stage === "putaway") continue;
+
+            // 4. Hoàn thành Cất hàng để tạo tồn khả dụng.
+            start("putaway", putaway);
+            run("putaway", "complete", {
+                putaway_id: putaway.putaway_id
+            });
+
+            // 5. Tạo đơn hàng mô phỏng riêng.
+            const orderId = state.nextId++;
+
+            state.orders.push({
+                order_id: orderId,
+                order_code: "SO-SIM-" + orderId,
+                priority: "Thường",
+                order_date: new Date().toLocaleDateString("vi-VN"),
+                required_date: new Date().toLocaleDateString("vi-VN"),
+                line_count: 1,
+                total_qty: item.qty,
+                product_id: item.product_id
+            });
+
+            const picking = create("picking", {
+                order_id: orderId
+            });
+
+            if (stage === "picking") continue;
+
+            // 6. Hoàn thành Lấy hàng.
+            start("picking", picking);
+
+            run("picking", "complete", {
+                picking_id: picking.picking_id,
+                picked_items: picking.items.map(detail => ({
+                    detail_id: detail.picking_detail_id,
+                    picked_qty: detail.requested_qty
+                }))
+            });
+
+            // 7. Tạo phiếu Đóng gói.
+            const packing = create("packing", {
+                picking_id: picking.picking_id
+            });
+
+            if (stage === "packing") continue;
+
+            // 8. Hoàn thành Đóng gói để tạo kiện hàng.
+            start("packing", packing);
+
+            run("packing", "complete", {
+                packing_id: packing.packing_id,
+                packages: [{
+                    package_type: "Thùng carton",
+                    weight: 5,
+                    items: picking.items.map(detail => ({
+                        picking_detail_id: detail.picking_detail_id,
+                        packed_qty: detail.picked_qty
+                    }))
+                }]
+            });
+
+            // 9. Tạo phiếu Xuất hàng đang chờ.
+            create("shipping", {
+                order_id: orderId
+            });
+        }
+
+        // Chỉ lưu khi toàn bộ dữ liệu đã tạo thành công.
+        save(state);
+
+        return {
+            success: true,
+            stage,
+            importedRows: items.length,
+            importedQty: items.reduce((sum, x) => sum + x.qty, 0)
+        };
+    });
+}
     return {request, overview, importReceivingCsv, analysis, inventory, setCapacity, resetScenario, restoreLegacy, exportData, storageKey: key};
 })();

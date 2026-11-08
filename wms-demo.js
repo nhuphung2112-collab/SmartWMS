@@ -1011,22 +1011,15 @@ const WmsDemo = (() => {
 
                 const id = nextId();
 
-               state.shipments.push({
-    ...data,
-    shipping_order_id: row.shipping_order_id,
-    package_ids: ids,
-    shipment_id: id,
-    shipment_code: "TRIP-" + id,
-    shipping_code: row.shipping_code,
-    order_id: row.order_id,
-    order_code: row.order_code,
-    delivery_status: "PENDING"
-});
+                state.shipments.push({
                     ...data,
+                    shipping_order_id:
+                        row.shipping_order_id,
                     package_ids: ids,
                     shipment_id: id,
                     shipment_code: "TRIP-" + id,
                     shipping_code: row.shipping_code,
+                    order_id: row.order_id,
                     order_code: row.order_code,
                     delivery_status: "PENDING"
                 });
@@ -1997,200 +1990,93 @@ const WmsDemo = (() => {
 
     function overview() {
         const state = read();
+        const stats = analysis();
+
+        const totalOrders =
+            state.orders.length;
+
+        const totalReceipts =
+            state.receipts.length;
+
+        const completedReceipts =
+            state.receipts.filter(
+                row => row.status === "COMPLETED"
+            ).length;
+
+        const completedShipments =
+            state.shipments.filter(
+                row =>
+                    row.delivery_status === "DELIVERED"
+            ).length;
+
+        const bottleneck = [...stats].sort(
+            (a, b) =>
+                b.loadPercent - a.loadPercent
+        )[0];
 
         return {
-            received:
-                state.receipts.flatMap(
-                    r => r.items || []
-                ).reduce(
-                    (sum, item) =>
-                        sum +
-                        num(item.received_qty),
-                    0
-                ),
-            orders:
-                state.orders.length,
-            pendingOrders:
-                state.orders.filter(
-                    o =>
-                        !state.pickings.some(
-                            p =>
-                                Number(p.order_id) ===
-                                Number(o.order_id)
-                        )
-                ).length,
-            completed:
-                state.shipping_orders.filter(
-                    r =>
-                        r.status === "SHIPPED"
-                ).length,
-            stages:
-                Object.fromEntries(
-                    Object.entries(stages).map(
-                        ([
-                            stage,
-                            [collection]
-                        ]) => [
-                            stage,
-                            state[collection]
-                        ]
-                    )
-                )
+            totalOrders,
+            totalReceipts,
+            completedReceipts,
+            completedShipments,
+            bottleneck,
+            stages: stats,
+            inventory: inventory()
         };
     }
 
     function inventory() {
         const state = read();
 
-        return products.map(
-            product => {
-                const productId =
-                    product.product_id;
+        const stock = new Map();
 
-                const sum = (
-                    items,
-                    field
-                ) => items.filter(
-                    item =>
-                        Number(item.product_id) ===
-                        productId
-                ).reduce(
-                    (total, item) =>
-                        total +
-                        num(item[field]),
-                    0
-                );
-
-                const receiptItems =
-                    state.receipts.flatMap(
-                        r => r.items || []
-                    );
-
-                const received =
-                    sum(
-                        receiptItems,
-                        "received_qty"
-                    );
-
-                const accepted =
-                    sum(
-                        receiptItems,
-                        "accepted_qty"
-                    );
-
-                const rejected =
-                    sum(
-                        receiptItems,
-                        "rejected_qty"
-                    );
-
-                const batches =
-                    state.batches.filter(
-                        b =>
-                            Number(b.product_id) ===
-                            productId
-                    );
-
-                const batchIds =
-                    batches.map(
-                        b =>
-                            Number(b.batch_id)
-                    );
-
-                const putaways =
-                    state.putaways.filter(
-                        p =>
-                            batchIds.includes(
-                                Number(p.batch_id)
-                            )
-                    );
-
-                const toStore =
-                    sum(
-                        batches,
-                        "available_qty"
-                    ) +
-                    putaways.filter(
-                        p =>
-                            p.status !== "COMPLETED"
-                    ).reduce(
-                        (total, p) =>
-                            total +
-                            num(p.quantity),
-                        0
-                    );
-
-                const free =
-                    putaways.reduce(
-                        (total, p) =>
-                            total +
-                            num(p.stock_qty),
-                        0
-                    );
-
-                const reserved =
-                    sum(
-                        state.pickings.filter(
-                            p =>
-                                p.status !== "COMPLETED"
-                        ).flatMap(
-                            p => p.items || []
-                        ),
-                        "requested_qty"
-                    );
-
-                const picked =
-                    sum(
-                        state.pickings.filter(
-                            p =>
-                                p.status === "COMPLETED"
-                        ).flatMap(
-                            p => p.items || []
-                        ),
-                        "picked_qty"
-                    );
-
-                const packed =
-                    sum(
-                        state.packages.flatMap(
-                            p => p.items || []
-                        ),
-                        "packed_qty"
-                    );
-
-                const shipped =
-                    sum(
-                        state.packages.filter(
-                            p =>
-                                p.status === "SHIPPED"
-                        ).flatMap(
-                            p => p.items || []
-                        ),
-                        "packed_qty"
-                    );
-
-                return {
+        for (const product of products) {
+            stock.set(
+                product.product_id,
+                {
                     ...product,
-                    received,
-                    accepted,
-                    rejected,
-                    toStore,
-                    free,
-                    reserved,
-                    toPack:
-                        Math.max(
-                            0,
-                            picked - packed
-                        ),
-                    toShip:
-                        Math.max(
-                            0,
-                            packed - shipped
-                        ),
-                    shipped
-                };
+                    quantity: 0,
+                    locations: []
+                }
+            );
+        }
+
+        for (const task of state.putaways) {
+            if (
+                task.status !== "COMPLETED" ||
+                num(task.stock_qty) <= 0
+            ) {
+                continue;
             }
-        );
+
+            const batch = state.batches.find(
+                b =>
+                    Number(b.batch_id) ===
+                    Number(task.batch_id)
+            );
+
+            if (!batch) continue;
+
+            const product = stock.get(
+                Number(batch.product_id)
+            );
+
+            if (!product) continue;
+
+            product.quantity +=
+                num(task.stock_qty);
+
+            product.locations.push({
+                location_code:
+                    task.destination_location,
+                batch_code:
+                    task.batch_code,
+                quantity:
+                    num(task.stock_qty)
+            });
+        }
+
+        return [...stock.values()];
     }
 
     async function setCapacity(
@@ -2204,144 +2090,137 @@ const WmsDemo = (() => {
             );
         }
 
-        workers =
+        const validWorkers =
             amount(workers, true);
 
-        perHour =
+        const validPerHour =
             amount(perHour, true);
 
         if (
-            workers > 20 ||
-            perHour > 500
+            validWorkers > 20 ||
+            validPerHour > 500
         ) {
             throw new Error(
-                "Chọn tối đa 20 nhân viên " +
-                "và 500 thùng/người/giờ."
+                "Năng lực vượt giới hạn mô phỏng."
             );
         }
 
-        return locked(
-            () => {
-                const state =
-                    clone(read());
+        return locked(() => {
+            const state = clone(read());
 
-                state.capacity[stage] = {
-                    workers,
-                    perHour
-                };
+            state.capacity[stage] = {
+                workers: validWorkers,
+                perHour: validPerHour
+            };
 
-                save(state);
+            save(state);
 
-                return {
-                    success: true
-                };
-            }
-        );
+            return {
+                success: true,
+                stage,
+                workers: validWorkers,
+                perHour: validPerHour
+            };
+        });
     }
 
     async function resetScenario() {
-        return locked(
-            () => {
-                const previous =
-                    localStorage.getItem(key);
+        return locked(() => {
+            const previous =
+                localStorage.getItem(key);
 
-                if (previous) {
-                    localStorage.setItem(
-                        key + ":backup",
-                        previous
-                    );
-                }
-
-                const state =
-                    freshState();
-
-                seed(state);
-
-                save(state);
-
-                return {
-                    success: true
-                };
+            if (previous) {
+                localStorage.setItem(
+                    key + ":backup",
+                    previous
+                );
             }
-        );
+
+            const state = freshState();
+
+            seed(state);
+            save(state);
+
+            return {
+                success: true
+            };
+        });
     }
 
     async function restoreLegacy() {
-        return locked(
-            () => {
-                const raw =
-                    localStorage.getItem(
-                        "wms_operations_v1"
-                    );
+        return locked(() => {
+            const raw =
+                localStorage.getItem(
+                    "wms_operations_v1"
+                );
 
-                if (!raw) {
-                    throw new Error(
-                        "Không có dữ liệu phiên bản cũ."
-                    );
-                }
-
-                const state =
-                    JSON.parse(raw);
-
-                for (
-                    const [collection]
-                    of Object.values(stages)
-                ) {
-                    if (
-                        !Array.isArray(
-                            state[collection]
-                        )
-                    ) {
-                        throw new Error(
-                            "Dữ liệu cũ không đúng định dạng."
-                        );
-                    }
-                }
-
-                state.orders =
-                    clone(orders);
-
-                for (
-                    const order
-                    of state.orders
-                ) {
-                    const picking =
-                        state.pickings.find(
-                            p =>
-                                Number(p.order_id) ===
-                                order.order_id
-                        );
-
-                    if (picking) {
-                        order.total_qty =
-                            num(
-                                picking.requested_total
-                            );
-                    }
-                }
-
-                state.capacity =
-                    clone(defaults);
-
-                normalizeState(state);
-
-                const previous =
-                    localStorage.getItem(key);
-
-                if (previous) {
-                    localStorage.setItem(
-                        key + ":backup",
-                        previous
-                    );
-                }
-
-                save(state);
-
-                return {
-                    success: true
-                };
+            if (!raw) {
+                throw new Error(
+                    "Không có dữ liệu phiên bản cũ."
+                );
             }
-        );
+
+            const state =
+                JSON.parse(raw);
+
+            for (
+                const [collection]
+                of Object.values(stages)
+            ) {
+                if (
+                    !Array.isArray(
+                        state[collection]
+                    )
+                ) {
+                    throw new Error(
+                        "Dữ liệu cũ không đúng định dạng."
+                    );
+                }
+            }
+
+            state.orders =
+                clone(orders);
+
+            for (
+                const order
+                of state.orders
+            ) {
+                const picking =
+                    state.pickings.find(
+                        p =>
+                            Number(p.order_id) ===
+                            order.order_id
+                    );
+
+                if (picking) {
+                    order.total_qty =
+                        num(
+                            picking.requested_total
+                        );
+                }
+            }
+
+            state.capacity =
+                clone(defaults);
+
+            normalizeState(state);
+
+            const previous =
+                localStorage.getItem(key);
+
+            if (previous) {
+                localStorage.setItem(
+                    key + ":backup",
+                    previous
+                );
+            }
+
+            save(state);
+
+            return {
+                success: true
+            };
+        });
     }
 
     function exportData() {

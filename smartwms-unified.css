@@ -90,3 +90,208 @@ body .status {font-size:11px !important;}
   body .sim-layout {grid-template-columns:1fr !important;}
 }
 @media(max-width:390px) {body .overview-grid,body .kpis {grid-template-columns:1fr !important;}}
+
+/* =========================================
+   SMARTWMS - MOBILE RESPONSIVE FIX
+   Chỉ áp dụng cho màn hình <= 650px
+   ========================================= */
+
+@media screen and (max-width: 650px) {
+
+  /* Chống tràn ngang toàn trang */
+  html, body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body .container,
+  body main.page {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 16px 12px 32px !important;
+  }
+
+  /* Thanh menu */
+  body .topbar {
+    padding: 12px !important;
+    gap: 12px !important;
+    position: relative !important;
+  }
+
+  body .topbar .navigation,
+  body .topbar .nav {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    max-width: 100% !important;
+    padding-bottom: 6px !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body .topbar .navigation a,
+  body .topbar .nav a {
+    flex: 0 0 auto !important;
+    min-height: 44px !important;
+    font-size: 14px !important;
+    padding: 10px 13px !important;
+  }
+
+  /* Tiêu đề và chữ */
+  body .page-heading h1,
+  body .sim-intro h1 {
+    font-size: 23px !important;
+    line-height: 1.4 !important;
+  }
+
+  body .page-heading p,
+  body .sim-intro p,
+  body .process-data,
+  body .card-note,
+  body .kpi-note {
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Các ô thống kê */
+  body .overview-grid,
+  body .kpis {
+    display: grid !important;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  body .overview-card,
+  body .kpi {
+    min-width: 0 !important;
+    padding: 14px !important;
+  }
+
+  body .overview-card h2,
+  body .kpi-value {
+    font-size: 23px !important;
+    overflow-wrap: anywhere;
+  }
+
+  /* 5 công đoạn: mỗi ô một hàng */
+  body .process-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  body .process-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 16px !important;
+  }
+
+  /* Sơ đồ kho */
+  body .warehouse-section,
+  body .warehouse-map {
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  body .warehouse-map {
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  body .warehouse-map img {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Các bảng dữ liệu được cuộn ngang */
+  body .table-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body .table-wrap table {
+    min-width: 650px;
+  }
+
+  body th,
+  body td {
+    font-size: 13px !important;
+    padding: 11px !important;
+  }
+
+  /* Nút dễ thao tác bằng ngón tay */
+  body .btn,
+  body .sim-btn,
+  body button {
+    min-height: 44px !important;
+    font-size: 14px !important;
+    padding: 10px 14px !important;
+    touch-action: manipulation;
+  }
+
+  body .actions,
+  body .sim-controls {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  /* Ô nhập liệu */
+  body input,
+  body select,
+  body textarea,
+  body .search,
+  body .field input,
+  body .field select,
+  body .field textarea {
+    max-width: 100% !important;
+    min-height: 44px;
+    font-size: 16px !important;
+  }
+
+  /* Mô phỏng kho */
+  body .sim-layout {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  body .sim-panel,
+  body .panel,
+  body .ai-section,
+  body .prediction-box {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  /* Các tab công đoạn có thể cuộn */
+  body .sim-stage-tabs {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 8px !important;
+    padding-bottom: 5px !important;
+  }
+
+  body .sim-stage-tab {
+    flex: 0 0 auto !important;
+    min-height: 44px !important;
+  }
+}
+
+/* Điện thoại màn hình rất nhỏ */
+@media screen and (max-width: 390px) {
+  body .overview-grid,
+  body .kpis {
+    grid-template-columns: 1fr !important;
+  }
+}

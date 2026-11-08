@@ -1988,39 +1988,64 @@ const WmsDemo = (() => {
         );
     }
 
+  
     function overview() {
         const state = read();
         const stats = analysis();
 
-        const totalOrders =
-            state.orders.length;
+        // Tổng số thùng đã thực nhận
+        const received = state.receipts
+            .filter(row => row.status === "COMPLETED")
+            .reduce((total, row) => {
+                return total + (row.items || []).reduce(
+                    (sum, item) =>
+                        sum + num(item.received_qty),
+                    0
+                );
+            }, 0);
 
-        const totalReceipts =
-            state.receipts.length;
+        // Tổng số đơn hàng
+        const orders = state.orders.length;
 
-        const completedReceipts =
-            state.receipts.filter(
-                row => row.status === "COMPLETED"
-            ).length;
+        // Số đơn đã xuất kho
+        const completed = new Set(
+            state.shipping_orders
+                .filter(row => row.status === "SHIPPED")
+                .map(row => Number(row.order_id))
+        ).size;
 
-        const completedShipments =
-            state.shipments.filter(
-                row =>
-                    row.delivery_status === "DELIVERED"
-            ).length;
+        // Danh sách phiếu theo từng công đoạn
+        const stageRows = {
+            receiving: state.receipts,
+            putaway: state.putaways,
+            picking: state.pickings,
+            packing: state.packings,
+            shipping: state.shipping_orders
+        };
 
+        // Công đoạn có tỷ lệ tải cao nhất
         const bottleneck = [...stats].sort(
-            (a, b) =>
-                b.loadPercent - a.loadPercent
-        )[0];
+            (a, b) => b.loadPercent - a.loadPercent
+        )[0] || null;
 
         return {
-            totalOrders,
-            totalReceipts,
-            completedReceipts,
-            completedShipments,
+            // Tương thích với index.html hiện tại
+            received,
+            orders,
+            completed,
+            stages: stageRows,
+
+            // Giữ các trường thống kê bổ sung
+            totalOrders: orders,
+            totalReceipts: state.receipts.length,
+            completedReceipts: state.receipts.filter(
+                row => row.status === "COMPLETED"
+            ).length,
+            completedShipments: state.shipments.filter(
+                row => row.delivery_status === "DELIVERED"
+            ).length,
             bottleneck,
-            stages: stats,
+            stageMetrics: stats,
             inventory: inventory()
         };
     }
